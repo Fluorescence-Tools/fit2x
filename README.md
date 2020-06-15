@@ -1,4 +1,6 @@
 # fits2x
+[![Build Status](https://travis-ci.org/fluorescence-tools/fit2x.svg?branch=master)](https://travis-ci.org/fluorescence-tools/fit2x)
+
 
 ## General description
 fits2x is a collection of fit models that use maximum likelihood
