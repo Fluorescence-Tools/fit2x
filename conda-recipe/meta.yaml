@@ -1,0 +1,44 @@
+{% set data = load_setup_py_data(setup_file='../setup.py', from_recipe_dir=True) %}
+
+package:
+  name: {{ data.get('name')|lower }}
+  version: {{ data.get('version')|lower }}
+
+source:
+  path: ..
+
+build:
+    number: 0
+    string: np{{ CONDA_NPY }}py{{ CONDA_PY }}_{{ data.get('GIT_BUILD_STR', "0")|lower }}
+
+requirements:
+  host:
+    - python {{ python }}
+    - {{ pin_compatible('numpy') }}
+    - setuptools
+    - git
+  build:
+    - python {{ python }}
+    - {{ pin_compatible('numpy') }}
+    - cmake
+    - swig 3.0.12.*
+  run:
+    - python {{ python }}
+    - {{ pin_compatible('numpy') }}
+
+test:
+  imports:
+    - fit2x
+
+about:
+  home: https://github.com/fluorescence-tools/fit2x
+  license: {{ data.get('license') }}
+  summary: Python bindings for fit2x
+  description: |
+    fit2x is a C++ MLE fitting library including Python bindings for MFD
+    data.
+  doc_url: https://fluorescence-tools.github.io/fit2x/
+
+extra:
+  recipe-maintainers:
+    - tpeulen

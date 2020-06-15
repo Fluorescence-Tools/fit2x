@@ -1,0 +1,37 @@
+build
+dist
+*.pro.user
+*.pro.user.*
+scratch.py
+CMakeLists.txt.user
+CMakeLists.txt.user.*
+cmake-build-*
+playground
+temp
+*.egg-info
+docs/_build
+test/stage
+
+# Documentation and tools
+doc/_*
+doc/paper*
+
+# JetBrains
+# User-specific stuff
+.idea
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries
+.idea/**/shelf
+# Generated files
+.idea/**/contentModel.xml
+# Sensitive or high-churn files
+.idea/**/dataSources/
+.idea/**/dataSources.ids
+.idea/**/dataSources.local.xml
+.idea/**/sqlDataSources.xml
+.idea/**/dynamic.xml
+.idea/**/uiDesigner.xml
+.idea/**/dbnavigator.xml
+/dist/
