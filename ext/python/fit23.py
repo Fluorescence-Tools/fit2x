@@ -39,7 +39,7 @@ class Fit23(object):
         """
         if len(irf) != len(background):
             raise ValueError("The IRF and the background differ in size")
-        if irf % 2 != 0:
+        if len(irf) % 2 != 0:
             raise ValueError("The length of the input arrays is not divisible "
                              "by two. Inputs need to be in Jordi format.")
         if convolution_stop < 0:

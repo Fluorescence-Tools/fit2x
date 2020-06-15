@@ -1,6 +1,5 @@
 Fits
 ====
-
 General
 -------
 The fits covered by fit2x (e.g. fit23, fit24, and fit25) all have their own

@@ -1,4 +1,6 @@
 # fits2x
+[![Build Status](https://travis-ci.org/fluorescence-tools/fit2x.svg?branch=master)](https://travis-ci.org/fluorescence-tools/fit2x)
+
 
 ## General description
 fits2x is a collection of fit models that use maximum likelihood
@@ -122,4 +124,4 @@ If you have used fit2x in a scientific publication, we would appreciate citation
 [![DOI for citing LabelLib](https://img.shields.io/badge/10.1021/ac000877g-blue.svg)](https://doi.org/10.1021/ac000877g)
 > Michael Maus, Mircea Cotlet, Johan Hofkens, Thomas Gensch, Frans C. De Schryver, J. Schaffer, and C. A. M. Seidel, 2001. An Experimental Comparison of the Maximum Likelihood Estimation and Nonlinear Least-Squares Fluorescence Lifetime Analysis of Single Molecules. Anal. Chem., 73, 9, pp2078–2086.
 
- [1]: docs/_build/html/_images/fit23_1 "Fit23 single molecule MLE"
+ [1]: docs/_build/html/_images/fit23_1.png "Fit23 single molecule MLE"
