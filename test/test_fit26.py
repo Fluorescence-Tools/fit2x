@@ -90,4 +90,5 @@ class Tests(unittest.TestCase):
             fixed=fixed
         )
         best_fraction_1 = r['x'][0]
+        print(r)
         self.assertEqual(best_fraction_1 < 0.1, True)
