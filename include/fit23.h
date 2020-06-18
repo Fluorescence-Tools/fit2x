@@ -63,7 +63,8 @@ int modelf23(double* param,
  * only affects the returned score and does not influence the fitting (in)
  * [6] background corrected anisotropy - r Scatter (out)
  * [7] anisotropy without background correction - r Experimental (out)
- * @param pv[in] a pointer to a MParam structure.
+ * @param pv[in] a pointer to a MParam structure that contains the data and
+ * a set of corrections.
  * @return a normalized chi2
  */
 double targetf23(double *x, void *pv);
@@ -84,7 +85,6 @@ double targetf23(double *x, void *pv);
  * only affects the returned score and does not influence the fitting (in)
  * [6] background corrected anisotropy - r Scatter (out)
  * [7] anisotropy without background correction - r Experimental (out)
- *
  * @param fixed an array at least of length 4 for the parameters tau, gamma, r0,
  * and rho that specifies if a parameter is optimized. If a value is set to 1,
  * the parameter is optimized.

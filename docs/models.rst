@@ -55,9 +55,9 @@ module. Here, the ``x`` represents a particular model function. The use of a
 ``fit2x`` model function is for the model function 23 (``modelf23``) below.
 model function
 
-.. literalinclude:: ../test/test_fit2x_model.py
+.. literalinclude:: ../test/test_fit23_model.py
    :language: python
-   :lines: 286-291
+   :lines: 36-44
    :linenos:
 
 To compute a model, first a set of model parameters and a set of corrections need
@@ -76,9 +76,9 @@ structure that contains the corrections and all other necessary data to compute
 the value of the objective function (for fit23 i.e. data, irf, backgound, time
 resolution).
 
-.. literalinclude:: ../test/test_fit2x_model.py
+.. literalinclude:: ../test/test_fit23_model.py
    :language: python
-   :lines: 356-365
+   :lines: 171-179
    :linenos:
 
 The data needed in addition to the model parameters are passed to the target function
@@ -89,22 +89,24 @@ of the model parameters
 Model parameters can be optimized to the data by fit functions for fit 23 the
 fit function ``fit2x.fit23`` is used.
 
-.. literalinclude:: ../test/test_fit2x_model.py
+.. literalinclude:: ../test/test_fit23_model.py
    :language: python
-   :lines: 425-439
+   :lines: 250-253
    :linenos:
 
 The fit functions takes like the target function an object of the type
-``fit2x.MParam`` in addtition to the initial values, and a list of fixed model
+``fit2x.MParam`` in addition to the initial values, and a list of fixed model
 parameters as an input. The array containing the initial values of the model
 parameters are modified in-place buy the fit function.
 
-Alternatively, a simplified interface can be used to optimize a set of model
-parameters to the data
+Alternatively, a simplified python interface can be used to optimize a set of
+model as illustrated by the source code embedded in the plot below. The simplified
+interface handles the creation of auxiliary data structures such as ``fit2x.MParam``.
 
-.. literalinclude:: ./plots/fit23_mini_example.py
-   :language: python
-   :linenos:
+.. plot:: plots/fit23_mini_example.py
+
+    Analysis result of fit23 by the simplified python interface profided
+    by ``fit2x``
 
 In the example shown above, first a fit object of the type ``fit2x.Fit23`` is
 created. All necessary data except for the experimental data for a fit is passed
@@ -119,9 +121,71 @@ fit23
 fit23 optimizes a single rotational correlation time :math:`\rho` and a
 fluorescence lifetime :math:`\tau` to a polarization resolved fluorescence decay
 considering the fraction of scattered light and instrument response function in
-the two detection channels for the parallel and perpendicular fluorescence.
+the two detection channels for the parallel and perpendicular fluorescence. Fit23
+operates on fluorescence decays in the :term:`Jordi-format`.
 
 .. plot:: plots/fit23_1.py
 
+    Simulation and analysis of low photon count data by ``fit2x.fit23``.
+
+
 fit23 is intended to be used for data with very few photons, e.g. for pixel analysis
 in fluorescence lifetime image microscopy (FLIM) or for single-molecule spectroscopy.
+The fit implements a maximum likelihood estimimator as previously described :cite:`maus_experimental_2001`.
+Briefly, the MLE fit quality parameter 2I* = :math:`-2\ln L(n,g)` (where :math:`L`
+is the likelihood function, :math:`n` are the experimental counts, and :math:`g`
+is the model function) is minimized. The model function :math:`g` under magic-angle
+is given by:
+
+:math:`g_i=N_g \left[ (1-\gamma) \frac{irf_i \ast \exp(iT/k\tau) + c}{\sum_{i=0}^{k}irf_i \ast \exp(iT/k\tau) + c} + \gamma \frac{bg_i}{\sum_i^{k} bg_i} \right]`
+
+:math:`N_e` is not a fitting parameter but set to the experimental number of
+photons :math:`N`, :math:`\ast` is the convolution operation, :math:`\tau` is the
+fluorescence lifetime, :math:`irf` is the instrument response function, :math:`i`
+is the channel number, :math:`bg_i` is the background count in the channel :math:`i`,
+
+The convolution by fit23 is computed recusively and accounts for high repetition
+rates:
+
+:math:`irf_i \ast \exp(iT/k\tau) = \sum_{j=1}^{min(i,l)}irf_j\exp(-(i-j)T/k\tau) + \sum_{j=i+1}^{k}irf_j\exp(-(i+k-j)T/k\tau) `
+
+The anisotropy treated as previously described :cite:`schaffer_identification_1999`.
+The correction factors needed for a correct anisotropy used by ``fit2x`` are
+defined in the glossary (:term:`Anisotropy`).
+
+
+fit24
+-----
+Fit24 optimizes is a bi-exponential model function with two fluorescence lifetimes
+:math:`\tau_1`, :math:`\tau_2`, and amplitude of the second lifetime :math:`a_2`,
+the fraction scattered light :math:`\gamma`, and a constant offset to experimental
+data. Fit24 does not describe anisotropy. The decays passed to the fit in the
+:term:`Jordi` format. The two decays in the Jordi array are both treated by the
+same model function and convoluted with the corresponding
+:term:`instrument response function<IRF>`. The model function is
+
+.. :math:
+
+    M_i =(1-a_2) \exp(i\Delta t/\tau_1) + a_2 \exp(i\Delta t/\tau_2)
+
+where :math:`\Delta t` is the time per micro time channel, :math:`i` is the micro time
+channel number, :math:`a_2` is the fraction of the second species. The model function
+is corrected for the fraction of background and a constant offset.
+
+.. :math:
+
+    g_i =(1 - \gamma) \frac{M_i}{\sum_i M_i} + \gamma \frac{B_i}{\sum_i B_i} + c
+
+Where,  :math:`c` is a constant offset, :math:`B` the background pattern, :math:`M`
+the model function and :math:`\gamma` the fraction of scattered light.
+
+fit25
+-----
+Selects the lifetime out of a set of 4 fixed lifetimes that best describes the data.
+Works with polarization resolved Jordi stacks, computes rotational correlation time
+by the anisotropy. This function selects out of a set of 4 lifetimes tau the lifetime
+that fits best the data.
+
+fit26
+-----
+Pattern fit. Determines the fraction of two mixed patterns.

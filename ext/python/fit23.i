@@ -1,14 +1,3 @@
-%apply (int DIM1, double* INPLACE_ARRAY1) {(int len5, double* mfunction)}
-%apply (int DIM1, double* IN_ARRAY1)
-{
-    (int len1, double* param),
-    (int len2, double* irf),
-    (int len3, double* bg),
-    (int len4, double* corrections)
-}
-%apply (int DIM1, double* INPLACE_ARRAY1) {(int len1, double* x)}
-%apply (int DIM1, short* IN_ARRAY1) {(int len2, short* fixed)}
-
 
 %exception my_modelf23{$action if (PyErr_Occurred()) SWIG_fail;}
 %rename (modelf23) my_modelf23;

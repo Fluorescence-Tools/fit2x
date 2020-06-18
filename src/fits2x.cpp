@@ -538,8 +538,28 @@ void correct_input25(double* x, double* xm, LVDoubleArray* corrections, int retu
     g = corrections->data[1];
     l1 = corrections->data[2];
     l2 = corrections->data[3];
-    Fp = (Sp-xm[1]*Bp)/(1.-xm[1]); Fs = (Ss-xm[1]*Bs)/(1.-xm[1]);
+    Fp = (Sp-xm[1]*Bp)/(1.-xm[1]);
+    Fs = (Ss-xm[1]*Bs)/(1.-xm[1]);
     r = (Fp - g*Fs)/(Fp*(1.-3.*l2) + (2.-3.*l1)*g*Fs);
+
+#if VERBOSE
+    std::cout << "correct_input25" << std::endl;
+    std::cout<< "xm[1]:" << xm[1] << std::endl;
+    std::cout<< "Bp:" << Bp << std::endl;
+    std::cout<< "Bs:" << Bs << std::endl;
+    std::cout<< "Ss:" << Ss << std::endl;
+    std::cout<< "Sp:" << Sp << std::endl;
+    std::cout<< "Fp:" << Fp << std::endl;
+    std::cout<< "Fs:" << Fs << std::endl;
+    std::cout<< "l1:" << l1 << std::endl;
+    std::cout<< "l2:" << l2 << std::endl;
+    std::cout<< "g:" << g << std::endl;
+    std::cout<< "gamma:" << x[1] << std::endl;
+    std::cout<< "r:" << r << std::endl;
+    std::cout<< "rho:" << x[3] << std::endl;
+    std::cout<< "tau:" << x[0] << std::endl;
+    std::cout<< "r0:" << x[2] << std::endl;
+#endif
 
     if (!fixedrho) {
         xm[3] = x[0]/(x[2]/r-1.);		// rho = tau/(r0/r-1)
@@ -584,7 +604,6 @@ double targetf25(double* x, void* pv)
 
 double fit25 (double* x, short* fixed, MParam* p)
 {
-
     // x is:
     // [0] tau1 always fixed
     // [1] tau2 always fixed
@@ -603,7 +622,6 @@ double fit25 (double* x, short* fixed, MParam* p)
     firstcall = 0;
     softbifl = (x[6]<0.);
     p2s_twoIstar = 1;
-//outf.open("D:\\Programs\\fit23\\test.txt",ios_base::out | ios_base::app );
 
     LVI32Array* expdata = *(p->expdata);
     int Nchannels = expdata->length/2;
@@ -623,8 +641,8 @@ double fit25 (double* x, short* fixed, MParam* p)
         Bs += bg->data[i];
     }
     B = Bp+Bs;
-    Bp *= (Sp+Ss)/B;
-    Bs *= (Sp+Ss)/B;
+    Bp *= (Sp+Ss)/std::max(1., B);
+    Bs *= (Sp+Ss)/std::max(1., B);
     Bexpected = x[4]*(Sp+Ss);
 
     // xtmp: same order as for fit23: [tau gamma r0 rho]
@@ -639,7 +657,6 @@ double fit25 (double* x, short* fixed, MParam* p)
     // choose tau
     info = 0;
     for (int i=0; i<4; i++) {
-
         xtmp[0] = x[i]; xtmp[1] = x[4];
         // fit gamma if unfixed
         if (!fixed[4] && (x[6]<=0.)) bfgs_o.minimize(xtmp,p);
@@ -651,6 +668,9 @@ double fit25 (double* x, short* fixed, MParam* p)
         if (p2s_twoIstar) tIstar = twoIstar_p2s(expdata->data, M->data, Nchannels);
         else tIstar = twoIstar(expdata->data, M->data, Nchannels);
 //outf << x[i] << '\t' << tIstar << '\t';
+#if VERBOSE
+        std::cout<< x[i] << "\t" << tIstar << "\t"  << std::endl;
+#endif
         if (tIstar < tIstarbest) {
             tIstarbest = tIstar;
             taubest = x[i];
@@ -679,9 +699,10 @@ double fit25 (double* x, short* fixed, MParam* p)
 
 void correct_input26(double* x, double* xm)
 {
-
+#if VERBOSE
+    std::cout<<"correct_input26"<<std::endl;
+#endif
     // correct input parameters (take care of unreasonable values)
-
     xm[0] = x[0];		// fraction of pattern 1 is between 0 and 1
     if (xm[0]<0.0) {
         xm[0] = 0.0;	// tau > 0
@@ -692,6 +713,10 @@ void correct_input26(double* x, double* xm)
         penalty = x[0]-1.0;
     }
     else penalty = 0.;
+#if VERBOSE
+    std::cout<<"x[0]: " << x[0] <<std::endl;
+    std::cout<<"xm[0]: " << xm[0] <<std::endl;
+#endif
 }
 
 

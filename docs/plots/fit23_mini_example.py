@@ -25,8 +25,9 @@ settings = {
     'g_factor': 1.0,
     'l1': 0.1,
     'l2': 0.2,
-    'conv_stop': 31,
+    'convolution_stop': 31,
     'irf': irf,
+    'period': 16.0,
     'background': np.zeros_like(irf)
 }
 
@@ -40,5 +41,7 @@ r = fit23(
     initial_values=x0,
     fixed=fixed
 )
-data = fit23.data
-model = fit23.model
+
+p.plot(fit23.data, label='data')
+p.plot(fit23.model, label='model')
+p.show()

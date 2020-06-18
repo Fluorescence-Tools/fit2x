@@ -6,7 +6,7 @@ General description
 ===================
 fits2x is a collection of fit models that use maximum likelihood
 estimators for polarization and time-resolved fluorescence decays
-(seeL :ref:`maus_experimental_2001`).
+(see :cite:`maus_experimental_2001`).
 
 fit2x implement burst integrated fluorescence lifetime fits (BIFL)
 with scatter. The library can be used in conjuncture with tttrlib to
