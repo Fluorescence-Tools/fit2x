@@ -20,7 +20,6 @@ void rescale(double *fit, double *decay, double *scale, int start, int stop)
      }
     for (i=start; i<=stop; i++)
       fit[i] *= *scale;
-
 }
 
 /* rescaling -- new version. scale = sum(fit*decay/w^2)/sum(fit^2/w^2) */
@@ -150,8 +149,7 @@ void fconv_per_cs(double *fit, double *x, double *lamp, int numexp, int stop,
 }
 
 /* fast convolution with reference compound decay */
-void fconv_ref(double *fit, double *x, double *lamp, int numexp, 
-	int start, int stop, double tauref)
+void fconv_ref(double *fit, double *x, double *lamp, int numexp, int start, int stop, double tauref)
 {
     int ne,i;
     double fitcurr, expcurr, deltathalf = DELTA_T*0.5, correct_a, sum_a=0;

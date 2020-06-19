@@ -14,9 +14,9 @@ OPTION(BUILD_PYTHON_INTERFACE "Build Python interface" ON)
 # Source groups
 ################################################################################
 FILE(
-        GLOB
-        SRC_files
-        "${CMAKE_SOURCE_DIR}/src/*.cpp"
+    GLOB
+    SRC_files
+    "${CMAKE_SOURCE_DIR}/src/*.cpp"
 )
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})

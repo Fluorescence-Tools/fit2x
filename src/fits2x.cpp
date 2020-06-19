@@ -454,7 +454,6 @@ double targetf24(double *x, void *pv) {
 }
 
 double fit24(double *x, short *fixed, MParam *p) {
-
     // x is:
     // [0] tau1
     // [1] gamma
@@ -520,9 +519,7 @@ double fit24(double *x, short *fixed, MParam *p) {
 void correct_input25(double* x, double* xm, LVDoubleArray* corrections, int return_r)
 {
     double r, g, Fp, Fs, l1, l2;
-
     // correct input parameters (take care of unreasonable values)
-
     // here x = [tau gamma r0 rho] + outputs
 
     xm[0] = x[0];
@@ -703,13 +700,13 @@ void correct_input26(double* x, double* xm)
     std::cout<<"correct_input26"<<std::endl;
 #endif
     // correct input parameters (take care of unreasonable values)
-    xm[0] = x[0];		// fraction of pattern 1 is between 0 and 1
+    xm[0] = x[0]; // fraction of pattern 1 is between 0 and 1
     if (xm[0]<0.0) {
-        xm[0] = 0.0;	// tau > 0
+        xm[0] = 0.0; // tau > 0
         penalty = -x[0];
     }
     else if (xm[0]>1.0) {
-        xm[0] = 1.0;	// tau > 0
+        xm[0] = 1.0; // tau > 0
         penalty = x[0]-1.0;
     }
     else penalty = 0.;
