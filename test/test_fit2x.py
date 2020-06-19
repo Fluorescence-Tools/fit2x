@@ -2,24 +2,8 @@ from __future__ import division
 
 import unittest
 import numpy as np
-import scipy.stats
 
 import fit2x
-
-
-def model_irf(
-        n_channels: int = 256,
-        period: float = 32,
-        irf_position_p: float = 2.0,
-        irf_position_s: float = 18.0,
-        irf_width: float = 0.25
-):
-    time_axis = np.linspace(0, period, n_channels * 2)
-    irf_np = scipy.stats.norm.pdf(time_axis, loc=irf_position_p,
-                                  scale=irf_width) + \
-             scipy.stats.norm.pdf(time_axis, loc=irf_position_s,
-                                  scale=irf_width)
-    return irf_np, time_axis
 
 
 class Tests(unittest.TestCase):
@@ -38,12 +22,12 @@ class Tests(unittest.TestCase):
             list(lv_array), l
         )
 
-    @unittest.expectedFailure
-    def test_LVDoubleArray_slice(self):
-        lv_array = fit2x.CreateLVDoubleArray(10)
-        vec = np.linspace(1, 10., 10, dtype=np.float)
-        # will fail slicing not supported
-        lv_array[:] = vec
+    # @unittest.expectedFailure
+    # def test_LVDoubleArray_slice(self):
+    #     lv_array = fit2x.CreateLVDoubleArray(10)
+    #     vec = np.linspace(1, 10., 10, dtype=np.float)
+    #     # will fail slicing not supported
+    #     lv_array[:] = vec
 
     def test_LVI32Array(self):
         lv_array = fit2x.CreateLVI32Array(10)
@@ -61,18 +45,18 @@ class Tests(unittest.TestCase):
             list(lv_array), l
         )
 
-    @unittest.expectedFailure
-    def test_LVI32Array_slice(self):
-        lv_array = fit2x.CreateLVI32Array(10)
-        vec = np.linspace(1, 10, 10, dtype=np.int)
-        lv_array[:] = vec
+    # @unittest.expectedFailure
+    # def test_LVI32Array_slice(self):
+    #     lv_array = fit2x.CreateLVI32Array(10)
+    #     vec = np.linspace(1, 10, 10, dtype=np.int)
+    #     lv_array[:] = vec
 
     def test_MParam_2(self):
         # create filled MParam structure
         n_corrections = 5
         corrections_np = np.zeros(n_corrections, dtype=np.float)
-        irf_np, timeaxis = model_irf()
-        dt = timeaxis[1] - timeaxis[0]
+        irf_np = np.ones(32)
+        dt = 0.1
         bg_np = np.zeros_like(irf_np)
         parameter_group = fit2x.CreateMParam(
             irf=irf_np,
@@ -107,9 +91,9 @@ class Tests(unittest.TestCase):
             x = [x for x in lv_array]
             self.assertListEqual(list(a), x)
 
-        for i in range(1000):
-            dt = 0.032
+        for i in range(15000):
             a = np.ones(111, dtype=np.float)
+            dt = 0.032
             parameter_group = fit2x.CreateMParam(
                 irf=a,
                 background=a,

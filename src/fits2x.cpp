@@ -750,10 +750,8 @@ double targetf26(double* x, void* pv)
 
 double fit26 (double* x, short* fixed, MParam* p)
 {
-
     // x is:
     // [0] fraction of pattern 1
-
     double tIstar, xm[1], f, s = 0., s1 = 0., s2 = 0.;
     int i, info;
 

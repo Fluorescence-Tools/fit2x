@@ -71,16 +71,11 @@ class Tests(unittest.TestCase):
             1, 1, 1, 2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         )
         settings = {
-            'convolution_stop': 31,
             'pattern_1': pattern_1,
             'pattern_2': pattern_2,
-            'verbose': True
+            'verbose': False
         }
         fit26 = fit2x.Fit26(**settings)
-        # import pylab as p
-        # p.plot(s)
-        # p.plot(model_ref)
-        # p.show()
         x1 = 0.5
         x = np.array([x1])
         fixed = np.array([0])
@@ -89,6 +84,10 @@ class Tests(unittest.TestCase):
             initial_values=x,
             fixed=fixed
         )
+        # import pylab as p
+        # p.plot(fit26.model)
+        # p.plot(fit26.data)
+        # p.plot(fit26.irf)
+        # p.show()
         best_fraction_1 = r['x'][0]
-        print(r)
         self.assertEqual(best_fraction_1 < 0.1, True)
