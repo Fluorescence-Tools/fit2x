@@ -436,6 +436,14 @@
 <dt id="_CPPv413LVDoubleArray">
 <span id="_CPPv313LVDoubleArray"></span><span id="_CPPv213LVDoubleArray"></span><span id="LVDoubleArray"></span><span class="target" id="struct_l_v_double_array"></span><em class="property">struct </em><code class="sig-name descname">LVDoubleArray</code><a class="headerlink" href="#_CPPv413LVDoubleArray" title="Permalink to this definition">¶</a><br /></dt>
 <dd><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Public Functions</p>
+<dl class="cpp function">
+<dt id="_CPPv4N13LVDoubleArrayD0Ev">
+<span id="_CPPv3N13LVDoubleArrayD0Ev"></span><span id="_CPPv2N13LVDoubleArrayD0Ev"></span><span id="LVDoubleArray::~LVDoubleArray"></span><span class="target" id="struct_l_v_double_array_1a563da05056cb75886427f628f5afd6c8"></span><code class="sig-name descname">~LVDoubleArray</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13LVDoubleArrayD0Ev" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric">Public Members</p>
 <dl class="cpp var">
 <dt id="_CPPv4N13LVDoubleArray6lengthE">
@@ -456,6 +464,14 @@
 <dd><em>#include &lt;lvarrays.h&gt;</em><p>Structures and functions used for LabView interface. </p>
 <p>fit2x was originally developed as a C backend for LabView software. Therefore, the interface with fit2x uses structures that can be accessed by Labview. In order to make an interfacing with Python and other languages possible there is a this files defines a set of functions that facilitate the creation of the LabView structures. </p>
 <div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Public Functions</p>
+<dl class="cpp function">
+<dt id="_CPPv4N10LVI32ArrayD0Ev">
+<span id="_CPPv3N10LVI32ArrayD0Ev"></span><span id="_CPPv2N10LVI32ArrayD0Ev"></span><span id="LVI32Array::~LVI32Array"></span><span class="target" id="struct_l_v_i32_array_1a488349dc20b164b1a35156dc8fb95172"></span><code class="sig-name descname">~LVI32Array</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10LVI32ArrayD0Ev" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric">Public Members</p>
 <dl class="cpp var">
 <dt id="_CPPv4N10LVI32Array6lengthE">
@@ -474,6 +490,14 @@
 <dt id="_CPPv46MParam">
 <span id="_CPPv36MParam"></span><span id="_CPPv26MParam"></span><span id="MParam"></span><span class="target" id="struct_m_param"></span><em class="property">struct </em><code class="sig-name descname">MParam</code><a class="headerlink" href="#_CPPv46MParam" title="Permalink to this definition">¶</a><br /></dt>
 <dd><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Public Functions</p>
+<dl class="cpp function">
+<dt id="_CPPv4N6MParamD0Ev">
+<span id="_CPPv3N6MParamD0Ev"></span><span id="_CPPv2N6MParamD0Ev"></span><span id="MParam::~MParam"></span><span class="target" id="struct_m_param_1aafeaa0b3b979166d3840bf8025d2c474"></span><code class="sig-name descname">~MParam</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6MParamD0Ev" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric">Public Members</p>
 <dl class="cpp var">
 <dt id="_CPPv4N6MParam7expdataE">
@@ -1104,7 +1128,7 @@
 </dd>
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">x[in</span><span class="pre">out]</span></code>: a vector of length that that contains the starting parameters for the optimization and is used to return the optimized parameters. [0] fluorescence lifetime - tau (in) [1] fraction of scattered light - gamma (in) [2] fundamental anisotropy - r0 (in) [3] rotational correlation time - rho (in) [4] if negative reduce contribution of background photons from scoring function - Soft BIFL scatter fit? (flag) (in) [5] specifies type of score that is returned - 2I*: P+2S? (flag), this parameter only affects the returned score and does not influence the fitting (in) [6] background corrected anisotropy - r Scatter (out) [7] anisotropy without background correction - r Experimental (out) </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">pv[in]</span></code>: a pointer to a <a class="reference internal" href="#struct_m_param"><span class="std std-ref">MParam</span></a> structure. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pv[in]</span></code>: a pointer to a <a class="reference internal" href="#struct_m_param"><span class="std std-ref">MParam</span></a> structure that contains the data and a set of corrections. </p></li>
 </ul>
 </dd>
 </dl>
@@ -1119,7 +1143,7 @@
 <dt><strong>Return</strong></dt><dd><p></p>
 </dd>
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">x[in</span><span class="pre">out]</span></code>: a vector of length that that contains the starting parameters for the optimization and is used to return the optimized parameters. [0] fluorescence lifetime - tau (in,out) [1] fraction of scattered light - gamma (in,out) [2] fundamental anisotropy - r0 () [3] rotational correlation time - rho (in,out) [4] if negative reduce contribution of background photons from scoring function - Soft BIFL scatter fit? (flag) (in) [5] specifies type of score that is returned - 2I*: P+2S? (flag), this parameter only affects the returned score and does not influence the fitting (in) [6] background corrected anisotropy - r Scatter (out) [7] anisotropy without background correction - r Experimental (out)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">x[in</span><span class="pre">out]</span></code>: a vector of length that that contains the starting parameters for the optimization and is used to return the optimized parameters. [0] fluorescence lifetime - tau (in,out) [1] fraction of scattered light - gamma (in,out) [2] fundamental anisotropy - r0 () [3] rotational correlation time - rho (in,out) [4] if negative reduce contribution of background photons from scoring function - Soft BIFL scatter fit? (flag) (in) [5] specifies type of score that is returned - 2I*: P+2S? (flag), this parameter only affects the returned score and does not influence the fitting (in) [6] background corrected anisotropy - r Scatter (out) [7] anisotropy without background correction - r Experimental (out) </p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">fixed</span></code>: an array at least of length 4 for the parameters tau, gamma, r0, and rho that specifies if a parameter is optimized. If a value is set to 1, the parameter is optimized. </p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">p</span></code>: an instance of <a class="reference internal" href="#struct_m_param"><span class="std std-ref">MParam</span></a> that contains all relevant information, i.e., experimental data, the instrument response function, the needed corrections ( g-factor, l1, l2) </p></li>
 </ul>
@@ -1156,17 +1180,21 @@
 <dl class="cpp function">
 <dt id="_CPPv48modelf24PdPdPdidPdPd">
 <span id="_CPPv38modelf24PdPdPdidPdPd"></span><span id="_CPPv28modelf24PdPdPdidPdPd"></span><span id="modelf24__doubleP.doubleP.doubleP.i.double.doubleP.doubleP"></span><span class="target" id="fit24_8h_1a825c09db677c8957aef55c2b54d79bd6"></span>int <code class="sig-name descname">modelf24</code><span class="sig-paren">(</span>double *<em>param</em>, double *<em>irf</em>, double *<em>bg</em>, int <em>Nchannels</em>, double <em>dt</em>, double *<em>corrections</em>, double *<em>mfunction</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv48modelf24PdPdPdidPdPd" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>Bi-exponential model function <dl class="simple">
+<dd><p>Bi-exponential model function. </p>
+<p>Bi-exponential model function with two fluorescence lifetimes tau1, tau2 and amplitude of the second lifetime A2, fraction scattered light gamma, and a constant offset. A2 (A1 + A2 = 1)</p>
+<p>The model function does not describe anisotropy. The decays passed as a Jordi format are treated identical in first and the second channel of the stacked arrays.</p>
+<p>mfunction[i] * (1. - gamma) / sum_m + bg[i] * gamma / sum_s + offset</p>
+<p><dl class="simple">
 <dt><strong>Return</strong></dt><dd><p></p>
 </dd>
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">param</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">irf</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">bg</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">Nchannels</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">dt</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">corrections</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">mfunction</span></code>: </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">param</span></code>: array containing the parameters of the model [0] tau1, [1] gamma, [2] tau2, [3] A2, [4] offset </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">irf</span></code>: instrument response function in Jordi format </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bg[in]</span></code>: background pattern in Jordi format </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Nchannels[in]</span></code>: number of channels (half the length of the Jordi arrays) </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dt[in]</span></code>: time difference between two consecutive counting channels </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">corrections[in]</span></code>: [0] excitation period, [1] unused, [2] unused, [3] unused, [4] convolution stop channel. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mfunction[out]</span></code>: output array of the computed decay in Jordi format. The output array has to have twice the number of channels. It needs to be allocated by beforehand. </p></li>
 </ul>
 </dd>
 </dl>
@@ -1176,12 +1204,13 @@
 <dl class="cpp function">
 <dt id="_CPPv49targetf24PdPv">
 <span id="_CPPv39targetf24PdPv"></span><span id="_CPPv29targetf24PdPv"></span><span id="targetf24__doubleP.voidP"></span><span class="target" id="fit24_8h_1ad2ebd22bbec125dce83d4a8257bc804a"></span>double <code class="sig-name descname">targetf24</code><span class="sig-paren">(</span>double *<em>x</em>, void *<em>pv</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv49targetf24PdPv" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p><dl class="simple">
-<dt><strong>Return</strong></dt><dd><p></p>
+<dd><p>Target function (to minimize) for fit23. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>a normalized chi2 </p>
 </dd>
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">x</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">pv</span></code>: </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">x</span></code>: array containing the parameters of the model [0] tau1, [1] gamma, [2] tau2, [3] A2, [4] offset </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pv[in]</span></code>: a pointer to a <a class="reference internal" href="#struct_m_param"><span class="std std-ref">MParam</span></a> structure that contains the data and a set of corrections. </p></li>
 </ul>
 </dd>
 </dl>
@@ -1191,13 +1220,18 @@
 <dl class="cpp function">
 <dt id="_CPPv45fit24PdPsP6MParam">
 <span id="_CPPv35fit24PdPsP6MParam"></span><span id="_CPPv25fit24PdPsP6MParam"></span><span id="fit24__doubleP.shortP.MParamP"></span><span class="target" id="fit24_8h_1a4063cbfdf751558e71313c0cf0df62e8"></span>double <code class="sig-name descname">fit24</code><span class="sig-paren">(</span>double *<em>x</em>, short *<em>fixed</em>, <a class="reference internal" href="#_CPPv46MParam" title="MParam">MParam</a> *<em>p</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv45fit24PdPsP6MParam" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p><dl class="simple">
-<dt><strong>Return</strong></dt><dd><p></p>
+<dd><p>Fit a bi-exponential decay model</p>
+<p>This function fits a bi-exponential decay model to two decays that are stacked using global parameters for the lifetimes and amplitudes.</p>
+<p>Bi-exponential model function with two fluorescence lifetimes tau1, tau2 and amplitude of the second lifetime A2, fraction scattered light gamma, and a constant offset. A2 (A1 + A2 = 1)</p>
+<p>The model function does not describe anisotropy. The decays passed as a Jordi format are treated identical in first and the second channel of the stacked arrays.</p>
+<p>The anisotropy is computed assuming that the first and the second part of the Jordi input arrays are for parallel and perpendicular using the correction array of the attribute p of the type <a class="reference internal" href="#struct_m_param"><span class="std std-ref">MParam</span></a>.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>Quality parameter 2I* </p>
 </dd>
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">x</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">fixed</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">p</span></code>: </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[inout]</span> <span class="pre">x</span></code>: array containing the parameters of the model [0] tau1, [1] gamma, [2] tau2, [3] A2, [4] offset, [5] BIFL scatter fit? (flag) - if smaller than 0 uses soft bifl scatter fit (seems to be unused) [6] r Scatter (output only), [7] r Experimental (output only) </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fixed</span></code>: an array at least of length 5 for the parameters [0] tau1, [1] gamma, [2] tau2, [3] A2, [4] offset. If a value is not set to fixed the parameter is optimized. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">p</span></code>: an instance of <a class="reference internal" href="#struct_m_param"><span class="std std-ref">MParam</span></a> that contains relevant information. Here, experimental data, the instrument response function, and the background decay are used. </p></li>
 </ul>
 </dd>
 </dl>
@@ -1207,14 +1241,16 @@
 <dl class="cpp function">
 <dt id="_CPPv415correct_input24PdPdP13LVDoubleArrayi">
 <span id="_CPPv315correct_input24PdPdP13LVDoubleArrayi"></span><span id="_CPPv215correct_input24PdPdP13LVDoubleArrayi"></span><span id="correct_input24__doubleP.doubleP.LVDoubleArrayP.i"></span><span class="target" id="fit24_8h_1a964838af4ca1091590ba3dc68b888f46"></span>void <code class="sig-name descname">correct_input24</code><span class="sig-paren">(</span>double *<em>x</em>, double *<em>xm</em>, <a class="reference internal" href="#_CPPv413LVDoubleArray" title="LVDoubleArray">LVDoubleArray</a> *<em>corrections</em>, int <em>return_r</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv415correct_input24PdPdP13LVDoubleArrayi" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p><dl class="simple">
+<dd><p>Correct input parameters and compute anisotropy for fit24. </p>
+<p>limits (0.001 &lt; A2 &lt; 0.999), (0.001 &lt; gamma &lt; 0.999), (tau1 &gt; 0), (tau2 &gt; 0), background &gt; 0 (called offset in other places)</p>
+<p><dl class="simple">
 <dt><strong>Return</strong></dt><dd><p></p>
 </dd>
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">x</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">xm</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">corrections</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">return_r</span></code>: </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">x[in</span><span class="pre">out]</span></code>: [0] tau1, [1] gamma [2] tau2, [3] A2, [4] background, [5] BIFL scatter fit? (flag, not used), [6] anisotropy r (scatter corrected, output), [7] anisotropy (no scatter correction, output) </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">xm[out]</span></code>: array for corrected parameters (amplied range) </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">corrections</span></code>: [1] g factor, [2] l1, [3] l3 </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">return_r</span></code>: if true computes the anisotropy. </p></li>
 </ul>
 </dd>
 </dl>
@@ -1232,7 +1268,9 @@
 <dl class="cpp function">
 <dt id="_CPPv415correct_input25PdPdP13LVDoubleArrayi">
 <span id="_CPPv315correct_input25PdPdP13LVDoubleArrayi"></span><span id="_CPPv215correct_input25PdPdP13LVDoubleArrayi"></span><span id="correct_input25__doubleP.doubleP.LVDoubleArrayP.i"></span><span class="target" id="fit25_8h_1a2c1e0d9347092a4171064ddf82e9e0f2"></span>void <code class="sig-name descname">correct_input25</code><span class="sig-paren">(</span>double *<em>x</em>, double *<em>xm</em>, <a class="reference internal" href="#_CPPv413LVDoubleArray" title="LVDoubleArray">LVDoubleArray</a> *<em>corrections</em>, int <em>return_r</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv415correct_input25PdPdP13LVDoubleArrayi" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p><dl class="simple">
+<dd><p>adjust parameters for fit25 and compute anisotropy </p>
+<p>Makes sure that (0 &lt; gamma &lt; 0.999) and (0&lt;rho).</p>
+<p><dl class="simple">
 <dt><strong>Return</strong></dt><dd><p></p>
 </dd>
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
@@ -1249,7 +1287,9 @@
 <dl class="cpp function">
 <dt id="_CPPv49targetf25PdPv">
 <span id="_CPPv39targetf25PdPv"></span><span id="_CPPv29targetf25PdPv"></span><span id="targetf25__doubleP.voidP"></span><span class="target" id="fit25_8h_1a4d63eeed61601c5b24a1bc2a1a27520c"></span>double <code class="sig-name descname">targetf25</code><span class="sig-paren">(</span>double *<em>x</em>, void *<em>pv</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv49targetf25PdPv" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p><dl class="simple">
+<dd><p>Function used to compute the target value in fit 25</p>
+<p>This is misleadingly named target25. Fit25 selects out of a set of 4 lifetimes the lifetime that describes best the data.</p>
+<p><dl class="simple">
 <dt><strong>Return</strong></dt><dd><p></p>
 </dd>
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
@@ -1264,13 +1304,16 @@
 <dl class="cpp function">
 <dt id="_CPPv45fit25PdPsP6MParam">
 <span id="_CPPv35fit25PdPsP6MParam"></span><span id="_CPPv25fit25PdPsP6MParam"></span><span id="fit25__doubleP.shortP.MParamP"></span><span class="target" id="fit25_8h_1aaa095ee8e9c6e8dde3426e8c09181267"></span>double <code class="sig-name descname">fit25</code><span class="sig-paren">(</span>double *<em>x</em>, short *<em>fixed</em>, <a class="reference internal" href="#_CPPv46MParam" title="MParam">MParam</a> *<em>p</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv45fit25PdPsP6MParam" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p><dl class="simple">
+<dd><p>Selects the lifetime out of a set of 4 fixed lifetimes that best describes the data. </p>
+<p>This function selects out of a set of 4 lifetimes tau the lifetime that fits best the data and returns the lifetime through the parameter x[0].</p>
+<p>If softBIFL flag is set to (x[6] &lt; 0) and fixed[4] is zero gamma is optimized for each lifetime tau and the best gamma is returned by x[4]. The gamma is fitted with fit23.</p>
+<p><dl class="simple">
 <dt><strong>Return</strong></dt><dd><p></p>
 </dd>
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">x</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">fixed</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">p</span></code>: </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[inout]</span> <span class="pre">x</span></code>: array containing the parameters [0] tau1 output for best tau (always fixed), [1] tau2 (always fixed), [2] tau3 (always fixed), [3] tau4 (always fixed), [4] gamma (input, output), [5] fundamental anisotropy r0, [6] BIFL scatter fit? (flag), [7] r Scatter (output only), [8] r Experimental (output only) </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fixed</span></code>: array that is of least of length 5. Only the element fixed[4] is used. If fixed[4] is zero gamma is optimized for each lifetime. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">p</span></code>: an instance of <a class="reference internal" href="#struct_m_param"><span class="std std-ref">MParam</span></a> that contains all relevant information, i.e., experimental data, the instrument response function, the needed corrections for the anisotropy (g-factor, l1, l2) </p></li>
 </ul>
 </dd>
 </dl>
@@ -1288,7 +1331,17 @@
 <dl class="cpp function">
 <dt id="_CPPv415correct_input26PdPd">
 <span id="_CPPv315correct_input26PdPd"></span><span id="_CPPv215correct_input26PdPd"></span><span id="correct_input26__doubleP.doubleP"></span><span class="target" id="fit26_8h_1a7a5548292a1456f7fc66b9a89f99003b"></span>void <code class="sig-name descname">correct_input26</code><span class="sig-paren">(</span>double *<em>x</em>, double *<em>xm</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv415correct_input26PdPd" title="Permalink to this definition">¶</a><br /></dt>
-<dd></dd></dl>
+<dd><p>Correct input for fit 26</p>
+<p>Constrains the fraction x1 of the first pattern to (0 &lt; x1 &lt; 1).</p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">x[in]</span></code>: x[0] fraction of first pattern </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">xm[out]</span></code>: xm[0] corrected fraction of first pattern </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
 
 <dl class="cpp function">
 <dt id="_CPPv49targetf26PdPv">
@@ -1298,7 +1351,21 @@
 <dl class="cpp function">
 <dt id="_CPPv45fit26PdPsP6MParam">
 <span id="_CPPv35fit26PdPsP6MParam"></span><span id="_CPPv25fit26PdPsP6MParam"></span><span id="fit26__doubleP.shortP.MParamP"></span><span class="target" id="fit26_8h_1a0dd1a6826d3a8fba1894c5b28a8a52e7"></span>double <code class="sig-name descname">fit26</code><span class="sig-paren">(</span>double *<em>x</em>, short *<em>fixed</em>, <a class="reference internal" href="#_CPPv46MParam" title="MParam">MParam</a> *<em>p</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv45fit26PdPsP6MParam" title="Permalink to this definition">¶</a><br /></dt>
-<dd></dd></dl>
+<dd><p>Pattern-fit</p>
+<p>Fits the fraction of a mixture of two patterns</p>
+<p>The two patterns are set by the attributes irf and bg of the <a class="reference internal" href="#struct_m_param"><span class="std std-ref">MParam</span></a> structure.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p></p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">x</span></code>: [0] fraction of pattern 1 </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fixed</span></code>: not used </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">p</span></code>: an instance of <a class="reference internal" href="#struct_m_param"><span class="std std-ref">MParam</span></a> that contains the patterns. The fist pattern is contained in the instrument response function array, the second in the background, array, the experimental data is in the array expdata. </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
 
 </div>
 </dd></dl>
@@ -1632,6 +1699,26 @@
 <dt>
 <span class="target" id="lvarrays_8h"></span><em>file</em> <code class="sig-name descname">lvarrays.h</code></dt>
 <dd><em>#include &lt;iostream&gt;</em><em>#include &lt;cmath&gt;</em><em>#include &lt;algorithm&gt;</em><em>#include &lt;vector&gt;</em><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Typedefs</p>
+<dl class="cpp type">
+<dt id="_CPPv410LVI32Array">
+<span id="_CPPv310LVI32Array"></span><span id="_CPPv210LVI32Array"></span><span class="target" id="lvarrays_8h_1a6b8372eb2690e4d5e56d05a236725756"></span><em class="property">typedef </em><em class="property">struct</em> <a class="reference internal" href="#_CPPv410LVI32Array" title="LVI32Array">LVI32Array</a> <code class="sig-name descname">LVI32Array</code><br /></dt>
+<dd><p>Structures and functions used for LabView interface. </p>
+<p>fit2x was originally developed as a C backend for LabView software. Therefore, the interface with fit2x uses structures that can be accessed by Labview. In order to make an interfacing with Python and other languages possible there is a this files defines a set of functions that facilitate the creation of the LabView structures. </p>
+</dd></dl>
+
+<dl class="cpp type">
+<dt id="_CPPv413LVDoubleArray">
+<span id="_CPPv313LVDoubleArray"></span><span id="_CPPv213LVDoubleArray"></span><span class="target" id="lvarrays_8h_1aed82f9e08df3ee8805ddc8a4a8587509"></span><em class="property">typedef </em><em class="property">struct</em> <a class="reference internal" href="#_CPPv413LVDoubleArray" title="LVDoubleArray">LVDoubleArray</a> <code class="sig-name descname">LVDoubleArray</code><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp type">
+<dt id="_CPPv46MParam">
+<span id="_CPPv36MParam"></span><span id="_CPPv26MParam"></span><span class="target" id="lvarrays_8h_1a68b6128e651f2d86ed00133c0f7701f0"></span><em class="property">typedef </em><em class="property">struct</em> <a class="reference internal" href="#_CPPv46MParam" title="MParam">MParam</a> <code class="sig-name descname">MParam</code><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric">Functions</p>
 <dl class="cpp function">
 <dt id="_CPPv416CreateLVI32Array6size_t">
