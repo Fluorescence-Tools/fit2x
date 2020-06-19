@@ -1467,14 +1467,16 @@
 <dl class="cpp function">
 <dt id="_CPPv47rescalePdPdPdii">
 <span id="_CPPv37rescalePdPdPdii"></span><span id="_CPPv27rescalePdPdPdii"></span><span id="rescale__doubleP.doubleP.doubleP.i.i"></span><span class="target" id="fsconv_8h_1a8b35ff5c9518235f4e9763a8acb35475"></span>void <code class="sig-name descname">rescale</code><span class="sig-paren">(</span>double *<em>fit</em>, double *<em>decay</em>, double *<em>scale</em>, int <em>start</em>, int <em>stop</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv47rescalePdPdPdii" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>rescaling  old version. sum(fit)-&gt;sum(decay)</p>
+<dd><p>Scale model function to the data (old version)</p>
+<p>This function rescales the model function (fit) to the data by the number of photons between a start and a stop micro time counting channel. The number of photons between start and stop are counted and the model function is scaled to match the data by area.</p>
+<p>This rescaling function does not consider the noise in the data when rescaling the model.</p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">fit</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">decay</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">scale</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">start</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">stop</span></code>: </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fit[in</span><span class="pre">out]</span></code>: model function that is scaled (modified in-place) </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">decay[in]</span></code>: the experimental data to which the model function is scaled </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">scale[out]</span></code>: the scaling parameter (the factor) by which the model function is multiplied. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">start[in]</span></code>: The start micro time channel </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stop[in]</span></code>: The stop micro time channel </p></li>
 </ul>
 </dd>
 </dl>
@@ -1484,15 +1486,18 @@
 <dl class="cpp function">
 <dt id="_CPPv49rescale_wPdPdPdPdii">
 <span id="_CPPv39rescale_wPdPdPdPdii"></span><span id="_CPPv29rescale_wPdPdPdPdii"></span><span id="rescale_w__doubleP.doubleP.doubleP.doubleP.i.i"></span><span class="target" id="fsconv_8h_1af39a07bf429dca0d50c5d0af1fe5479e"></span>void <code class="sig-name descname">rescale_w</code><span class="sig-paren">(</span>double *<em>fit</em>, double *<em>decay</em>, double *<em>w_sq</em>, double *<em>scale</em>, int <em>start</em>, int <em>stop</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv49rescale_wPdPdPdPdii" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>rescaling new</p>
+<dd><p>Scale model function to the data (with weights)</p>
+<p>This function rescales the model function (fit) to the data by the number of photons between a start and a stop micro time counting channel. The number of photons between start and stop are counted and the model function is scaled to match the data by area considering the noise of the data.</p>
+<p>The scaling factor is computed by:</p>
+<p>scale = sum(fit*decay/w^2)/sum(fit^2/w^2)</p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">fit</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">decay</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">w_sq</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">scale</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">start</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">stop</span></code>: </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fit[in</span><span class="pre">out]</span></code>: model function that is scaled (modified in-place) </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">decay[in]</span></code>: the experimental data to which the model function is scaled </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">w_sq[in]</span></code>: squared weights of the data. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">scale[out]</span></code>: the scaling parameter (the factor) by which the model function is multiplied. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">start[in]</span></code>: The start micro time channel </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stop[in]</span></code>: The stop micro time channel </p></li>
 </ul>
 </dd>
 </dl>
@@ -1502,16 +1507,18 @@
 <dl class="cpp function">
 <dt id="_CPPv412rescale_w_bgPdPdPddPdii">
 <span id="_CPPv312rescale_w_bgPdPdPddPdii"></span><span id="_CPPv212rescale_w_bgPdPdPddPdii"></span><span id="rescale_w_bg__doubleP.doubleP.doubleP.double.doubleP.i.i"></span><span class="target" id="fsconv_8h_1a2f6d2c2481a8a73c84e33a9b19502f41"></span>void <code class="sig-name descname">rescale_w_bg</code><span class="sig-paren">(</span>double *<em>fit</em>, double *<em>decay</em>, double *<em>w_sq</em>, double <em>bg</em>, double *<em>scale</em>, int <em>start</em>, int <em>stop</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv412rescale_w_bgPdPdPddPdii" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>rescaling  new version + background. scale = sum(fit*decay/w^2)/sum(fit^2/w^2)</p>
+<dd><p>Scale model function to the data (with weights and background)</p>
+<p>This function scales the model function (fit) to the data by the number of photons between a start and a stop micro time counting channel. The number of photons between start and stop are counted and the model function is scaled to match the data by area considering the noise of the data and a constant offset of the data.</p>
+<p>scale = sum(fit*(decay-bg)/w^2)/sum(fit^2/w^2)</p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">fit</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">decay</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">w_sq</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">bg</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">scale</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">start</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">stop</span></code>: </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fit[in</span><span class="pre">out]</span></code>: model function that is scaled (modified in-place) </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">decay[in]</span></code>: the experimental data to which the model function is scaled </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">w_sq[in]</span></code>: squared weights of the data. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bg[in]</span></code>: constant background of the data </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">scale[out]</span></code>: the scaling parameter (the factor) by which the model function is multiplied. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">start[in]</span></code>: The start micro time channel </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stop[in]</span></code>: The stop micro time channel </p></li>
 </ul>
 </dd>
 </dl>
@@ -1521,15 +1528,16 @@
 <dl class="cpp function">
 <dt id="_CPPv45fconvPdPdPdiii">
 <span id="_CPPv35fconvPdPdPdiii"></span><span id="_CPPv25fconvPdPdPdiii"></span><span id="fconv__doubleP.doubleP.doubleP.i.i.i"></span><span class="target" id="fsconv_8h_1a3fbee679cd1fe79913300015bfd5739b"></span>void <code class="sig-name descname">fconv</code><span class="sig-paren">(</span>double *<em>fit</em>, double *<em>x</em>, double *<em>lamp</em>, int <em>numexp</em>, int <em>start</em>, int <em>stop</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv45fconvPdPdPdiii" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>fast convolution</p>
+<dd><p>Convolve lifetime spectrum with instrument response (fast convolution, low repetition rate)</p>
+<p>This function computes the convolution of a lifetime spectrum (a set of lifetimes with corresponding amplitudes) with a instrument response function (irf). This function does not consider periodic excitation and is suited for experiments at low repetition rate.</p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">fit</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">x</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">lamp</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">numexp</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">start</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">stop</span></code>: </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fit[out]</span></code>: model function. The convoluted decay is written to this array </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">x[in]</span></code>: lifetime spectrum (amplitude1, lifetime1, amplitude2, lifetime2, …) </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">lamp[in]</span></code>: instrument response function </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">numexp[in]</span></code>: number of fluorescence lifetimes </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">start[in]</span></code>: start micro time index for convolution (not used) </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stop[in]</span></code>: stop micro time index for convolution. </p></li>
 </ul>
 </dd>
 </dl>
@@ -1539,17 +1547,18 @@
 <dl class="cpp function">
 <dt id="_CPPv49fconv_perPdPdPdiiiid">
 <span id="_CPPv39fconv_perPdPdPdiiiid"></span><span id="_CPPv29fconv_perPdPdPdiiiid"></span><span id="fconv_per__doubleP.doubleP.doubleP.i.i.i.i.double"></span><span class="target" id="fsconv_8h_1a2f3a1c08352576004436c042e17e3a61"></span>void <code class="sig-name descname">fconv_per</code><span class="sig-paren">(</span>double *<em>fit</em>, double *<em>x</em>, double *<em>lamp</em>, int <em>numexp</em>, int <em>start</em>, int <em>stop</em>, int <em>n_points</em>, double <em>period</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv49fconv_perPdPdPdiiiid" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>fast convolution, high repetition rate</p>
+<dd><p>Convolve lifetime spectrum with instrument response (fast convolution, high repetition rate)</p>
+<p>This function computes the convolution of a lifetime spectrum (a set of lifetimes with corresponding amplitudes) with a instrument response function (irf). This function does consider periodic excitation and is suited for experiments at high repetition rate.</p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">fit</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">x</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">lamp</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">numexp</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">start</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">stop</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">n_points</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">period</span></code>: </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fit[out]</span></code>: model function. The convoluted decay is written to this array </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">x[in]</span></code>: lifetime spectrum (amplitude1, lifetime1, amplitude2, lifetime2, …) </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">lamp[in]</span></code>: instrument response function </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">numexp[in]</span></code>: number of fluorescence lifetimes </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">start[in]</span></code>: start micro time index for convolution (not used) </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stop[in]</span></code>: stop micro time index for convolution. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">n_points</span></code>: number of points in the model function. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">period</span></code>: excitation period in units of the fluorescence lifetimes (typically nanoseconds) </p></li>
 </ul>
 </dd>
 </dl>
@@ -1560,6 +1569,7 @@
 <dt id="_CPPv412fconv_per_csPdPdPdiiidi">
 <span id="_CPPv312fconv_per_csPdPdPdiiidi"></span><span id="_CPPv212fconv_per_csPdPdPdiiidi"></span><span id="fconv_per_cs__doubleP.doubleP.doubleP.i.i.i.double.i"></span><span class="target" id="fsconv_8h_1ac4c2b71189edfb6e270c2270fbd9d9fe"></span>void <code class="sig-name descname">fconv_per_cs</code><span class="sig-paren">(</span>double *<em>fit</em>, double *<em>x</em>, double *<em>lamp</em>, int <em>numexp</em>, int <em>stop</em>, int <em>n_points</em>, double <em>period</em>, int <em>conv_stop</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv412fconv_per_csPdPdPdiiidi" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>fast convolution, high repetition rate, with convolution stop</p>
+<p>fast convolution, high repetition rate, with convolution stop for Paris</p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">fit</span></code>: </p></li>
@@ -1599,13 +1609,14 @@
 <dt id="_CPPv45sconvPdPdPdii">
 <span id="_CPPv35sconvPdPdPdii"></span><span id="_CPPv25sconvPdPdPdii"></span><span id="sconv__doubleP.doubleP.doubleP.i.i"></span><span class="target" id="fsconv_8h_1ac803c0ec2757befca91f7cba66c357ac"></span>void <code class="sig-name descname">sconv</code><span class="sig-paren">(</span>double *<em>fit</em>, double *<em>p</em>, double *<em>lamp</em>, int <em>start</em>, int <em>stop</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv45sconvPdPdPdii" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>slow convolution</p>
+<p>This function computes a convolved model function for a fluorescence decay curve.</p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">fit</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">p</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">lamp</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">start</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">stop</span></code>: </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fit</span></code>: convolved model function </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">p</span></code>: model function before convolution - fluorescence decay curve </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">lamp</span></code>: instrument response function </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">start</span></code>: start index of the convolution </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stop</span></code>: stop index of the convolution </p></li>
 </ul>
 </dd>
 </dl>
