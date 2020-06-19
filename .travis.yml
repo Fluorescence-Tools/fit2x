@@ -57,7 +57,7 @@ script:
   - ln -sf $(which nosetests) $(pwd)/test/
   - cd $(pwd)/test/
   - echo $PWD
-  - nosetests --process-restartworker --processes=1 --nocapture --with-coverage test_*.py
+  - nosetests --nocapture --with-coverage test_*.py
   - cd ..
 
 after_success:
