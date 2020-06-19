@@ -741,7 +741,8 @@ double targetf26(double* x, void* pv)
     }
     for(i=0; i<Nchannels; i++) M->data[i] *= s;
 
-    w = Wcm(expdata->data, M->data, Nchannels);
+    // divide here Nchannels / 2, because Wcm multiplies Nchannels by two
+    w = Wcm(expdata->data, M->data, Nchannels / 2);
 
     return w/Nchannels + penalty;
 
@@ -783,7 +784,8 @@ double fit26 (double* x, short* fixed, MParam* p)
     }
     for(i=0; i<Nchannels; i++) M->data[i] *= s;
 
-    tIstar = twoIstar(expdata->data, M->data, Nchannels);
+    // divide here Nchannels / 2, because twoIstar multiplies Nchannels by two
+    tIstar = twoIstar(expdata->data, M->data, Nchannels / 2);
     if (info==5) x[0] = -1.;		// for report
     x[1]=1.-x[0];
     return tIstar;

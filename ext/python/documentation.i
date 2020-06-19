@@ -85,6 +85,9 @@
 %feature("docstring") LVDoubleArray "
 ";
 
+%feature("docstring") LVDoubleArray::~LVDoubleArray "
+";
+
 // File: struct_l_v_i32_array.xml
 
 
@@ -101,10 +104,16 @@ LabView structures.
 C++ includes: lvarrays.h
 ";
 
+%feature("docstring") LVI32Array::~LVI32Array "
+";
+
 // File: struct_m_param.xml
 
 
 %feature("docstring") MParam "
+";
+
+%feature("docstring") MParam::~MParam "
 ";
 
 // File: classap_1_1raw__vector.xml
