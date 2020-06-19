@@ -94,7 +94,7 @@ static int LVDoubleArrayErr = 0; // flag to save LVDoubleArrayErr struct error s
         PyArrayObject* obj = (PyArrayObject*)input;
         int size = PyArray_SIZE(obj);
         int* data = (int*) PyArray_DATA(obj);
-        int* temp = (int*) malloc(size * sizeof(int));
+        int* temp = (int*) calloc(size, sizeof(int));
         for(int i=0; i<size;i++){
             temp[i] = data[i];
         }
@@ -170,7 +170,7 @@ static int LVDoubleArrayErr = 0; // flag to save LVDoubleArrayErr struct error s
         PyArrayObject* obj = (PyArrayObject*)input;
         int size = PyArray_SIZE(obj);
         double* data = (double*) PyArray_DATA(obj);
-        double* temp = (double*)malloc(size * sizeof(double));
+        double* temp = (double*) calloc(size, sizeof(double));
         for(int i=0; i<size;i++){
             temp[i] = data[i];
         }

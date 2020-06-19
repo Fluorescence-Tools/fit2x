@@ -45,8 +45,9 @@ settings = {
     'g_factor': 1.0,
     'l1': 0.1,
     'l2': 0.2,
-    'conv_stop': 31,
+    'convolution_stop': 31,
     'irf': irf,
+    'period': 16.0,
     'background': np.zeros_like(irf)
 }
 fit23 = fit2x.Fit23(**settings)
@@ -124,4 +125,5 @@ If you have used fit2x in a scientific publication, we would appreciate citation
 [![DOI for citing LabelLib](https://img.shields.io/badge/10.1021/ac000877g-blue.svg)](https://doi.org/10.1021/ac000877g)
 > Michael Maus, Mircea Cotlet, Johan Hofkens, Thomas Gensch, Frans C. De Schryver, J. Schaffer, and C. A. M. Seidel, 2001. An Experimental Comparison of the Maximum Likelihood Estimation and Nonlinear Least-Squares Fluorescence Lifetime Analysis of Single Molecules. Anal. Chem., 73, 9, pp2078–2086.
 
- [1]: docs/_build/html/_images/fit23_1.png "Fit23 single molecule MLE"
+ [1]: https://github.com/Fluorescence-Tools/fit2x/blob/gh-pages/docs/_build/html/_images/fit23_1.png "Fit23 single molecule MLE"
+ 

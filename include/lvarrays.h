@@ -15,25 +15,34 @@
 #include <vector>
 
 
-typedef struct {
+typedef struct LVI32Array{
     int length;
     int* data;
+    ~LVI32Array(){free(data);}
 } LVI32Array;
 
 
-typedef struct {
+typedef struct LVDoubleArray{
     int length;
     double* data;
+    ~LVDoubleArray(){free(data);}
 } LVDoubleArray;
 
 
-typedef struct {
+typedef struct MParam{
     LVI32Array** expdata;
     LVDoubleArray** irf;
     LVDoubleArray** bg;	// must be normalized outside!!!
     double dt;
     LVDoubleArray** corrections;
     LVDoubleArray** M;
+    ~MParam(){
+        delete *expdata;
+        delete *irf;
+        delete *bg;
+        delete *corrections;
+        delete *M;
+    };
 } MParam;
 
 
@@ -52,7 +61,7 @@ LVI32Array *CreateLVI32Array(size_t len);
 LVDoubleArray *CreateLVDoubleArray(size_t len);
 
 
-MParam *CreateMParam(
+MParam* CreateMParam(
     double dt=1.0,
     std::vector<double> corrections = std::vector<double>(),
     std::vector<double> irf = std::vector<double>(),

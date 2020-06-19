@@ -347,7 +347,8 @@ Parameters
     corrected anisotropy - r Scatter (out) [7] anisotropy without background
     correction - r Experimental (out)  
 * `pv[in]` :  
-    a pointer to a MParam structure.  
+    a pointer to a MParam structure that contains the data and a set of
+    corrections.  
 
 Returns
 -------
@@ -419,17 +420,37 @@ Parameters
 
 %feature("docstring") modelf24 "
 
-Bi-exponential model function  
+Bi-exponential model function.  
+
+Bi-exponential model function with two fluorescence lifetimes tau1, tau2 and
+amplitude of the second lifetime A2, fraction scattered light gamma, and a
+constant offset. A2 (A1 + A2 = 1)  
+
+The model function does not describe anisotropy. The decays passed as a Jordi
+format are treated identical in first and the second channel of the stacked
+arrays.  
+
+mfunction[i] * (1. - gamma) / sum_m + bg[i] * gamma / sum_s + offset  
 
 Parameters
 ----------
 * `param` :  
+    array containing the parameters of the model [0] tau1, [1] gamma, [2] tau2,
+    [3] A2, [4] offset  
 * `irf` :  
-* `bg` :  
-* `Nchannels` :  
-* `dt` :  
-* `corrections` :  
-* `mfunction` :  
+    instrument response function in Jordi format  
+* `bg[in]` :  
+    background pattern in Jordi format  
+* `Nchannels[in]` :  
+    number of channels (half the length of the Jordi arrays)  
+* `dt[in]` :  
+    time difference between two consecutive counting channels  
+* `corrections[in]` :  
+    [0] excitation period, [1] unused, [2] unused, [3] unused, [4] convolution
+    stop channel.  
+* `mfunction[out]` :  
+    output array of the computed decay in Jordi format. The output array has to
+    have twice the number of channels. It needs to be allocated by beforehand.  
 
 Returns
 -------  
@@ -437,35 +458,80 @@ Returns
 
 %feature("docstring") targetf24 "
 
+Target function (to minimize) for fit23.  
+
 Parameters
 ----------
 * `x` :  
-* `pv` :  
+    array containing the parameters of the model [0] tau1, [1] gamma, [2] tau2,
+    [3] A2, [4] offset  
+* `pv[in]` :  
+    a pointer to a MParam structure that contains the data and a set of
+    corrections.  
 
 Returns
--------  
+-------
+a normalized chi2  
 ";
 
 %feature("docstring") fit24 "
 
+Fit a bi-exponential decay model  
+
+This function fits a bi-exponential decay model to two decays that are stacked
+using global parameters for the lifetimes and amplitudes.  
+
+Bi-exponential model function with two fluorescence lifetimes tau1, tau2 and
+amplitude of the second lifetime A2, fraction scattered light gamma, and a
+constant offset. A2 (A1 + A2 = 1)  
+
+The model function does not describe anisotropy. The decays passed as a Jordi
+format are treated identical in first and the second channel of the stacked
+arrays.  
+
+The anisotropy is computed assuming that the first and the second part of the
+Jordi input arrays are for parallel and perpendicular using the correction array
+of the attribute p of the type MParam.  
+
 Parameters
 ----------
 * `x` :  
+    array containing the parameters of the model [0] tau1, [1] gamma, [2] tau2,
+    [3] A2, [4] offset, [5] BIFL scatter fit? (flag) - if smaller than 0 uses
+    soft bifl scatter fit (seems to be unused) [6] r Scatter (output only), [7]
+    r Experimental (output only)  
 * `fixed` :  
+    an array at least of length 5 for the parameters [0] tau1, [1] gamma, [2]
+    tau2, [3] A2, [4] offset. If a value is not set to fixed the parameter is
+    optimized.  
 * `p` :  
+    an instance of MParam that contains relevant information. Here, experimental
+    data, the instrument response function, and the background decay are used.  
 
 Returns
--------  
+-------
+Quality parameter 2I*  
 ";
 
 %feature("docstring") correct_input24 "
 
+Correct input parameters and compute anisotropy for fit24.  
+
+limits (0.001 < A2 < 0.999), (0.001 < gamma < 0.999), (tau1 > 0), (tau2 > 0),
+background > 0 (called offset in other places)  
+
 Parameters
 ----------
-* `x` :  
-* `xm` :  
+* `x[in`, `out]` :  
+    [0] tau1, [1] gamma [2] tau2, [3] A2, [4] background, [5] BIFL scatter fit?
+    (flag, not used), [6] anisotropy r (scatter corrected, output), [7]
+    anisotropy (no scatter correction, output)  
+* `xm[out]` :  
+    array for corrected parameters (amplied range)  
 * `corrections` :  
+    [1] g factor, [2] l1, [3] l3  
 * `return_r` :  
+    if true computes the anisotropy.  
 
 Returns
 -------  
@@ -474,6 +540,10 @@ Returns
 // File: fit25_8h.xml
 
 %feature("docstring") correct_input25 "
+
+adjust parameters for fit25 and compute anisotropy  
+
+Makes sure that (0 < gamma < 0.999) and (0<rho).  
 
 Parameters
 ----------
@@ -488,6 +558,11 @@ Returns
 
 %feature("docstring") targetf25 "
 
+Function used to compute the target value in fit 25  
+
+This is misleadingly named target25. Fit25 selects out of a set of 4 lifetimes
+the lifetime that describes best the data.  
+
 Parameters
 ----------
 * `x` :  
@@ -499,11 +574,30 @@ Returns
 
 %feature("docstring") fit25 "
 
+Selects the lifetime out of a set of 4 fixed lifetimes that best describes the
+data.  
+
+This function selects out of a set of 4 lifetimes tau the lifetime that fits
+best the data and returns the lifetime through the parameter x[0].  
+
+If softBIFL flag is set to (x[6] < 0) and fixed[4] is zero gamma is optimized
+for each lifetime tau and the best gamma is returned by x[4]. The gamma is
+fitted with fit23.  
+
 Parameters
 ----------
 * `x` :  
+    array containing the parameters [0] tau1 output for best tau (always fixed),
+    [1] tau2 (always fixed), [2] tau3 (always fixed), [3] tau4 (always fixed),
+    [4] gamma (input, output), [5] fundamental anisotropy r0, [6] BIFL scatter
+    fit? (flag), [7] r Scatter (output only), [8] r Experimental (output only)  
 * `fixed` :  
+    array that is of least of length 5. Only the element fixed[4] is used. If
+    fixed[4] is zero gamma is optimized for each lifetime.  
 * `p` :  
+    an instance of MParam that contains all relevant information, i.e.,
+    experimental data, the instrument response function, the needed corrections
+    for the anisotropy (g-factor, l1, l2)  
 
 Returns
 -------  
@@ -512,12 +606,43 @@ Returns
 // File: fit26_8h.xml
 
 %feature("docstring") correct_input26 "
+
+Correct input for fit 26  
+
+Constrains the fraction x1 of the first pattern to (0 < x1 < 1).  
+
+Parameters
+----------
+* `x[in]` :  
+    x[0] fraction of first pattern  
+* `xm[out]` :  
+    xm[0] corrected fraction of first pattern  
 ";
 
 %feature("docstring") targetf26 "
 ";
 
 %feature("docstring") fit26 "
+
+Pattern-fit  
+
+Fits the fraction of a mixture of two patterns  
+
+The two patterns are set by the attributes irf and bg of the MParam structure.  
+
+Parameters
+----------
+* `x` :  
+    [0] fraction of pattern 1  
+* `fixed` :  
+    not used  
+* `p` :  
+    an instance of MParam that contains the patterns. The fist pattern is
+    contained in the instrument response function array, the second in the
+    background, array, the experimental data is in the array expdata.  
+
+Returns
+-------  
 ";
 
 // File: fits2x_8h.xml
