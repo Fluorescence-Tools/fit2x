@@ -290,12 +290,12 @@ int modelf23(double *param,            // here: [tau gamma r0 rho]
 
 /************************ Input arguments ***********************/
 
-    tau = param[0] * DELTA_T / dt;
+    tau = param[0];
     gamma = param[1];
     r0 = param[2];
-    rho = param[3] * DELTA_T / dt;
+    rho = param[3] * dt / dt;
 
-    period = corrections[0] * DELTA_T / dt;
+    period = corrections[0];
     g = corrections[1];
     l1 = corrections[2];
     l2 = corrections[3];
@@ -322,12 +322,12 @@ int modelf23(double *param,            // here: [tau gamma r0 rho]
     x[1] = tau;
     x[2] = r0 * (2. - 3. * l1);
     x[3] = taurho;
-    fconv_per_cs(mfunction, x, irf, 2, Nchannels - 1, Nchannels, period, conv_stop);
+    fconv_per_cs(mfunction, x, irf, 2, Nchannels - 1, Nchannels, period, conv_stop, dt);
 
     /// vh
     x[0] = 1. / g;
     x[2] = 1. / g * r0 * (-1. + 3. * l2);
-    fconv_per_cs(mfunction + Nchannels, x, irf + Nchannels, 2, Nchannels - 1, Nchannels, period, conv_stop);
+    fconv_per_cs(mfunction + Nchannels, x, irf + Nchannels, 2, Nchannels - 1, Nchannels, period, conv_stop, dt);
 
     /// add background
     for (i = 0; i < 2 * Nchannels; i++) sum_m += mfunction[i];
@@ -392,13 +392,13 @@ int modelf24(double *param,            // here: [tau1 gamma tau2 A2 offset]
 
 /************************ Input arguments ***********************/
 
-    tau1 = param[0] * DELTA_T / dt;
+    tau1 = param[0];
     gamma = param[1];
-    tau2 = param[2] * DELTA_T / dt;
+    tau2 = param[2];
     A2 = param[3];
     offset = param[4] / (double) Nchannels;
 
-    period = corrections[0] * DELTA_T / dt;
+    period = corrections[0];
     conv_stop = (int) corrections[4];
 
 /************************* Model function ***********************/
@@ -408,10 +408,10 @@ int modelf24(double *param,            // here: [tau1 gamma tau2 A2 offset]
     x[1] = tau1;
     x[2] = A2;
     x[3] = tau2;
-    fconv_per_cs(mfunction, x, irf, 2, Nchannels - 1, Nchannels, period, conv_stop);
+    fconv_per_cs(mfunction, x, irf, 2, Nchannels - 1, Nchannels, period, conv_stop, dt);
 
     /// vh
-    fconv_per_cs(mfunction + Nchannels, x, irf + Nchannels, 2, Nchannels - 1, Nchannels, period, conv_stop);
+    fconv_per_cs(mfunction + Nchannels, x, irf + Nchannels, 2, Nchannels - 1, Nchannels, period, conv_stop, dt);
 
     /// add scatter and background
 

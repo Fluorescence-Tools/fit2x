@@ -1,9 +1,5 @@
 %exception my_modelf24{$action if (PyErr_Occurred()) SWIG_fail;}
 %rename (modelf24) my_modelf24;
-%exception my_modelf24{
-        $action
-        if (PyErr_Occurred()) SWIG_fail;
-}
 
 %inline %{
 int my_modelf24(

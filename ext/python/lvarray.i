@@ -4,7 +4,14 @@ static int LVI32ArrayErr = 0;    // flag to save LVI32Array struct error state
 static int LVDoubleArrayErr = 0; // flag to save LVDoubleArrayErr struct error state
 %}
 
-%include "../include/lvarrays.h"
+%apply (int DIM1, double* INPLACE_ARRAY1) {(int len5, double* mfunction)}
+%apply (int DIM1, double* IN_ARRAY1)
+{
+    (int len1, double* param),
+    (int len2, double* irf),
+    (int len3, double* bg),
+    (int len4, double* corrections)
+}
 
 %extend MParam{
 
@@ -178,3 +185,5 @@ static int LVDoubleArrayErr = 0; // flag to save LVDoubleArrayErr struct error s
         $self->length=size;
     }
 }
+
+%include "../include/lvarrays.h"

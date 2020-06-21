@@ -1,4 +1,3 @@
-
 %rename (targetf26) my_targetf26;
 %exception my_targetf26{$action if (PyErr_Occurred()) SWIG_fail;}
 %inline %{

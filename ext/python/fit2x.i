@@ -14,6 +14,7 @@
 %include "exception.i"
 %include "std_vector.i";
 %include "numpy.i"
+%include <typemaps.i>
 
 %init %{
 import_array();
@@ -23,21 +24,14 @@ import_array();
 %template(VectorDouble) std::vector<double>;
 %template(VectorInt32) std::vector<int>;
 
-%apply (int DIM1, double* INPLACE_ARRAY1) {(int len5, double* mfunction)}
-%apply (int DIM1, double* IN_ARRAY1)
-{
-    (int len1, double* param),
-    (int len2, double* irf),
-    (int len3, double* bg),
-    (int len4, double* corrections)
-}
 %apply (int DIM1, double* INPLACE_ARRAY1) {(int len1, double* x)}
 %apply (int DIM1, short* IN_ARRAY1) {(int len2, short* fixed)}
 
 %include "../include/fits2x.h"
 %pythoncode "../ext/python/fit2x.py"
-%include "lvarray.i"
 
+%include "lvarray.i"
+%include "fsconv.i"
 %include "fit23.i"
 %include "fit24.i"
 %include "fit25.i"

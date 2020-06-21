@@ -1,17 +1,13 @@
 //!  Convolution, scaling, and lamp shift routines
-/*!
- * fast and slow convolution routines, with autoscaling  + lamp shift
- * Version under construction!!!
-*/
+
+#ifndef FIT2X_FSCONV_H
+#define FIT2X_FSCONV_H
+
 #include <cmath>
 
-#ifndef DELTA_T
-#define DELTA_T 0.05
-#endif
-
 
 /*!
- * Scale model function to the data (old version)
+ * @brief Scale model function to the data (old version)
  *
  * This function rescales the model function (fit) to the data by the number
  * of photons between a start and a stop micro time counting channel. The number
@@ -32,7 +28,7 @@ void rescale(double *fit, double *decay, double *scale, int start, int stop);
 
 
 /*!
- * Scale model function to the data (with weights)
+ * @brief Scale model function to the data (with weights)
  *
  * This function rescales the model function (fit) to the data by the number
  * of photons between a start and a stop micro time counting channel. The number
@@ -55,7 +51,7 @@ void rescale_w(double *fit, double *decay, double *w_sq, double *scale, int star
 
 
 /*!
- * Scale model function to the data (with weights and background)
+ * @brief Scale model function to the data (with weights and background)
  *
  * This function scales the model function (fit) to the data by the number
  * of photons between a start and a stop micro time counting channel. The number
@@ -76,8 +72,10 @@ void rescale_w(double *fit, double *decay, double *w_sq, double *scale, int star
  */
 void rescale_w_bg(double *fit, double *decay, double *w_sq, double bg, double *scale, int start, int stop);
 
+
 /*!
- * Convolve lifetime spectrum with instrument response (fast convolution, low repetition rate)
+ * @brief Convolve lifetime spectrum with instrument response (fast convolution,
+ * low repetition rate)
  *
  * This function computes the convolution of a lifetime spectrum (a set of
  * lifetimes with corresponding amplitudes) with a instrument response function
@@ -90,11 +88,14 @@ void rescale_w_bg(double *fit, double *decay, double *w_sq, double bg, double *s
  * @param numexp[in] number of fluorescence lifetimes
  * @param start[in] start micro time index for convolution (not used)
  * @param stop[in] stop micro time index for convolution.
+ * @param dt[in] time difference between two micro time channels
  */
-void fconv(double *fit, double *x, double *lamp, int numexp, int start, int stop);
+void fconv(double *fit, double *x, double *lamp, int numexp, int start, int stop, double dt=0.05);
+
 
 /*!
- * Convolve lifetime spectrum with instrument response (fast convolution, high repetition rate)
+ * @brief Convolve lifetime spectrum with instrument response (fast convolution,
+ * high repetition rate)
  *
  * This function computes the convolution of a lifetime spectrum (a set of
  * lifetimes with corresponding amplitudes) with a instrument response function
@@ -110,46 +111,63 @@ void fconv(double *fit, double *x, double *lamp, int numexp, int start, int stop
  * @param n_points number of points in the model function.
  * @param period excitation period in units of the fluorescence lifetimes (typically
  * nanoseconds)
+ * @param dt[in] time difference between two micro time channels
  */
 void fconv_per(
         double *fit, double *x, double *lamp, int numexp, int start, int stop,
-        int n_points, double period
+        int n_points, double period, double dt=0.05
 );
 
+
 /*!
- * fast convolution, high repetition rate, with convolution stop
+ * @brief Convolve lifetime spectrum - fast convolution, high repetition rate,
+ * with convolution stop
  *
  * fast convolution, high repetition rate, with convolution stop for Paris
  *
- * @param fit
- * @param x
- * @param lamp
- * @param numexp
- * @param stop
- * @param n_points
- * @param period
- * @param conv_stop
+ * @param fit[out] model function. The convoluted decay is written to this array
+ * @param x[in] lifetime spectrum (amplitude1, lifetime1, amplitude2, lifetime2, ...)
+ * @param lamp[in] instrument response function
+ * @param numexp[in] number of fluorescence lifetimes
+ * @param stop[in] stop micro time index for convolution.
+ * @param n_points number of points in the model function.
+ * @param period excitation period in units of the fluorescence lifetimes (typically
+ * nanoseconds)
+ * @param conv_stop convolution stop micro channel number
+ * @param dt[in] time difference between two micro time channels
  */
 void fconv_per_cs(double *fit, double *x, double *lamp, int numexp, int stop,
-                  int n_points, double period, int conv_stop);
+                  int n_points, double period, int conv_stop, double dt=0.05);
 
 
 /*!
- * fast convolution with reference compound decay
+ * @brief Convolve lifetime spectrum - fast convolution with reference compound
+ * decay
  *
- * @param fit
- * @param x
- * @param lamp
- * @param numexp
- * @param start
- * @param stop
- * @param tauref
+ * This function convolves a set of fluorescence lifetimes and with associated
+ * amplitudes with an instrument response function. The provided amplitudes are
+ * scaled prior to the convolution by area using a reference fluorescence lifetime.
+ * The amplitudes are computed by
+ *
+ * amplitude_corrected = a * ( 1 /tauref - 1 / tau)
+ *
+ * where a and tau are provided amplitudes.
+ *
+ * @param fit[out] model function. The convoluted decay is written to this array
+ * @param x[in] lifetime spectrum (amplitude1, lifetime1, amplitude2, lifetime2, ...)
+ * @param lamp[in] instrument response function
+ * @param numexp[in] number of fluorescence lifetimes
+ * @param start[in] start micro time index for convolution (not used)
+ * @param stop[in] stop micro time index for convolution.
+ * @param tauref a reference lifetime used to rescale the amplitudes of the
+ * fluorescence lifetime spectrum
+ * @param dt[in] time difference between two micro time channels
  */
-void fconv_ref(double *fit, double *x, double *lamp, int numexp, int start, int stop, double tauref);
+void fconv_ref(double *fit, double *x, double *lamp, int numexp, int start, int stop, double tauref, double dt=0.05);
 
 
 /*!
- * slow convolution
+ * @brief Convolve fluorescence decay curve with irf - slow convolution
  *
  * This function computes a convolved model function for a fluorescence decay
  * curve.
@@ -164,12 +182,15 @@ void sconv(double *fit, double *p, double *lamp, int start, int stop);
 
 
 /*!
- * shifting lamp
+ * @brief shift instrumnet response function
  *
  * @param lampsh
  * @param lamp
  * @param ts
  * @param n_points
+ * @param out_value the value of the shifted response function outside of the
+ * valid indices
  */
-void shift_lamp(double *lampsh, double *lamp, double ts, int n_points);
+void shift_lamp(double *lampsh, double *lamp, double ts, int n_points, double out_value=0.0);
 
+#endif //FIT2X_FSCONV_H
