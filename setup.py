@@ -21,7 +21,7 @@ def read_version(
 
 __name__ = "fit2x"
 __version__ = read_version()
-__license__ = 'MPL v2.0'
+__license__ = 'Mozilla Public License 2.0 (MPL 2.0)'
 
 
 class CMakeExtension(Extension):
@@ -83,18 +83,21 @@ class CMakeBuild(build_ext):
         )
         if not os.path.exists(self.build_temp):
             os.makedirs(self.build_temp)
-        # build the documentation.i file using doxygen and doxy2swig
-        working_directory = pathlib.Path(__file__).parent.absolute()
-        subprocess.check_call(
-            ["doxygen"],
-            cwd=str(working_directory / "docs"),
-            env=env
-        )
-        subprocess.check_call(
-            ["python", "doxy2swig.py", "../docs/_build/xml/index.xml", "../ext/python/documentation.i"],
-            cwd=str(working_directory / "utility"),
-            env=env
-        )
+        try:
+            # build the documentation.i file using doxygen and doxy2swig
+            working_directory = pathlib.Path(__file__).parent.absolute()
+            subprocess.check_call(
+                ["doxygen"],
+                cwd=str(working_directory / "docs"),
+                env=env
+            )
+            subprocess.check_call(
+                ["python", "doxy2swig.py", "../docs/_build/xml/index.xml", "../ext/python/documentation.i"],
+                cwd=str(working_directory / "utility"),
+                env=env
+            )
+        except:
+            print("Problem calling doxygen")
         print("cmake building: " + " ".join(cmake_args))
         subprocess.check_call(
             ['cmake', ext.sourcedir] + cmake_args,
