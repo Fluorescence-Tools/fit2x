@@ -4,6 +4,8 @@
 #define FIT2X_FSCONV_H
 
 #include <cmath>
+#include <numeric> /* accumulate */
+#include <string>
 
 
 /*!
@@ -192,5 +194,140 @@ void sconv(double *fit, double *p, double *lamp, int start, int stop);
  * valid indices
  */
 void shift_lamp(double *lampsh, double *lamp, double ts, int n_points, double out_value=0.0);
+
+
+/*!
+ * @brief Correct the model function for pile up
+ *
+ * Add pile up to a model function. The pile-up model follows the
+ * description by Coates, 1968, eq. 2
+ *
+ * p = data / (n_excitation_pulses - np.cumsum(data))
+ * Coates, 1968, eq. 4
+ *
+ * Reference:
+ * Coates, P.: The correction for photonpile-up’ in the measurement of radiative
+ * lifetimes. J. Phys. E: Sci. Instrum. 1(8), 878–879 (1968)
+ *
+ *
+ * @param model[in,out] The array containing the model function
+ * @param n_model[in] Number of elements in the model array
+ * @param data[in] The array containing the experimental decay
+ * @param n_data[in] number of elements in experimental decay
+ * @param repetition_rate[in] The repetition-rate in MHz
+ * @param dead_time[in] The dead-time of the detection system in nanoseconds
+ * @param measurement_time[in] The measurement time in seconds
+ * @param pile_up_model[in] The model used to compute the pile up distortion of
+ * the data (currently only Coates)
+ */
+void add_pile_up(
+        double* model, int n_model,
+        double* data, int n_data,
+        double repetition_rate,
+        double dead_time,
+        double measurement_time,
+        std::string pile_up_model="coates"
+);
+
+
+/*!
+* Compute the fluorescence decay for a lifetime spectrum and a instrument
+* response function considering periodic excitation.
+*
+* Fills the pre-allocated output array `output_decay` with a fluorescence
+* intensity decay defined by a set of fluorescence lifetimes defined by the
+* parameter `lifetime_spectrum`. The fluorescence decay will be convolved
+* (non-periodically) with an instrumental response function that is defined
+* by `instrument_response_function`.
+*
+* This function calculates a fluorescence intensity model_decay that is
+* convolved with an instrument response function (IRF). The fluorescence
+* intensity model_decay is specified by its fluorescence lifetime spectrum,
+* i.e., an interleaved array containing fluorescence lifetimes with
+* corresponding amplitudes.
+*
+* This convolution only works with evenly linear spaced time axes.
+*
+* @param inplace_output[in,out] Inplace output array that is filled with the values
+* of the computed fluorescence intensity decay model
+* @param n_output[in] Number of elements in the output array
+* @param time_axis[in] the time-axis of the model_decay
+* @param n_time_axis[in] length of the time axis
+* @param irf[in] the instrument response function array
+* @param n_irf[in] length of the instrument response function array
+* @param lifetime_spectrum[in] Interleaved array of amplitudes and fluorescence
+* lifetimes of the form (amplitude, lifetime, amplitude, lifetime, ...)
+* @param n_lifetime_spectrum[in] number of elements in the lifetime spectrum
+* @param convolution_start[in] Start channel of convolution (position in array of IRF)
+* @param convolution_stop[in] convolution stop channel (the index on the time-axis)
+* @param use_amplitude_threshold[in] If this value is True (default False)
+* fluorescence lifetimes in the lifetime spectrum which have an amplitude
+* with an absolute value of that is smaller than `amplitude_threshold` are
+* not omitted in the convolution.
+* @param amplitude_threshold[in] Threshold value for the amplitudes
+* @param period Period of repetition in units of the lifetime (usually,
+* nano-seconds)
+*/
+void fconv_per_cs_time_axis(
+    double *model, int n_model,
+    double *time_axis, int n_time_axis,
+    double *instrument_response_function, int n_instrument_response_function,
+    double *lifetime_spectrum, int n_lifetime_spectrum,
+    int convolution_start = 0,
+    int convolution_stop = -1,
+    bool use_amplitude_threshold = false,
+    double amplitude_threshold = 1e10,
+    double period = 100.0
+);
+
+
+/*!
+* Compute the fluorescence decay for a lifetime spectrum and a instrument
+* response function.
+*
+* Fills the pre-allocated output array `output_decay` with a fluorescence
+* intensity decay defined by a set of fluorescence lifetimes defined by the
+* parameter `lifetime_spectrum`. The fluorescence decay will be convolved
+* (non-periodically) with an instrumental response function that is defined
+* by `instrument_response_function`.
+*
+* This function calculates a fluorescence intensity model_decay that is
+* convolved with an instrument response function (IRF). The fluorescence
+* intensity model_decay is specified by its fluorescence lifetime spectrum,
+* i.e., an interleaved array containing fluorescence lifetimes with
+* corresponding amplitudes.
+*
+* This convolution works also with uneven spaced time axes.
+*
+* @param inplace_output[in,out] Inplace output array that is filled with the
+* values of the computed fluorescence intensity decay model
+* @param n_output[in] Number of elements in the output array
+* @param time_axis[in] the time-axis of the model_decay
+* @param n_time_axis[in] length of the time axis
+* @param irf[in] the instrument response function array
+* @param n_irf[in] length of the instrument response function array
+* @param lifetime_spectrum[in] Interleaved array of amplitudes and fluorescence
+* lifetimes of the form (amplitude, lifetime, amplitude, lifetime, ...)
+* @param n_lifetime_spectrum[in] number of elements in the lifetime spectrum
+* @param convolution_start[in] Start channel of convolution (position in array
+* of IRF)
+* @param convolution_stop[in] convolution stop channel (the index on the time-axis)
+* @param use_amplitude_threshold[in] If this value is True (default False)
+* fluorescence lifetimes in the lifetime spectrum which have an amplitude
+* with an absolute value of that is smaller than `amplitude_threshold` are
+* not omitted in the convolution.
+* @param amplitude_threshold[in] Threshold value for the amplitudes
+*/
+void fconv_cs_time_axis(
+        double *inplace_output, int n_output,
+        double *time_axis, int n_time_axis,
+        double *instrument_response_function, int n_instrument_response_function,
+        double *lifetime_spectrum, int n_lifetime_spectrum,
+        int convolution_start = 0,
+        int convolution_stop = -1,
+        bool use_amplitude_threshold = false,
+        double amplitude_threshold = 1e10
+);
+
 
 #endif //FIT2X_FSCONV_H

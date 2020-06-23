@@ -1,13 +1,34 @@
 %include "typemaps.i"
 
+// manually added instead of including header file as all other functions
+// are also manually added
 %apply (double* INPLACE_ARRAY1, int DIM1) {
     (double* fit, int len1),
     (double* model, int len3),
+    (double *model, int n_model),
+    (double *time_axis, int n_time_axis),
+    (double *instrument_response_function, int n_instrument_response_function),
+    (double *lifetime_spectrum, int n_lifetime_spectrum),
+    (double *data, int n_data),
     (double* w_sq, int len3),
     (double* x, int len3),
     (double* decay, int len2),
     (double* irf, int len2)
 }
+
+void fconv_per_cs_time_axis(
+        double *model, int n_model,
+        double *time_axis, int n_time_axis,
+        double *instrument_response_function, int n_instrument_response_function,
+        double *lifetime_spectrum, int n_lifetime_spectrum,
+        int convolution_start = 0,
+        int convolution_stop = -1,
+        bool use_amplitude_threshold = false,
+        double amplitude_threshold = 1e10,
+        double period = 100.0
+);
+
+// %include "../include/fsconv.h"
 
 //// rescale
 //////////////
@@ -375,3 +396,4 @@ void my_shift_lamp(
     shift_lamp(lampsh, lamp, ts, len1);
 }
 %}
+
