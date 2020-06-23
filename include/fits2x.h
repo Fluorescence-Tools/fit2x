@@ -1,5 +1,5 @@
-#define VERSION                     "0.0.1"
-#define VERBOSE 1
+#define VERSION                     "0.0.2"
+//#define VERBOSE 0
 
 #include <iostream>
 #include <cmath>
