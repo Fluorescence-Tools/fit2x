@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Convolutions &#8212; fit2x  documentation</title>
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/fix_rtd.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          fit2x</a>
+        <span class="navbar-text navbar-version pull-left"><b></b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Fits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html#description-of-fits">Description of fits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cpp_api.html">C++ API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="zreferences.html">References</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Convolutions</a></li>
+<li><a class="reference internal" href="#pile-up-correction">Pile-up correction</a></li>
+<li><a class="reference internal" href="#differential-non-linearities">Differential non linearities</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="_sources/corrections.rst.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <div class="section" id="convolutions">
+<h1>Convolutions<a class="headerlink" href="#convolutions" title="Permalink to this headline">¶</a></h1>
+<p>make figure of different convolution modes describe what to use when.</p>
+</div>
+<div class="section" id="pile-up-correction">
+<h1>Pile-up correction<a class="headerlink" href="#pile-up-correction" title="Permalink to this headline">¶</a></h1>
+<p>Typical time-correlated single photon counting electronics detects can only
+detect a single photon per excitation pulse. Thus, for a certain amount of time
+after detecting a photon the detection system is unable to register photons.
+Consequently, at higher count rates not all photons are registered. The count
+rate depends on the time since excitation and decays (in a fluorescence experiment)
+typically exponentially. Hence, the most photons are detected right after exciting
+the sample. Subsequent photons are detected less likely. This results in an
+apparent “pile-up” of photons in the beginning of the decay curve. This pile-up
+is in fact the loss of photons that would have been detected at later times.</p>
+<p>(<a class="reference external" href="./plots/pile_up.py">Source code</a>)</p>
+<p>The effect of pile-up is well known and there are models that can compute the
+effect of pile-up on experimental decay curves :cite:´coates_correction_1968´.
+To compute the effect of pile-up the repetition rate of the laser, the dead time
+of the detection system, and the total measurement time needs to be known.
+Traditionally, the data can be corrected for pile-up :cite:´coates_correction_1968´.
+However, for analysis, the model function can be perturbed to mirror the effect
+of pile-up on the experimental data and to preserve the counting statistics.</p>
+</div>
+<div class="section" id="differential-non-linearities">
+<h1>Differential non linearities<a class="headerlink" href="#differential-non-linearities" title="Permalink to this headline">¶</a></h1>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2019, Seidel Lab (Heinrich-Heine University).<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

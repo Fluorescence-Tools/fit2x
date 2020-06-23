@@ -1380,11 +1380,6 @@
 <span class="target" id="fits2x_8h_1a1c6d5de492ac61ad29aec7aa9a436bbf"></span><code class="sig-name descname">VERSION</code><a class="headerlink" href="#c.VERSION" title="Permalink to this definition">¶</a><br /></dt>
 <dd></dd></dl>
 
-<dl class="cpp macro">
-<dt id="c.VERBOSE">
-<span class="target" id="fits2x_8h_1a42f8c497a1968074f38bf5055c650dca"></span><code class="sig-name descname">VERBOSE</code><a class="headerlink" href="#c.VERBOSE" title="Permalink to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
 </div>
 <div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric">Functions</p>
@@ -1452,22 +1447,13 @@
 <dl class="file">
 <dt>
 <span class="target" id="fsconv_8h"></span><em>file</em> <code class="sig-name descname">fsconv.h</code></dt>
-<dd><em>#include &lt;cmath&gt;</em><div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric">Defines</p>
-<dl class="cpp macro">
-<dt id="c.DELTA_T">
-<span class="target" id="fsconv_8h_1a5400b1f2028d38732e4377be4f32b255"></span><code class="sig-name descname">DELTA_T</code><a class="headerlink" href="#c.DELTA_T" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>Convolution, scaling, and lamp shift routines. </p>
-<p>fast and slow convolution routines, with autoscaling + lamp shift Version under construction!!! </p>
-</dd></dl>
-
-</div>
-<div class="breathe-sectiondef docutils container">
+<dd><em>#include &lt;cmath&gt;</em><em>#include &lt;numeric&gt;</em><em>#include &lt;string&gt;</em><div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric">Functions</p>
 <dl class="cpp function">
 <dt id="_CPPv47rescalePdPdPdii">
 <span id="_CPPv37rescalePdPdPdii"></span><span id="_CPPv27rescalePdPdPdii"></span><span id="rescale__doubleP.doubleP.doubleP.i.i"></span><span class="target" id="fsconv_8h_1a8b35ff5c9518235f4e9763a8acb35475"></span>void <code class="sig-name descname">rescale</code><span class="sig-paren">(</span>double *<em>fit</em>, double *<em>decay</em>, double *<em>scale</em>, int <em>start</em>, int <em>stop</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv47rescalePdPdPdii" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>Scale model function to the data (old version)</p>
+<dd><p>Convolution, scaling, and lamp shift routines. </p>
+<p>Scale model function to the data (old version)</p>
 <p>This function rescales the model function (fit) to the data by the number of photons between a start and a stop micro time counting channel. The number of photons between start and stop are counted and the model function is scaled to match the data by area.</p>
 <p>This rescaling function does not consider the noise in the data when rescaling the model.</p>
 <p><dl class="simple">
@@ -1486,7 +1472,7 @@
 <dl class="cpp function">
 <dt id="_CPPv49rescale_wPdPdPdPdii">
 <span id="_CPPv39rescale_wPdPdPdPdii"></span><span id="_CPPv29rescale_wPdPdPdPdii"></span><span id="rescale_w__doubleP.doubleP.doubleP.doubleP.i.i"></span><span class="target" id="fsconv_8h_1af39a07bf429dca0d50c5d0af1fe5479e"></span>void <code class="sig-name descname">rescale_w</code><span class="sig-paren">(</span>double *<em>fit</em>, double *<em>decay</em>, double *<em>w_sq</em>, double *<em>scale</em>, int <em>start</em>, int <em>stop</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv49rescale_wPdPdPdPdii" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>Scale model function to the data (with weights)</p>
+<dd><p>Scale model function to the data (with weights) </p>
 <p>This function rescales the model function (fit) to the data by the number of photons between a start and a stop micro time counting channel. The number of photons between start and stop are counted and the model function is scaled to match the data by area considering the noise of the data.</p>
 <p>The scaling factor is computed by:</p>
 <p>scale = sum(fit*decay/w^2)/sum(fit^2/w^2)</p>
@@ -1507,7 +1493,7 @@
 <dl class="cpp function">
 <dt id="_CPPv412rescale_w_bgPdPdPddPdii">
 <span id="_CPPv312rescale_w_bgPdPdPddPdii"></span><span id="_CPPv212rescale_w_bgPdPdPddPdii"></span><span id="rescale_w_bg__doubleP.doubleP.doubleP.double.doubleP.i.i"></span><span class="target" id="fsconv_8h_1a2f6d2c2481a8a73c84e33a9b19502f41"></span>void <code class="sig-name descname">rescale_w_bg</code><span class="sig-paren">(</span>double *<em>fit</em>, double *<em>decay</em>, double *<em>w_sq</em>, double <em>bg</em>, double *<em>scale</em>, int <em>start</em>, int <em>stop</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv412rescale_w_bgPdPdPddPdii" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>Scale model function to the data (with weights and background)</p>
+<dd><p>Scale model function to the data (with weights and background) </p>
 <p>This function scales the model function (fit) to the data by the number of photons between a start and a stop micro time counting channel. The number of photons between start and stop are counted and the model function is scaled to match the data by area considering the noise of the data and a constant offset of the data.</p>
 <p>scale = sum(fit*(decay-bg)/w^2)/sum(fit^2/w^2)</p>
 <p><dl class="simple">
@@ -1526,9 +1512,9 @@
 </dd></dl>
 
 <dl class="cpp function">
-<dt id="_CPPv45fconvPdPdPdiii">
-<span id="_CPPv35fconvPdPdPdiii"></span><span id="_CPPv25fconvPdPdPdiii"></span><span id="fconv__doubleP.doubleP.doubleP.i.i.i"></span><span class="target" id="fsconv_8h_1a3fbee679cd1fe79913300015bfd5739b"></span>void <code class="sig-name descname">fconv</code><span class="sig-paren">(</span>double *<em>fit</em>, double *<em>x</em>, double *<em>lamp</em>, int <em>numexp</em>, int <em>start</em>, int <em>stop</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv45fconvPdPdPdiii" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>Convolve lifetime spectrum with instrument response (fast convolution, low repetition rate)</p>
+<dt id="_CPPv45fconvPdPdPdiiid">
+<span id="_CPPv35fconvPdPdPdiiid"></span><span id="_CPPv25fconvPdPdPdiiid"></span><span id="fconv__doubleP.doubleP.doubleP.i.i.i.double"></span><span class="target" id="fsconv_8h_1a08d6ad70b705fe0e9b5fcfe2336105e3"></span>void <code class="sig-name descname">fconv</code><span class="sig-paren">(</span>double *<em>fit</em>, double *<em>x</em>, double *<em>lamp</em>, int <em>numexp</em>, int <em>start</em>, int <em>stop</em>, double <em>dt</em> = 0.05<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv45fconvPdPdPdiiid" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Convolve lifetime spectrum with instrument response (fast convolution, low repetition rate) </p>
 <p>This function computes the convolution of a lifetime spectrum (a set of lifetimes with corresponding amplitudes) with a instrument response function (irf). This function does not consider periodic excitation and is suited for experiments at low repetition rate.</p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
@@ -1538,6 +1524,7 @@
 <li><p><code class="docutils literal notranslate"><span class="pre">numexp[in]</span></code>: number of fluorescence lifetimes </p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">start[in]</span></code>: start micro time index for convolution (not used) </p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">stop[in]</span></code>: stop micro time index for convolution. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dt[in]</span></code>: time difference between two micro time channels </p></li>
 </ul>
 </dd>
 </dl>
@@ -1545,9 +1532,9 @@
 </dd></dl>
 
 <dl class="cpp function">
-<dt id="_CPPv49fconv_perPdPdPdiiiid">
-<span id="_CPPv39fconv_perPdPdPdiiiid"></span><span id="_CPPv29fconv_perPdPdPdiiiid"></span><span id="fconv_per__doubleP.doubleP.doubleP.i.i.i.i.double"></span><span class="target" id="fsconv_8h_1a2f3a1c08352576004436c042e17e3a61"></span>void <code class="sig-name descname">fconv_per</code><span class="sig-paren">(</span>double *<em>fit</em>, double *<em>x</em>, double *<em>lamp</em>, int <em>numexp</em>, int <em>start</em>, int <em>stop</em>, int <em>n_points</em>, double <em>period</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv49fconv_perPdPdPdiiiid" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>Convolve lifetime spectrum with instrument response (fast convolution, high repetition rate)</p>
+<dt id="_CPPv49fconv_perPdPdPdiiiidd">
+<span id="_CPPv39fconv_perPdPdPdiiiidd"></span><span id="_CPPv29fconv_perPdPdPdiiiidd"></span><span id="fconv_per__doubleP.doubleP.doubleP.i.i.i.i.double.double"></span><span class="target" id="fsconv_8h_1ad5e964b93928cc8d1c34a23e3d7fd8e9"></span>void <code class="sig-name descname">fconv_per</code><span class="sig-paren">(</span>double *<em>fit</em>, double *<em>x</em>, double *<em>lamp</em>, int <em>numexp</em>, int <em>start</em>, int <em>stop</em>, int <em>n_points</em>, double <em>period</em>, double <em>dt</em> = 0.05<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv49fconv_perPdPdPdiiiidd" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Convolve lifetime spectrum with instrument response (fast convolution, high repetition rate) </p>
 <p>This function computes the convolution of a lifetime spectrum (a set of lifetimes with corresponding amplitudes) with a instrument response function (irf). This function does consider periodic excitation and is suited for experiments at high repetition rate.</p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
@@ -1559,6 +1546,7 @@
 <li><p><code class="docutils literal notranslate"><span class="pre">stop[in]</span></code>: stop micro time index for convolution. </p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">n_points</span></code>: number of points in the model function. </p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">period</span></code>: excitation period in units of the fluorescence lifetimes (typically nanoseconds) </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dt[in]</span></code>: time difference between two micro time channels </p></li>
 </ul>
 </dd>
 </dl>
@@ -1566,20 +1554,21 @@
 </dd></dl>
 
 <dl class="cpp function">
-<dt id="_CPPv412fconv_per_csPdPdPdiiidi">
-<span id="_CPPv312fconv_per_csPdPdPdiiidi"></span><span id="_CPPv212fconv_per_csPdPdPdiiidi"></span><span id="fconv_per_cs__doubleP.doubleP.doubleP.i.i.i.double.i"></span><span class="target" id="fsconv_8h_1ac4c2b71189edfb6e270c2270fbd9d9fe"></span>void <code class="sig-name descname">fconv_per_cs</code><span class="sig-paren">(</span>double *<em>fit</em>, double *<em>x</em>, double *<em>lamp</em>, int <em>numexp</em>, int <em>stop</em>, int <em>n_points</em>, double <em>period</em>, int <em>conv_stop</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv412fconv_per_csPdPdPdiiidi" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>fast convolution, high repetition rate, with convolution stop</p>
+<dt id="_CPPv412fconv_per_csPdPdPdiiidid">
+<span id="_CPPv312fconv_per_csPdPdPdiiidid"></span><span id="_CPPv212fconv_per_csPdPdPdiiidid"></span><span id="fconv_per_cs__doubleP.doubleP.doubleP.i.i.i.double.i.double"></span><span class="target" id="fsconv_8h_1a9a3c3143ce1b299c96e51f38ae4f17fe"></span>void <code class="sig-name descname">fconv_per_cs</code><span class="sig-paren">(</span>double *<em>fit</em>, double *<em>x</em>, double *<em>lamp</em>, int <em>numexp</em>, int <em>stop</em>, int <em>n_points</em>, double <em>period</em>, int <em>conv_stop</em>, double <em>dt</em> = 0.05<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv412fconv_per_csPdPdPdiiidid" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Convolve lifetime spectrum - fast convolution, high repetition rate, with convolution stop. </p>
 <p>fast convolution, high repetition rate, with convolution stop for Paris</p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">fit</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">x</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">lamp</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">numexp</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">stop</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">n_points</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">period</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">conv_stop</span></code>: </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fit[out]</span></code>: model function. The convoluted decay is written to this array </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">x[in]</span></code>: lifetime spectrum (amplitude1, lifetime1, amplitude2, lifetime2, …) </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">lamp[in]</span></code>: instrument response function </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">numexp[in]</span></code>: number of fluorescence lifetimes </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stop[in]</span></code>: stop micro time index for convolution. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">n_points</span></code>: number of points in the model function. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">period</span></code>: excitation period in units of the fluorescence lifetimes (typically nanoseconds) </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">conv_stop</span></code>: convolution stop micro channel number </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dt[in]</span></code>: time difference between two micro time channels </p></li>
 </ul>
 </dd>
 </dl>
@@ -1587,18 +1576,22 @@
 </dd></dl>
 
 <dl class="cpp function">
-<dt id="_CPPv49fconv_refPdPdPdiiid">
-<span id="_CPPv39fconv_refPdPdPdiiid"></span><span id="_CPPv29fconv_refPdPdPdiiid"></span><span id="fconv_ref__doubleP.doubleP.doubleP.i.i.i.double"></span><span class="target" id="fsconv_8h_1aaecc54cb3cd78d94f006082e8c248a34"></span>void <code class="sig-name descname">fconv_ref</code><span class="sig-paren">(</span>double *<em>fit</em>, double *<em>x</em>, double *<em>lamp</em>, int <em>numexp</em>, int <em>start</em>, int <em>stop</em>, double <em>tauref</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv49fconv_refPdPdPdiiid" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>fast convolution with reference compound decay</p>
+<dt id="_CPPv49fconv_refPdPdPdiiidd">
+<span id="_CPPv39fconv_refPdPdPdiiidd"></span><span id="_CPPv29fconv_refPdPdPdiiidd"></span><span id="fconv_ref__doubleP.doubleP.doubleP.i.i.i.double.double"></span><span class="target" id="fsconv_8h_1a757a6d813a633636f69a34f68700ce70"></span>void <code class="sig-name descname">fconv_ref</code><span class="sig-paren">(</span>double *<em>fit</em>, double *<em>x</em>, double *<em>lamp</em>, int <em>numexp</em>, int <em>start</em>, int <em>stop</em>, double <em>tauref</em>, double <em>dt</em> = 0.05<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv49fconv_refPdPdPdiiidd" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Convolve lifetime spectrum - fast convolution with reference compound decay. </p>
+<p>This function convolves a set of fluorescence lifetimes and with associated amplitudes with an instrument response function. The provided amplitudes are scaled prior to the convolution by area using a reference fluorescence lifetime. The amplitudes are computed by</p>
+<p>amplitude_corrected = a * ( 1 /tauref - 1 / tau)</p>
+<p>where a and tau are provided amplitudes.</p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">fit</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">x</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">lamp</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">numexp</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">start</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">stop</span></code>: </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">tauref</span></code>: </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fit[out]</span></code>: model function. The convoluted decay is written to this array </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">x[in]</span></code>: lifetime spectrum (amplitude1, lifetime1, amplitude2, lifetime2, …) </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">lamp[in]</span></code>: instrument response function </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">numexp[in]</span></code>: number of fluorescence lifetimes </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">start[in]</span></code>: start micro time index for convolution (not used) </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stop[in]</span></code>: stop micro time index for convolution. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tauref</span></code>: a reference lifetime used to rescale the amplitudes of the fluorescence lifetime spectrum </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dt[in]</span></code>: time difference between two micro time channels </p></li>
 </ul>
 </dd>
 </dl>
@@ -1608,7 +1601,7 @@
 <dl class="cpp function">
 <dt id="_CPPv45sconvPdPdPdii">
 <span id="_CPPv35sconvPdPdPdii"></span><span id="_CPPv25sconvPdPdPdii"></span><span id="sconv__doubleP.doubleP.doubleP.i.i"></span><span class="target" id="fsconv_8h_1ac803c0ec2757befca91f7cba66c357ac"></span>void <code class="sig-name descname">sconv</code><span class="sig-paren">(</span>double *<em>fit</em>, double *<em>p</em>, double *<em>lamp</em>, int <em>start</em>, int <em>stop</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv45sconvPdPdPdii" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>slow convolution</p>
+<dd><p>Convolve fluorescence decay curve with irf - slow convolution. </p>
 <p>This function computes a convolved model function for a fluorescence decay curve.</p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
@@ -1624,15 +1617,94 @@
 </dd></dl>
 
 <dl class="cpp function">
-<dt id="_CPPv410shift_lampPdPddi">
-<span id="_CPPv310shift_lampPdPddi"></span><span id="_CPPv210shift_lampPdPddi"></span><span id="shift_lamp__doubleP.doubleP.double.i"></span><span class="target" id="fsconv_8h_1ab608c255866c1638b1cead0fcec646ac"></span>void <code class="sig-name descname">shift_lamp</code><span class="sig-paren">(</span>double *<em>lampsh</em>, double *<em>lamp</em>, double <em>ts</em>, int <em>n_points</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv410shift_lampPdPddi" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>shifting lamp</p>
+<dt id="_CPPv410shift_lampPdPddid">
+<span id="_CPPv310shift_lampPdPddid"></span><span id="_CPPv210shift_lampPdPddid"></span><span id="shift_lamp__doubleP.doubleP.double.i.double"></span><span class="target" id="fsconv_8h_1a0f7b6bd14b8a73249d166afe8ea2262b"></span>void <code class="sig-name descname">shift_lamp</code><span class="sig-paren">(</span>double *<em>lampsh</em>, double *<em>lamp</em>, double <em>ts</em>, int <em>n_points</em>, double <em>out_value</em> = 0.0<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv410shift_lampPdPddid" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>shift instrumnet response function </p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">lampsh</span></code>: </p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">lamp</span></code>: </p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">ts</span></code>: </p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">n_points</span></code>: </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">out_value</span></code>: the value of the shifted response function outside of the valid indices </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv411add_pile_upPdiPdidddNSt6stringE">
+<span id="_CPPv311add_pile_upPdiPdidddNSt6stringE"></span><span id="_CPPv211add_pile_upPdiPdidddNSt6stringE"></span><span id="add_pile_up__doubleP.i.doubleP.i.double.double.double.ss"></span><span class="target" id="fsconv_8h_1a99ea63602c2e54ab2df76028fad7dc40"></span>void <code class="sig-name descname">add_pile_up</code><span class="sig-paren">(</span>double *<em>model</em>, int <em>n_model</em>, double *<em>data</em>, int <em>n_data</em>, double <em>repetition_rate</em>, double <em>dead_time</em>, double <em>measurement_time</em>, std::string <em>pile_up_model</em> = &quot;coates&quot;<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv411add_pile_upPdiPdidddNSt6stringE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Correct the model function for pile up. </p>
+<p>Add pile up to a model function. The pile-up model follows the description by Coates, 1968, eq. 2</p>
+<p>p = data / (n_excitation_pulses - np.cumsum(data)) Coates, 1968, eq. 4</p>
+<p>Reference: Coates, P.: The correction for photonpile-up’ in the measurement of radiative lifetimes. J. Phys. E: Sci. Instrum. 1(8), 878–879 (1968)</p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">model[in</span><span class="pre">out]</span></code>: The array containing the model function </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">n_model[in]</span></code>: Number of elements in the model array </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">data[in]</span></code>: The array containing the experimental decay </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">n_data[in]</span></code>: number of elements in experimental decay </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">repetition_rate[in]</span></code>: The repetition-rate in MHz </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dead_time[in]</span></code>: The dead-time of the detection system in nanoseconds </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">measurement_time[in]</span></code>: The measurement time in seconds </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pile_up_model[in]</span></code>: The model used to compute the pile up distortion of the data (currently only Coates) </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv422fconv_per_cs_time_axisPdiPdiPdiPdiiibdd">
+<span id="_CPPv322fconv_per_cs_time_axisPdiPdiPdiPdiiibdd"></span><span id="_CPPv222fconv_per_cs_time_axisPdiPdiPdiPdiiibdd"></span><span id="fconv_per_cs_time_axis__doubleP.i.doubleP.i.doubleP.i.doubleP.i.i.i.b.double.double"></span><span class="target" id="fsconv_8h_1a149923db4883d88efde0aaf676b111ae"></span>void <code class="sig-name descname">fconv_per_cs_time_axis</code><span class="sig-paren">(</span>double *<em>model</em>, int <em>n_model</em>, double *<em>time_axis</em>, int <em>n_time_axis</em>, double *<em>instrument_response_function</em>, int <em>n_instrument_response_function</em>, double *<em>lifetime_spectrum</em>, int <em>n_lifetime_spectrum</em>, int <em>convolution_start</em> = 0, int <em>convolution_stop</em> = -1, bool <em>use_amplitude_threshold</em> = false, double <em>amplitude_threshold</em> = 1e10, double <em>period</em> = 100.0<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv422fconv_per_cs_time_axisPdiPdiPdiPdiiibdd" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Compute the fluorescence decay for a lifetime spectrum and a instrument response function considering periodic excitation.</p>
+<p>Fills the pre-allocated output array <code class="docutils literal notranslate"><span class="pre">output_decay</span></code> with a fluorescence intensity decay defined by a set of fluorescence lifetimes defined by the parameter <code class="docutils literal notranslate"><span class="pre">lifetime_spectrum</span></code>. The fluorescence decay will be convolved (non-periodically) with an instrumental response function that is defined by <code class="docutils literal notranslate"><span class="pre">instrument_response_function</span></code>.</p>
+<p>This function calculates a fluorescence intensity model_decay that is convolved with an instrument response function (IRF). The fluorescence intensity model_decay is specified by its fluorescence lifetime spectrum, i.e., an interleaved array containing fluorescence lifetimes with corresponding amplitudes.</p>
+<p>This convolution only works with evenly linear spaced time axes.</p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">inplace_output[in</span><span class="pre">out]</span></code>: Inplace output array that is filled with the values of the computed fluorescence intensity decay model </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">n_output[in]</span></code>: Number of elements in the output array </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">time_axis[in]</span></code>: the time-axis of the model_decay </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">n_time_axis[in]</span></code>: length of the time axis </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">irf[in]</span></code>: the instrument response function array </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">n_irf[in]</span></code>: length of the instrument response function array </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">lifetime_spectrum[in]</span></code>: Interleaved array of amplitudes and fluorescence lifetimes of the form (amplitude, lifetime, amplitude, lifetime, …) </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">n_lifetime_spectrum[in]</span></code>: number of elements in the lifetime spectrum </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">convolution_start[in]</span></code>: Start channel of convolution (position in array of IRF) </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">convolution_stop[in]</span></code>: convolution stop channel (the index on the time-axis) </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">use_amplitude_threshold[in]</span></code>: If this value is True (default False) fluorescence lifetimes in the lifetime spectrum which have an amplitude with an absolute value of that is smaller than <code class="docutils literal notranslate"><span class="pre">amplitude_threshold</span></code> are not omitted in the convolution. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">amplitude_threshold[in]</span></code>: Threshold value for the amplitudes </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">period</span></code>: Period of repetition in units of the lifetime (usually, nano-seconds) </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv418fconv_cs_time_axisPdiPdiPdiPdiiibd">
+<span id="_CPPv318fconv_cs_time_axisPdiPdiPdiPdiiibd"></span><span id="_CPPv218fconv_cs_time_axisPdiPdiPdiPdiiibd"></span><span id="fconv_cs_time_axis__doubleP.i.doubleP.i.doubleP.i.doubleP.i.i.i.b.double"></span><span class="target" id="fsconv_8h_1a9d9fc020958e45acd01f459ed3c9dba7"></span>void <code class="sig-name descname">fconv_cs_time_axis</code><span class="sig-paren">(</span>double *<em>inplace_output</em>, int <em>n_output</em>, double *<em>time_axis</em>, int <em>n_time_axis</em>, double *<em>instrument_response_function</em>, int <em>n_instrument_response_function</em>, double *<em>lifetime_spectrum</em>, int <em>n_lifetime_spectrum</em>, int <em>convolution_start</em> = 0, int <em>convolution_stop</em> = -1, bool <em>use_amplitude_threshold</em> = false, double <em>amplitude_threshold</em> = 1e10<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418fconv_cs_time_axisPdiPdiPdiPdiiibd" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Compute the fluorescence decay for a lifetime spectrum and a instrument response function.</p>
+<p>Fills the pre-allocated output array <code class="docutils literal notranslate"><span class="pre">output_decay</span></code> with a fluorescence intensity decay defined by a set of fluorescence lifetimes defined by the parameter <code class="docutils literal notranslate"><span class="pre">lifetime_spectrum</span></code>. The fluorescence decay will be convolved (non-periodically) with an instrumental response function that is defined by <code class="docutils literal notranslate"><span class="pre">instrument_response_function</span></code>.</p>
+<p>This function calculates a fluorescence intensity model_decay that is convolved with an instrument response function (IRF). The fluorescence intensity model_decay is specified by its fluorescence lifetime spectrum, i.e., an interleaved array containing fluorescence lifetimes with corresponding amplitudes.</p>
+<p>This convolution works also with uneven spaced time axes.</p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">inplace_output[in</span><span class="pre">out]</span></code>: Inplace output array that is filled with the values of the computed fluorescence intensity decay model </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">n_output[in]</span></code>: Number of elements in the output array </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">time_axis[in]</span></code>: the time-axis of the model_decay </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">n_time_axis[in]</span></code>: length of the time axis </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">irf[in]</span></code>: the instrument response function array </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">n_irf[in]</span></code>: length of the instrument response function array </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">lifetime_spectrum[in]</span></code>: Interleaved array of amplitudes and fluorescence lifetimes of the form (amplitude, lifetime, amplitude, lifetime, …) </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">n_lifetime_spectrum[in]</span></code>: number of elements in the lifetime spectrum </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">convolution_start[in]</span></code>: Start channel of convolution (position in array of IRF) </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">convolution_stop[in]</span></code>: convolution stop channel (the index on the time-axis) </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">use_amplitude_threshold[in]</span></code>: If this value is True (default False) fluorescence lifetimes in the lifetime spectrum which have an amplitude with an absolute value of that is smaller than <code class="docutils literal notranslate"><span class="pre">amplitude_threshold</span></code> are not omitted in the convolution. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">amplitude_threshold[in]</span></code>: Threshold value for the amplitudes </p></li>
 </ul>
 </dd>
 </dl>
