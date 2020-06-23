@@ -5,6 +5,27 @@ PROJECT(${PROJECT_NAME})
 ENABLE_LANGUAGE(CXX)
 SET(CMAKE_CXX_STANDARD 11)
 
+## Check for Conda
+###########################
+IF(DEFINED ENV{CONDA_PREFIX})
+    MESSAGE(STATUS "CONDA env seen: --[$ENV{CONDA_PREFIX}]--")
+    SET(ENV{PATH} "$ENV{CONDA_PREFIX}/bin;$ENV{PATH}")
+    # Define python_command that is used to call python and locate the python libraries
+    if (MSVC)
+        INCLUDE_DIRECTORIES($ENV{CONDA_PREFIX}/Library/include)
+        LINK_DIRECTORIES($ENV{CONDA_PREFIX}/Library/lib)
+        SET(python_command $ENV{CONDA_PREFIX}/python.exe)
+    ELSE()
+        INCLUDE_DIRECTORIES($ENV{CONDA_PREFIX}/include)
+        LINK_DIRECTORIES($ENV{CONDA_PREFIX}/lib)
+        SET(python_command $ENV{CONDA_PREFIX}/bin/python)
+    ENDIF()
+ELSE()
+    MESSAGE(STATUS "No conda environment defined")
+ENDIF()
+SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
+
+
 SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
 
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include)
@@ -14,11 +35,7 @@ OPTION(BUILD_PYTHON_INTERFACE "Build Python interface" ON)
 ################################################################################
 # Source groups
 ################################################################################
-FILE(
-    GLOB
-    SRC_files
-    "${CMAKE_SOURCE_DIR}/src/*.cpp"
-)
+FILE(GLOB SRC_files "${CMAKE_SOURCE_DIR}/src/*.cpp")
 
 # Optimize compiler flags
 ###########################
@@ -42,29 +59,54 @@ ELSE (CMAKE_BUILD_TYPE STREQUAL "Debug")
 ENDIF (CMAKE_BUILD_TYPE STREQUAL "Release")
 
 
-## Intel MKL
-##############
-find_package(MKL REQUIRED)
-if (MKL_FOUND)
-    INCLUDE_DIRECTORIES(${MKL_INCLUDE_DIRS})
-    LINK_LIBRARIES(${MKL_CORE_LIBRARY})
-else ()
-    message(WARNING "MKL libs not found")
-endif ()
+### Intel MKL
+###############
+#find_package(MKL REQUIRED)
+#if (MKL_FOUND)
+#    INCLUDE_DIRECTORIES(${MKL_INCLUDE_DIRS})
+#    LINK_LIBRARIES(${MKL_CORE_LIBRARY})
+#else ()
+#    message(WARNING "MKL libs not found")
+#endif ()
 
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/src)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include)
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/ap)
 ADD_SUBDIRECTORY(ext)
 
+
+## Shared / static library target
+###########################
+# cmake needs unique target name, thus place shared in front of project
+ADD_LIBRARY(${PROJECT_NAME}Shared SHARED ${SRC_files})
+ADD_LIBRARY(${PROJECT_NAME}Static STATIC ${SRC_files})
+
+# Define which headers are going to be included in the install target
+FILE(GLOB FIT2X_HEADERS "${CMAKE_SOURCE_DIR}/include/*.h")
+SET_TARGET_PROPERTIES(${PROJECT_NAME}Shared PROPERTIES PUBLIC_HEADER "${FIT2X_HEADERS}")
+SET_TARGET_PROPERTIES(${PROJECT_NAME}Static PROPERTIES PUBLIC_HEADER "${FIT2X_HEADERS}")
+
+# By default the output name is the target. To not have different names, i.e.,
+# fit2xShard.dll and fit2xStatic.lib the output names are set manually.
+SET_TARGET_PROPERTIES(${PROJECT_NAME}Shared PROPERTIES LIBRARY_OUTPUT_NAME "${PROJECT_NAME}")
+SET_TARGET_PROPERTIES(${PROJECT_NAME}Shared PROPERTIES OUTPUT_NAME "${PROJECT_NAME}")
+SET_TARGET_PROPERTIES(${PROJECT_NAME}Static PROPERTIES LIBRARY_OUTPUT_NAME "${PROJECT_NAME}")
+SET_TARGET_PROPERTIES(${PROJECT_NAME}Static PROPERTIES OUTPUT_NAME "${PROJECT_NAME}")
+
 # Add install target
-##############
-INSTALL(TARGETS ${PROJECT_NAME}
+#######################
+INSTALL(TARGETS ${PROJECT_NAME}Shared
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib
-        ARCHIVE DESTINATION lib/static
-        PUBLIC_HEADER DESTINATION include
+        ARCHIVE DESTINATION lib
+        PUBLIC_HEADER DESTINATION include/fit2x
+)
+INSTALL(TARGETS ${PROJECT_NAME}Static
+        RUNTIME DESTINATION bin
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib
+        PUBLIC_HEADER DESTINATION include/fit2x
         )
+
 
