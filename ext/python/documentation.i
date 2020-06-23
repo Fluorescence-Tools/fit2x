@@ -720,123 +720,243 @@ Parameters
 
 %feature("docstring") rescale "
 
-rescaling -- old version. sum(fit)->sum(decay)  
+Convolution, scaling, and lamp shift routines.  
+
+Scale model function to the data (old version)  
+
+This function rescales the model function (fit) to the data by the number of
+photons between a start and a stop micro time counting channel. The number of
+photons between start and stop are counted and the model function is scaled to
+match the data by area.  
+
+This rescaling function does not consider the noise in the data when rescaling
+the model.  
 
 Parameters
 ----------
-* `fit` :  
-* `decay` :  
-* `scale` :  
-* `start` :  
-* `stop` :  
+* `fit[in`, `out]` :  
+    model function that is scaled (modified in-place)  
+* `decay[in]` :  
+    the experimental data to which the model function is scaled  
+* `scale[out]` :  
+    the scaling parameter (the factor) by which the model function is
+    multiplied.  
+* `start[in]` :  
+    The start micro time channel  
+* `stop[in]` :  
+    The stop micro time channel  
 ";
 
 %feature("docstring") rescale_w "
 
-rescaling new  
+Scale model function to the data (with weights)  
+
+This function rescales the model function (fit) to the data by the number of
+photons between a start and a stop micro time counting channel. The number of
+photons between start and stop are counted and the model function is scaled to
+match the data by area considering the noise of the data.  
+
+The scaling factor is computed by:  
+
+scale = sum(fit*decay/w^2)/sum(fit^2/w^2)  
 
 Parameters
 ----------
-* `fit` :  
-* `decay` :  
-* `w_sq` :  
-* `scale` :  
-* `start` :  
-* `stop` :  
+* `fit[in`, `out]` :  
+    model function that is scaled (modified in-place)  
+* `decay[in]` :  
+    the experimental data to which the model function is scaled  
+* `w_sq[in]` :  
+    squared weights of the data.  
+* `scale[out]` :  
+    the scaling parameter (the factor) by which the model function is
+    multiplied.  
+* `start[in]` :  
+    The start micro time channel  
+* `stop[in]` :  
+    The stop micro time channel  
 ";
 
 %feature("docstring") rescale_w_bg "
 
-rescaling -- new version + background. scale = sum(fit*decay/w^2)/sum(fit^2/w^2)  
+Scale model function to the data (with weights and background)  
+
+This function scales the model function (fit) to the data by the number of
+photons between a start and a stop micro time counting channel. The number of
+photons between start and stop are counted and the model function is scaled to
+match the data by area considering the noise of the data and a constant offset
+of the data.  
+
+scale = sum(fit*(decay-bg)/w^2)/sum(fit^2/w^2)  
 
 Parameters
 ----------
-* `fit` :  
-* `decay` :  
-* `w_sq` :  
-* `bg` :  
-* `scale` :  
-* `start` :  
-* `stop` :  
+* `fit[in`, `out]` :  
+    model function that is scaled (modified in-place)  
+* `decay[in]` :  
+    the experimental data to which the model function is scaled  
+* `w_sq[in]` :  
+    squared weights of the data.  
+* `bg[in]` :  
+    constant background of the data  
+* `scale[out]` :  
+    the scaling parameter (the factor) by which the model function is
+    multiplied.  
+* `start[in]` :  
+    The start micro time channel  
+* `stop[in]` :  
+    The stop micro time channel  
 ";
 
 %feature("docstring") fconv "
 
-fast convolution  
+Convolve lifetime spectrum with instrument response (fast convolution, low
+repetition rate)  
+
+This function computes the convolution of a lifetime spectrum (a set of
+lifetimes with corresponding amplitudes) with a instrument response function
+(irf). This function does not consider periodic excitation and is suited for
+experiments at low repetition rate.  
 
 Parameters
 ----------
-* `fit` :  
-* `x` :  
-* `lamp` :  
-* `numexp` :  
-* `start` :  
-* `stop` :  
+* `fit[out]` :  
+    model function. The convoluted decay is written to this array  
+* `x[in]` :  
+    lifetime spectrum (amplitude1, lifetime1, amplitude2, lifetime2, ...)  
+* `lamp[in]` :  
+    instrument response function  
+* `numexp[in]` :  
+    number of fluorescence lifetimes  
+* `start[in]` :  
+    start micro time index for convolution (not used)  
+* `stop[in]` :  
+    stop micro time index for convolution.  
+* `dt[in]` :  
+    time difference between two micro time channels  
 ";
 
 %feature("docstring") fconv_per "
 
-fast convolution, high repetition rate  
+Convolve lifetime spectrum with instrument response (fast convolution, high
+repetition rate)  
+
+This function computes the convolution of a lifetime spectrum (a set of
+lifetimes with corresponding amplitudes) with a instrument response function
+(irf). This function does consider periodic excitation and is suited for
+experiments at high repetition rate.  
 
 Parameters
 ----------
-* `fit` :  
-* `x` :  
-* `lamp` :  
-* `numexp` :  
-* `start` :  
-* `stop` :  
+* `fit[out]` :  
+    model function. The convoluted decay is written to this array  
+* `x[in]` :  
+    lifetime spectrum (amplitude1, lifetime1, amplitude2, lifetime2, ...)  
+* `lamp[in]` :  
+    instrument response function  
+* `numexp[in]` :  
+    number of fluorescence lifetimes  
+* `start[in]` :  
+    start micro time index for convolution (not used)  
+* `stop[in]` :  
+    stop micro time index for convolution.  
 * `n_points` :  
+    number of points in the model function.  
 * `period` :  
+    excitation period in units of the fluorescence lifetimes (typically
+    nanoseconds)  
+* `dt[in]` :  
+    time difference between two micro time channels  
 ";
 
 %feature("docstring") fconv_per_cs "
 
-fast convolution, high repetition rate, with convolution stop  
+Convolve lifetime spectrum - fast convolution, high repetition rate, with
+convolution stop.  
+
+fast convolution, high repetition rate, with convolution stop for Paris  
 
 Parameters
 ----------
-* `fit` :  
-* `x` :  
-* `lamp` :  
-* `numexp` :  
-* `stop` :  
+* `fit[out]` :  
+    model function. The convoluted decay is written to this array  
+* `x[in]` :  
+    lifetime spectrum (amplitude1, lifetime1, amplitude2, lifetime2, ...)  
+* `lamp[in]` :  
+    instrument response function  
+* `numexp[in]` :  
+    number of fluorescence lifetimes  
+* `stop[in]` :  
+    stop micro time index for convolution.  
 * `n_points` :  
+    number of points in the model function.  
 * `period` :  
+    excitation period in units of the fluorescence lifetimes (typically
+    nanoseconds)  
 * `conv_stop` :  
+    convolution stop micro channel number  
+* `dt[in]` :  
+    time difference between two micro time channels  
 ";
 
 %feature("docstring") fconv_ref "
 
-fast convolution with reference compound decay  
+Convolve lifetime spectrum - fast convolution with reference compound decay.  
+
+This function convolves a set of fluorescence lifetimes and with associated
+amplitudes with an instrument response function. The provided amplitudes are
+scaled prior to the convolution by area using a reference fluorescence lifetime.
+The amplitudes are computed by  
+
+amplitude_corrected = a * ( 1 /tauref - 1 / tau)  
+
+where a and tau are provided amplitudes.  
 
 Parameters
 ----------
-* `fit` :  
-* `x` :  
-* `lamp` :  
-* `numexp` :  
-* `start` :  
-* `stop` :  
+* `fit[out]` :  
+    model function. The convoluted decay is written to this array  
+* `x[in]` :  
+    lifetime spectrum (amplitude1, lifetime1, amplitude2, lifetime2, ...)  
+* `lamp[in]` :  
+    instrument response function  
+* `numexp[in]` :  
+    number of fluorescence lifetimes  
+* `start[in]` :  
+    start micro time index for convolution (not used)  
+* `stop[in]` :  
+    stop micro time index for convolution.  
 * `tauref` :  
+    a reference lifetime used to rescale the amplitudes of the fluorescence
+    lifetime spectrum  
+* `dt[in]` :  
+    time difference between two micro time channels  
 ";
 
 %feature("docstring") sconv "
 
-slow convolution  
+Convolve fluorescence decay curve with irf - slow convolution.  
+
+This function computes a convolved model function for a fluorescence decay
+curve.  
 
 Parameters
 ----------
 * `fit` :  
+    convolved model function  
 * `p` :  
+    model function before convolution - fluorescence decay curve  
 * `lamp` :  
+    instrument response function  
 * `start` :  
+    start index of the convolution  
 * `stop` :  
+    stop index of the convolution  
 ";
 
 %feature("docstring") shift_lamp "
 
-shifting lamp  
+shift instrumnet response function  
 
 Parameters
 ----------
@@ -844,6 +964,94 @@ Parameters
 * `lamp` :  
 * `ts` :  
 * `n_points` :  
+* `out_value` :  
+    the value of the shifted response function outside of the valid indices  
+";
+
+%feature("docstring") add_pile_up "
+
+Correct the model function for pile up.  
+
+Add pile up to a model function. The pile-up model follows the description by
+Coates, 1968, eq. 2  
+
+p = data / (n_excitation_pulses - np.cumsum(data)) Coates, 1968, eq. 4  
+
+Reference: Coates, P.: The correction for photonpile-up’ in the measurement of
+radiative lifetimes. J. Phys. E: Sci. Instrum. 1(8), 878–879 (1968)  
+
+Parameters
+----------
+* `model[in`, `out]` :  
+    The array containing the model function  
+* `n_model[in]` :  
+    Number of elements in the model array  
+* `data[in]` :  
+    The array containing the experimental decay  
+* `n_data[in]` :  
+    number of elements in experimental decay  
+* `repetition_rate[in]` :  
+    The repetition-rate in MHz  
+* `dead_time[in]` :  
+    The dead-time of the detection system in nanoseconds  
+* `measurement_time[in]` :  
+    The measurement time in seconds  
+* `pile_up_model[in]` :  
+    The model used to compute the pile up distortion of the data (currently only
+    Coates)  
+";
+
+%feature("docstring") fconv_per_cs_time_axis "
+
+Compute the fluorescence decay for a lifetime spectrum and a instrument response
+function considering periodic excitation.  
+
+Fills the pre-allocated output array `output_decay` with a fluorescence
+intensity decay defined by a set of fluorescence lifetimes defined by the
+parameter `lifetime_spectrum`. The fluorescence decay will be convolved (non-
+periodically) with an instrumental response function that is defined by
+`instrument_response_function`.  
+
+This function calculates a fluorescence intensity model_decay that is convolved
+with an instrument response function (IRF). The fluorescence intensity
+model_decay is specified by its fluorescence lifetime spectrum, i.e., an
+interleaved array containing fluorescence lifetimes with corresponding
+amplitudes.  
+
+This convolution only works with evenly linear spaced time axes.  
+
+Parameters
+----------
+* `inplace_output[in`, `out]` :  
+    Inplace output array that is filled with the values of the computed
+    fluorescence intensity decay model  
+* `n_output[in]` :  
+    Number of elements in the output array  
+* `time_axis[in]` :  
+    the time-axis of the model_decay  
+* `n_time_axis[in]` :  
+    length of the time axis  
+* `irf[in]` :  
+    the instrument response function array  
+* `n_irf[in]` :  
+    length of the instrument response function array  
+* `lifetime_spectrum[in]` :  
+    Interleaved array of amplitudes and fluorescence lifetimes of the form
+    (amplitude, lifetime, amplitude, lifetime, ...)  
+* `n_lifetime_spectrum[in]` :  
+    number of elements in the lifetime spectrum  
+* `convolution_start[in]` :  
+    Start channel of convolution (position in array of IRF)  
+* `convolution_stop[in]` :  
+    convolution stop channel (the index on the time-axis)  
+* `use_amplitude_threshold[in]` :  
+    If this value is True (default False) fluorescence lifetimes in the lifetime
+    spectrum which have an amplitude with an absolute value of that is smaller
+    than `amplitude_threshold` are not omitted in the convolution.  
+* `amplitude_threshold[in]` :  
+    Threshold value for the amplitudes  
+* `period` :  
+    Period of repetition in units of the lifetime (usually, nano-seconds)  
 ";
 
 // File: i__lbfgs_8h.xml

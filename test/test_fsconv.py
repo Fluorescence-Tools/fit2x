@@ -2,6 +2,7 @@ from __future__ import division
 
 import unittest
 import numpy as np
+import scipy
 
 import fit2x
 from compute_irf import model_irf
@@ -239,5 +240,29 @@ class Tests(unittest.TestCase):
                         1.05504424e+00, 1.00715054e+00, 9.61430968e-01, 9.17786836e-01])
         self.assertEqual(
             np.allclose(ref, model_sconv), True
+        )
+
+    def test_convolve_lifetime_spectrum_periodic(self):
+        time_axis = np.linspace(0, 25, 25)
+        irf_position = 6.0
+        irf_width = 1.0
+        irf = scipy.stats.norm.pdf(time_axis, loc=irf_position, scale=irf_width)
+        lifetime_spectrum = np.array([0.2, 1.1, 0.8, 4.0])
+        model_decay = np.zeros_like(time_axis)
+        fit2x.fconv_per_cs_time_axis(
+            model=model_decay,
+            time_axis=time_axis,
+            lifetime_spectrum=lifetime_spectrum,
+            instrument_response_function=irf,
+            period=16.0
+        )
+        reference = np.array(
+            [0.00560653, 0.00432208, 0.00342868, 0.00603476, 0.0454072,
+             0.21058509, 0.4551221, 0.55543513, 0.48165047, 0.36885986,
+             0.27946424, 0.21331303, 0.16359693, 0.12577494, 0.09681668,
+             0.07457228, 0.05745678, 0.04427657, 0.03412254, 0.02629821,
+             0.02026841, 0.01562132, 0.01203976, 0.00927939, 0.0071519])
+        self.assertEqual(
+            np.allclose(reference, model_decay), True
         )
 
