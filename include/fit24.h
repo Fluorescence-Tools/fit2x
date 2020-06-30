@@ -37,7 +37,8 @@ int modelf24(double* param, 			// here: [tau1 gamma tau2 A2 offset]
              int Nchannels,
              double dt,			// time per channel
              double* corrections,		// [period g l1 l2]
-             double* mfunction);		// out: model function in Jordi-girl format
+             double* mfunction 		// out: model function in Jordi-girl format
+             );
 
 
 /*!

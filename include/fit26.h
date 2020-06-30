@@ -1,7 +1,3 @@
-//
-// Created by Thomas-Otavio Peulen on 6/12/20.
-//
-
 #ifndef FIT2X_FIT26_H
 #define FIT2X_FIT26_H
 

@@ -290,12 +290,12 @@ int modelf23(double *param,            // here: [tau gamma r0 rho]
 
 /************************ Input arguments ***********************/
 
-    tau = param[0] * DELTA_T / dt;
+    tau = param[0];
     gamma = param[1];
     r0 = param[2];
-    rho = param[3] * DELTA_T / dt;
+    rho = param[3] * dt / dt;
 
-    period = corrections[0] * DELTA_T / dt;
+    period = corrections[0];
     g = corrections[1];
     l1 = corrections[2];
     l2 = corrections[3];
@@ -322,12 +322,12 @@ int modelf23(double *param,            // here: [tau gamma r0 rho]
     x[1] = tau;
     x[2] = r0 * (2. - 3. * l1);
     x[3] = taurho;
-    fconv_per_cs(mfunction, x, irf, 2, Nchannels - 1, Nchannels, period, conv_stop);
+    fconv_per_cs(mfunction, x, irf, 2, Nchannels - 1, Nchannels, period, conv_stop, dt);
 
     /// vh
     x[0] = 1. / g;
     x[2] = 1. / g * r0 * (-1. + 3. * l2);
-    fconv_per_cs(mfunction + Nchannels, x, irf + Nchannels, 2, Nchannels - 1, Nchannels, period, conv_stop);
+    fconv_per_cs(mfunction + Nchannels, x, irf + Nchannels, 2, Nchannels - 1, Nchannels, period, conv_stop, dt);
 
     /// add background
     for (i = 0; i < 2 * Nchannels; i++) sum_m += mfunction[i];
@@ -392,13 +392,13 @@ int modelf24(double *param,            // here: [tau1 gamma tau2 A2 offset]
 
 /************************ Input arguments ***********************/
 
-    tau1 = param[0] * DELTA_T / dt;
+    tau1 = param[0];
     gamma = param[1];
-    tau2 = param[2] * DELTA_T / dt;
+    tau2 = param[2];
     A2 = param[3];
     offset = param[4] / (double) Nchannels;
 
-    period = corrections[0] * DELTA_T / dt;
+    period = corrections[0];
     conv_stop = (int) corrections[4];
 
 /************************* Model function ***********************/
@@ -408,10 +408,10 @@ int modelf24(double *param,            // here: [tau1 gamma tau2 A2 offset]
     x[1] = tau1;
     x[2] = A2;
     x[3] = tau2;
-    fconv_per_cs(mfunction, x, irf, 2, Nchannels - 1, Nchannels, period, conv_stop);
+    fconv_per_cs(mfunction, x, irf, 2, Nchannels - 1, Nchannels, period, conv_stop, dt);
 
     /// vh
-    fconv_per_cs(mfunction + Nchannels, x, irf + Nchannels, 2, Nchannels - 1, Nchannels, period, conv_stop);
+    fconv_per_cs(mfunction + Nchannels, x, irf + Nchannels, 2, Nchannels - 1, Nchannels, period, conv_stop, dt);
 
     /// add scatter and background
 
@@ -454,7 +454,6 @@ double targetf24(double *x, void *pv) {
 }
 
 double fit24(double *x, short *fixed, MParam *p) {
-
     // x is:
     // [0] tau1
     // [1] gamma
@@ -520,9 +519,7 @@ double fit24(double *x, short *fixed, MParam *p) {
 void correct_input25(double* x, double* xm, LVDoubleArray* corrections, int return_r)
 {
     double r, g, Fp, Fs, l1, l2;
-
     // correct input parameters (take care of unreasonable values)
-
     // here x = [tau gamma r0 rho] + outputs
 
     xm[0] = x[0];
@@ -703,13 +700,13 @@ void correct_input26(double* x, double* xm)
     std::cout<<"correct_input26"<<std::endl;
 #endif
     // correct input parameters (take care of unreasonable values)
-    xm[0] = x[0];		// fraction of pattern 1 is between 0 and 1
+    xm[0] = x[0]; // fraction of pattern 1 is between 0 and 1
     if (xm[0]<0.0) {
-        xm[0] = 0.0;	// tau > 0
+        xm[0] = 0.0; // tau > 0
         penalty = -x[0];
     }
     else if (xm[0]>1.0) {
-        xm[0] = 1.0;	// tau > 0
+        xm[0] = 1.0; // tau > 0
         penalty = x[0]-1.0;
     }
     else penalty = 0.;
@@ -741,7 +738,8 @@ double targetf26(double* x, void* pv)
     }
     for(i=0; i<Nchannels; i++) M->data[i] *= s;
 
-    w = Wcm(expdata->data, M->data, Nchannels);
+    // divide here Nchannels / 2, because Wcm multiplies Nchannels by two
+    w = Wcm(expdata->data, M->data, Nchannels / 2);
 
     return w/Nchannels + penalty;
 
@@ -783,7 +781,8 @@ double fit26 (double* x, short* fixed, MParam* p)
     }
     for(i=0; i<Nchannels; i++) M->data[i] *= s;
 
-    tIstar = twoIstar(expdata->data, M->data, Nchannels);
+    // divide here Nchannels / 2, because twoIstar multiplies Nchannels by two
+    tIstar = twoIstar(expdata->data, M->data, Nchannels / 2);
     if (info==5) x[0] = -1.;		// for report
     x[1]=1.-x[0];
     return tIstar;
