@@ -1077,6 +1077,88 @@
 </div>
 </dd></dl>
 
+<dl class="cpp type">
+<dt id="_CPPv46Phasor">
+<span id="_CPPv36Phasor"></span><span id="_CPPv26Phasor"></span><span id="Phasor"></span><span class="target" id="namespace_phasor"></span><em class="property">namespace </em><code class="sig-name descname">Phasor</code><a class="headerlink" href="#_CPPv46Phasor" title="Permalink to this definition">¶</a><br /></dt>
+<dd><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="cpp function">
+<dt id="_CPPv4N6Phasor14compute_phasorEPtRNSt6vectorIiEEdidd">
+<span id="_CPPv3N6Phasor14compute_phasorEPtRNSt6vectorIiEEdidd"></span><span id="_CPPv2N6Phasor14compute_phasorEPtRNSt6vectorIiEEdidd"></span><span id="Phasor::compute_phasor__unsigned-shortP.std::vector:i:R.double.i.double.double"></span><span class="target" id="phasor_8h_1a64476fb004cd26a071149254b7f220f1"></span>std::vector&lt;double&gt; <code class="sig-name descname">compute_phasor</code><span class="sig-paren">(</span>unsigned short *<em>micro_times</em>, std::vector&lt;int&gt; &amp;<em>idxs</em>, double <em>frequency</em>, int <em>minimum_number_of_photons</em> = 1, double <em>g_irf</em> = 1.0, double <em>s_irf</em> = 0.0<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6Phasor14compute_phasorEPtRNSt6vectorIiEEdidd" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Compute the phasor (g,s) for a selection of micro times</p>
+<p>This function computes the phasor (g,s) for a set of micro times that are selected out of an vector. The microtimes are selected by a second vector. The second vector speciefies which indices of the microtime vector are used to compute the phasor.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>vector of length 2: first element g-value, second element s-value </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">micro_times</span></code>: vector of micro times </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">idxs</span></code>: vector of selected indices </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">minimum_number_of_photons</span></code>: </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">frequency</span></code>: the frequency of the phasor </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">g_irf</span></code>: g-value of instrument response phasor </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">s_irf</span></code>: s-value of instrument response phasor </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6Phasor18compute_phasor_allEPtid">
+<span id="_CPPv3N6Phasor18compute_phasor_allEPtid"></span><span id="_CPPv2N6Phasor18compute_phasor_allEPtid"></span><span id="Phasor::compute_phasor_all__unsigned-shortP.i.double"></span><span class="target" id="phasor_8h_1a7f599f2ac438ab60f8b387f63365b39b"></span>std::vector&lt;double&gt; <code class="sig-name descname">compute_phasor_all</code><span class="sig-paren">(</span>unsigned short *<em>microtimes</em>, int <em>n_microtimes</em>, double <em>frequency</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6Phasor18compute_phasor_allEPtid" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Compute the phasor (g,s) for a all passed micro times</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>vector of length 2: first element g-value, second element s-value </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">micro_times</span></code>: vector of micro times </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">n_microtimes</span></code>: number of elements in the micro time array </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">frequency</span></code>: the frequency of the phasor </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6Phasor1gEdddd">
+<span id="_CPPv3N6Phasor1gEdddd"></span><span id="_CPPv2N6Phasor1gEdddd"></span><span id="Phasor::g__double.double.double.double"></span><span class="target" id="phasor_8h_1ac41765437afc1ad12ac33e3a0655200e"></span>double <code class="sig-name descname">g</code><span class="sig-paren">(</span>double <em>g_irf</em>, double <em>s_irf</em>, double <em>g_exp</em>, double <em>s_exp</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6Phasor1gEdddd" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p><a class="reference external" href="https://journals.plos.org/plosone/article/file?type=supplementary&amp;id=info:doi/10.1371/journal.pone.0194578.s001">https://journals.plos.org/plosone/article/file?type=supplementary&amp;id=info:doi/10.1371/journal.pone.0194578.s001</a></p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p></p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">g_irf</span></code>: g-value of instrument response phasor </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">s_irf</span></code>: s-value of instrument response phasor </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">g_exp</span></code>: </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">s_exp</span></code>: </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6Phasor1sEdddd">
+<span id="_CPPv3N6Phasor1sEdddd"></span><span id="_CPPv2N6Phasor1sEdddd"></span><span id="Phasor::s__double.double.double.double"></span><span class="target" id="phasor_8h_1a0c86763da7e7cbf1a0e68f00d66a2931"></span>double <code class="sig-name descname">s</code><span class="sig-paren">(</span>double <em>g_irf</em>, double <em>s_irf</em>, double <em>g_exp</em>, double <em>s_exp</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6Phasor1sEdddd" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p><a class="reference external" href="https://journals.plos.org/plosone/article/file?type=supplementary&amp;id=info:doi/10.1371/journal.pone.0194578.s001">https://journals.plos.org/plosone/article/file?type=supplementary&amp;id=info:doi/10.1371/journal.pone.0194578.s001</a></p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p></p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">g_irf</span></code>: </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">s_irf</span></code>: </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">g_exp</span></code>: </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">s_exp</span></code>: </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
 <dl class="file">
 <dt>
 <span class="target" id="ap_8h"></span><em>file</em> <code class="sig-name descname">ap.h</code></dt>
@@ -1838,6 +1920,11 @@
 
 </div>
 </dd></dl>
+
+<dl class="file">
+<dt>
+<span class="target" id="phasor_8h"></span><em>file</em> <code class="sig-name descname">phasor.h</code></dt>
+<dd><em>#include &lt;vector&gt;</em><em>#include &lt;cmath&gt;</em></dd></dl>
 
 <dl class="file">
 <dt>
