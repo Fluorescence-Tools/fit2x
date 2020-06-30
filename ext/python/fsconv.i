@@ -13,7 +13,9 @@
     (double* w_sq, int len3),
     (double* x, int len3),
     (double* decay, int len2),
-    (double* irf, int len2)
+    (double* irf, int len2),
+    (double* lamp, int len1), // used by shift_lamp
+    (double* lampsh, int len2) // used by shift_lamp
 }
 
 void fconv_per_cs_time_axis(

@@ -3,6 +3,7 @@ from __future__ import division
 import unittest
 import numpy as np
 import scipy
+import scipy.stats
 
 import fit2x
 from compute_irf import model_irf
@@ -266,3 +267,20 @@ class Tests(unittest.TestCase):
             np.allclose(reference, model_decay), True
         )
 
+    def test_lamp_shift(self):
+        time_axis = np.linspace(4.5, 5.5, 16)
+        irf_position = 5.0
+        irf_width = 0.25
+        irf = scipy.stats.norm.pdf(time_axis, loc=irf_position, scale=irf_width)
+        irf_shift = np.empty_like(irf)
+        time_shift = 0.5
+        fit2x.shift_lamp(irf, irf_shift, time_shift)
+        ref = np.array(
+            [
+                0.28561886, 0.44980189, 0.66053707, 0.90452776, 1.15505166,
+                1.37543629, 1.52736396, 1.58164736, 1.52736396, 1.37543629,
+                1.15505166, 0.90452776, 0.66053707, 0.44980189, 0.28561886,
+                0.
+            ]
+        )
+        self.assertEqual(np.allclose(ref, irf_shift), True)
