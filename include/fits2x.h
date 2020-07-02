@@ -1,4 +1,4 @@
-#define VERSION                     "0.0.2"
+#define FIT2X_VERSION                "0.0.4"
 //#define VERBOSE 0
 
 #include <iostream>
