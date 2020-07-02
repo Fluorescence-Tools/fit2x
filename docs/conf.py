@@ -88,7 +88,7 @@ sphinx_gallery_conf = {
     'show_memory': False,
     'examples_dirs': ['../examples'],
     'gallery_dirs': ['auto_examples'],
-    'subsection_order': SubSectionTitleOrder('../examples'),
+    'subsection_order': SubSectionTitleOrder('./examples'),
     'inspect_global_variables': False,
     'remove_config_comments': True,
     'filename_pattern': '/plot_',
