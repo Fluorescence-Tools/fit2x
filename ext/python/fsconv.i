@@ -30,7 +30,14 @@ void fconv_per_cs_time_axis(
         double period = 100.0
 );
 
-// %include "../include/fsconv.h"
+void add_pile_up(
+        double* model, int n_model,
+        double* data, int n_data,
+        double repetition_rate,
+        double dead_time,
+        double measurement_time,
+        std::string pile_up_model
+);
 
 //// rescale
 //////////////
@@ -123,9 +130,8 @@ double my_rescale_w(
 }
 %}
 
-//// rescale_w_bg
+/// rescale_w_bg
 ///////////////////
-
 %rename (rescale_w_bg) my_rescale_w_bg;
 %exception my_rescale_w_bg{$action if (PyErr_Occurred()) SWIG_fail;}
 %inline %{
