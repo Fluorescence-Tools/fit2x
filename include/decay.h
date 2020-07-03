@@ -190,11 +190,13 @@ public:
             bool scale_model_to_area = true
     );
 
-public:
+protected:
 
     bool is_valid() const {
         return _is_valid;
     }
+
+public:
 
     void set_data(double *input, int n_input) {
         _is_valid = false;
@@ -323,14 +325,8 @@ public:
         _is_valid = false;
         if(n_input < 0) n_input = _lifetime_spectrum.size();
         _lifetime_spectrum.resize(n_input);
-        if(abs_lifetime_spectrum) {
-            for (int i = 0; i < n_input; i++) {
-                _lifetime_spectrum[i] = std::abs(input[i]);
-            }
-        } else{
-            for (int i = 0; i < n_input; i++) {
-                _lifetime_spectrum[i] = std::abs(input[i]);
-            }
+        for (int i = 0; i < n_input; i++) {
+            _lifetime_spectrum[i] = input[i];
         }
     }
 
@@ -597,6 +593,12 @@ public:
                     lifetime_spectrum.size()
             );
         }
+        std::vector<double> lt = lifetime_spectrum;
+        if(abs_lifetime_spectrum) {
+            for(auto &l: lt){
+                l = std::abs(l);
+            }
+        }
         if (!_is_valid) {
             compute_decay(
                     _model_function.data(),_model_function.size(),
@@ -604,7 +606,7 @@ public:
                     _sq_weights.data(),_sq_weights.size(),
                     _time_axis.data(),_time_axis.size(),
                     _irf.data(),_irf.size(),
-                    _lifetime_spectrum.data(),_lifetime_spectrum.size(),
+                    lt.data(),lt.size(),
                     _convolution_start, _convolution_stop,
                     _irf_background_counts, _irf_shift_channels,
                     _areal_scatter_fraction,
