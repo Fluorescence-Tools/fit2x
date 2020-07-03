@@ -28,14 +28,6 @@ def time_axis(self):
     return self.get_time_axis()
 
 @property
-def irf_background_counts(self):
-    return self.get_irf_background_counts()
-
-@irf_background_counts.setter
-def irf_background_counts(self, v):
-    return self.set_irf_background_counts(v)
-
-@property
 def lifetime_spectrum(self):
     return self.get_lifetime_spectrum()
 
@@ -53,10 +45,10 @@ def chi2(self):
 
 def __repr__(self):
     s = 'DECAY \n'
-    s += '-- Lifetime spectrum: %s \n' % self.get_lifetime_spectrum()
-    s += '-- Constant background / counts: %s \n' % self.get_constant_background()
-    s += '-- Areal scatter fraction: %s \n' % self.get_areal_scatter_fraction()
-    s += '-- Irf shift / channels: %s \n' % self.get_irf_shift_channels()
-    s += '-- Irf background / counts: %s \n' % self.get_irf_background_counts()
+    s += '-- Lifetime spectrum: %s \n' % self.lifetime_spectrum
+    s += '-- Constant background / counts: %s \n' % self.background
+    s += '-- Areal scatter fraction: %s \n' % self.scatter_fraction
+    s += '-- Irf shift / channels: %s \n' % self.irf_shift
+    s += '-- Irf background / counts: %s \n' % self.irf_background
     s += '-- Chi2: %s \n' % self.chi2
     return s

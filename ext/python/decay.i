@@ -24,6 +24,7 @@
     (double* x, int n_x)
 }
 
+%attribute(Decay, double, background, get_constant_background, set_constant_background);
 %attribute(Decay, double, irf_shift, get_irf_shift_channels, set_irf_shift_channels);
 %attribute(Decay, double, irf_background, get_irf_background_counts, set_irf_background_counts);
 %attribute(Decay, int, convolution_stop, get_convolution_stop, set_convolution_stop);

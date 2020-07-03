@@ -24,10 +24,10 @@ class Tests(unittest.TestCase):
         decay.set_amplitude_threshold(2.2)
         self.assertEqual(decay.get_amplitude_threshold(), 2.2)
 
-        decay.set_constant_background(11)
-        self.assertEqual(decay.get_constant_background(), 11)
-        decay.set_constant_background(2.2)
-        self.assertEqual(decay.get_constant_background(), 2.2)
+        decay.background = 11
+        self.assertEqual(decay.background, 11)
+        decay.background = 2.2
+        self.assertEqual(decay.background, 2.2)
 
         # This does not work because there is no IRF
         # decay.set_irf_shift_channels(11)
