@@ -1,6 +1,6 @@
 #include "fits2x.h"
 #include "fsconv.h"
-#include "twoIstar.h"
+#include "statistics.h"
 #include <iomanip>      // std::setprecision
 
 // normalization
