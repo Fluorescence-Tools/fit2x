@@ -98,7 +98,7 @@ class Tests(unittest.TestCase):
 
     def test_constructor_2(self):
         decay = fit2x.Decay(
-            decay_data=[1, 2, 3, 4, 56]
+            decay_histogram=[1, 2, 3, 4, 56]
         )
         self.assertListEqual(list(decay.get_data()), [1, 2, 3, 4, 56])
 
@@ -119,7 +119,7 @@ class Tests(unittest.TestCase):
 
         data = np.linspace(1, 22, 12)
         decay = fit2x.Decay(
-            decay_data=data,
+            decay_histogram=data,
             start=2, stop=32,
             correct_pile_up=True,
             excitation_period=123.2
@@ -380,7 +380,7 @@ class Tests(unittest.TestCase):
         weights = 1. / (np.sqrt(data))
         weights[0] = 0
         decay_object = fit2x.Decay(
-            decay_data=data,
+            decay_histogram=data,
             weights=weights,
             instrument_response_function=irf,
             time_axis=time_axis,

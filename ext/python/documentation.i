@@ -344,7 +344,7 @@ Parameters
 * `micro_time_coarsening` :  
     an (optional) integer by which the micro times are divided to coarsen the
     time axis (default is 1)  
-* `decay_data` :  
+* `decay_histogram` :  
     the data to which the decay is fitted  
 * `time_axis` :  
     the time axis that belongs to the data  

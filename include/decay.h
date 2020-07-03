@@ -377,7 +377,7 @@ public:
      * histogram
      * @param micro_time_coarsening an (optional) integer by which the micro times
      * are divided to coarsen the time axis (default is 1)
-     * @param decay_data the data to which the decay is fitted
+     * @param decay_histogram the data to which the decay is fitted
      * @param time_axis the time axis that belongs to the data
      * @param dt the spacing between the points in the time axis. This optional
      * parameter is used to compute a time axis if not time axis was provided by
@@ -404,7 +404,7 @@ public:
             std::shared_ptr<TTTR> tttr_data = nullptr,
             std::shared_ptr<TTTR> tttr_irf = nullptr,
             int micro_time_coarsening = 1,
-            std::vector<double> decay_data = std::vector<double>(),
+            std::vector<double> decay_histogram = std::vector<double>(),
             std::vector<double> time_axis = std::vector<double>(),
             std::vector<double> weights = std::vector<double>(),
             std::vector<double> instrument_response_function = std::vector<double>(),
@@ -422,7 +422,7 @@ public:
             std::vector<double> lifetime_spectrum = std::vector<double>()
     ) {
         _convolution_start = std::max(0, start);
-        _convolution_stop = std::min(stop, (int) decay_data.size());
+        _convolution_stop = std::min(stop, (int) decay_histogram.size());
         _amplitude_threshold = amplitude_threshold;
         _use_amplitude_threshold = use_amplitude_threshold;
         _correct_pile_up = correct_pile_up;
@@ -450,7 +450,7 @@ public:
             set_time_axis(time, n_time);
             free(hist); free(time);
         } else {
-            set_data(decay_data.data(), decay_data.size());
+            set_data(decay_histogram.data(), decay_histogram.size());
         }
 
         // set time axis
