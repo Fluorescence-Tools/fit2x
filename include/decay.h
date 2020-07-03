@@ -426,7 +426,7 @@ public:
         _amplitude_threshold = amplitude_threshold;
         _use_amplitude_threshold = use_amplitude_threshold;
         _correct_pile_up = correct_pile_up;
-        _period = (tttr_data->get_n_events() > 0) ?
+        _period = (tttr_data == nullptr) ?
                   excitation_period :
                   tttr_data->get_header().macro_time_resolution;
         _irf_background_counts = irf_background_counts;
@@ -435,9 +435,8 @@ public:
         this->x_min = x_min;
         this->x_max = x_max;
         set_lifetime_spectrum(lifetime_spectrum.data(), lifetime_spectrum.size());
-
         // set data
-        if (tttr_data->get_n_events() > 0) {
+        if (tttr_data != nullptr) {
             double *hist; int n_hist;
             double *time; int n_time;
             TTTR::compute_microtime_histogram(
@@ -452,7 +451,6 @@ public:
         } else {
             set_data(decay_histogram.data(), decay_histogram.size());
         }
-
         // set time axis
         if(time_axis.empty()) {
 #if VERBOSE
@@ -464,7 +462,6 @@ public:
         } else{
             set_time_axis(time_axis.data(), time_axis.size());
         }
-
         // set irf
         if (tttr_irf != nullptr) {
 #if VERBOSE

@@ -24,11 +24,12 @@
     (double* x, int n_x)
 }
 
-%attribute(Decay, float, irf_shift, get_irf_shift_channels, set_irf_shift_channels);
-%attribute(Decay, float, irf_background, get_irf_background_counts, set_irf_background_counts);
+%attribute(Decay, double, irf_shift, get_irf_shift_channels, set_irf_shift_channels);
+%attribute(Decay, double, irf_background, get_irf_background_counts, set_irf_background_counts);
 %attribute(Decay, int, convolution_stop, get_convolution_stop, set_convolution_stop);
+%attribute(Decay, int, convolution_start, get_convolution_start, set_convolution_start);
 %attribute(Decay, bool, correct_pile_up, get_correct_pile_up, set_correct_pile_up);
-%attribute(Decay, float, scatter_fraction, get_areal_scatter_fraction, set_areal_scatter_fraction);
+%attribute(Decay, double, scatter_fraction, get_areal_scatter_fraction, set_areal_scatter_fraction);
 
 
 

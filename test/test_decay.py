@@ -40,25 +40,25 @@ class Tests(unittest.TestCase):
         decay.set_total_area(2.2)
         self.assertEqual(decay.get_total_area(), 2.2)
 
-        decay.set_areal_scatter_fraction(0.2)
-        self.assertEqual(decay.get_areal_scatter_fraction(), 0.2)
-        decay.set_areal_scatter_fraction(0.8)
-        self.assertEqual(decay.get_areal_scatter_fraction(), 0.8)
+        decay.scatter_fraction = 0.2
+        self.assertEqual(decay.scatter_fraction, 0.2)
+        decay.scatter_fraction = 0.8
+        self.assertEqual(decay.scatter_fraction, 0.8)
 
-        decay.set_convolution_start(12)
-        self.assertEqual(decay.get_convolution_start(), 12)
-        decay.set_convolution_start(3)
-        self.assertEqual(decay.get_convolution_start(), 3)
+        decay.convolution_start = 12
+        self.assertEqual(decay.convolution_start, 12)
+        decay.convolution_start = 3
+        self.assertEqual(decay.convolution_start, 3)
 
-        decay.set_convolution_stop(12)
-        self.assertEqual(decay.get_convolution_stop(), 12)
-        decay.set_convolution_stop(3)
-        self.assertEqual(decay.get_convolution_stop(), 3)
+        decay.convolution_stop = 12
+        self.assertEqual(decay.convolution_stop, 12)
+        decay.convolution_stop = 3
+        self.assertEqual(decay.convolution_stop, 3)
 
-        decay.set_correct_pile_up(True)
-        self.assertEqual(decay.get_correct_pile_up(), True)
-        decay.set_correct_pile_up(False)
-        self.assertEqual(decay.get_correct_pile_up(), False)
+        decay.correct_pile_up = True
+        self.assertEqual(decay.correct_pile_up, True)
+        decay.correct_pile_up = False
+        self.assertEqual(decay.correct_pile_up, False)
 
         decay.set_irf([1, 2, 3])
         self.assertListEqual(list(decay.get_irf()), [1, 2, 3])
@@ -83,16 +83,16 @@ class Tests(unittest.TestCase):
         decay.set_data([1, 2, 3, 45])
         self.assertListEqual(list(decay.get_data()), [1, 2, 3, 45])
 
-        decay.set_irf_background_counts(892.1)
-        self.assertEqual(decay.get_irf_background_counts(), 892.1)
+        decay.irf_background = 892.1
+        self.assertEqual(decay.irf_background, 892.1)
 
     def test_constructor_1(self):
         decay = fit2x.Decay()
         # default values
         self.assertEqual(decay.is_valid(), False)
-        self.assertEqual(decay.get_convolution_start(), 0)
-        self.assertEqual(decay.get_convolution_stop(), -1)
-        self.assertEqual(decay.get_correct_pile_up(), False)
+        self.assertEqual(decay.convolution_start, 0)
+        self.assertEqual(decay.convolution_stop, -1)
+        self.assertEqual(decay.correct_pile_up, False)
         self.assertEqual(decay.get_use_amplitude_threshold(), False)
         self.assertEqual(decay.get_period(), 100.0)
 
@@ -130,9 +130,9 @@ class Tests(unittest.TestCase):
         )
         self.assertEqual(len(decay.get_irf()), len(data))
         self.assertEqual(len(decay.get_time_axis()), len(data))
-        self.assertEqual(decay.get_convolution_start(), 2)
-        self.assertEqual(decay.get_convolution_stop(), min(len(data), 12))
-        self.assertEqual(decay.get_correct_pile_up(), True)
+        self.assertEqual(decay.convolution_start, 2)
+        self.assertEqual(decay.convolution_stop, min(len(data), 12))
+        self.assertEqual(decay.correct_pile_up, True)
         self.assertEqual(decay.get_period(), 123.2)
 
     def test_convolve_lifetime_spectrum_variable_time_axis(self):
