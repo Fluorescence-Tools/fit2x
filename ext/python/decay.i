@@ -24,15 +24,24 @@
     (double* x, int n_x)
 }
 
-%attribute(Decay, double, background, get_constant_background, set_constant_background);
+%attribute(Decay, double, constant_offset, get_constant_offset, set_constant_offset);
 %attribute(Decay, double, irf_shift, get_irf_shift_channels, set_irf_shift_channels);
-%attribute(Decay, double, irf_background, get_irf_background_counts, set_irf_background_counts);
+%attribute(Decay, double, irf_background_counts, get_irf_background_counts, set_irf_background_counts);
 %attribute(Decay, int, convolution_stop, get_convolution_stop, set_convolution_stop);
 %attribute(Decay, int, convolution_start, get_convolution_start, set_convolution_start);
-%attribute(Decay, bool, correct_pile_up, get_correct_pile_up, set_correct_pile_up);
+%attribute(Decay, bool, add_pile_up, get_add_pile_up, set_add_pile_up);
+%attribute(Decay, bool, abs_lifetime_spectrum, get_abs_lifetime_spectrum, set_abs_lifetime_spectrum);
+%attribute(Decay, bool, use_amplitude_threshold, get_use_amplitude_threshold, set_use_amplitude_threshold);
+%attribute(Decay, double, amplitude_threshold, get_amplitude_threshold, set_amplitude_threshold);
 %attribute(Decay, double, scatter_fraction, get_areal_scatter_fraction, set_areal_scatter_fraction);
+%attribute(Decay, bool, scale_model_to_data, get_scale_model_to_data, set_scale_model_to_data);
+%attribute(Decay, bool, use_corrected_irf_as_scatter, get_use_corrected_irf_as_scatter, set_use_corrected_irf_as_scatter);
+%attribute(Decay, bool, is_valid, get_is_valid, set_is_valid);
 
-
+%attribute(Decay, double, acquisition_time, get_acquisition_time, set_acquisition_time);
+%attribute(Decay, double, instrument_dead_time, get_instrument_dead_time, set_instrument_dead_time);
+%attribute(Decay, double, number_of_photons, get_number_of_photons, set_number_of_photons);
+%attribute(Decay, double, excitation_period, get_excitation_period, set_excitation_period);
 
 %include "../include/decay.h"
 

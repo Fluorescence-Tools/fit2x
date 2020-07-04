@@ -20,15 +20,27 @@ class Decay {
 
 private:
 
+    /// If set to true scales the model to the data (default false)
+    bool _scale_model_to_data;
+
+    /// If set to true uses the background corrected IRF as scatter
+    bool _use_corrected_irf_as_scatter;
+
+    /// Acquisition time of the experiment in seconds
+    double _acquisition_time;
+
+    /// Dead time of the instrument in units of the lifetime (usually nanoseconds)
+    double _instrument_dead_time;
+
     /// Stores the weighted residuals
     std::vector<double> _weighted_residuals = std::vector<double>();
 
     /// Proportional to the area of the model. If negative, the area is scaled
     /// to the data.
-    double _total_area = -1;
+    double _number_of_photons = -1;
 
     /// The constant offset in the model
-    double _constant_background = 0.0;
+    double _constant_offset = 0.0;
 
     /// The fraction of the irf (scattered light) in the model decay
     double _areal_scatter_fraction = 0.0;
@@ -41,7 +53,7 @@ private:
     double _irf_background_counts = 0.0;
 
     /// The repetiotion period (usually in nano seconds)
-    double _period = 100.;
+    double _excitation_period = 100.;
 
     /// The instrument response function
     std::vector<double> _irf = std::vector<double>();
@@ -68,7 +80,7 @@ private:
     bool _is_valid = false;
 
     /// If set to true will add pile up to the model function
-    bool _correct_pile_up = false;
+    bool _add_pile_up = false;
 
     /// Beginning index of the comvolution
     int _convolution_start = 0;
@@ -82,6 +94,8 @@ private:
     /// If set to true discriminates low populated lifetimes in convolution.
     bool _use_amplitude_threshold = false;
 
+    /// If set to true take abs values of lifetime spectrum
+    bool _abs_lifetime_spectrum = true;
 
 public:
 
@@ -89,8 +103,14 @@ public:
     int x_min = -1;
     int x_max = -1;
 
-    /// If set to true take abs values of lifetime spectrum
-    bool abs_lifetime_spectrum = true;
+    void set_abs_lifetime_spectrum(bool v){
+        set_is_valid(false);
+        _abs_lifetime_spectrum = v;
+    }
+
+    bool get_abs_lifetime_spectrum() const{
+        return _abs_lifetime_spectrum;
+    }
 
     /*!
      * Computes a fluorescence decay for a lifetime spectrum.
@@ -129,21 +149,21 @@ public:
      * (amplitude1, lifetime1, amplitude2, lifetime2, ...)
      * @param n_lifetime_spectrum[in] The number of points in the fluorescence lifetime
      * spectrum
-     * @param start[in] The start of the convolution
-     * @param stop[in] The stop of the convoution. The decay will be computed in the
+     * @param convolution_start[in] The start of the convolution
+     * @param convolution_stop[in] The stop of the convoution. The decay will be computed in the
      * range [start, stop]
      * @param irf_background_counts[in] The background counts of the instrument
      * response function. This number will be subtracted from the IRF before
      * convolution.
      * @param irf_shift_channels[in] The number of micro time channels the IRF will be
      * shifted before the fluorescence lifetimes are convoluted with the IRF.
-     * @param scatter_areal_fraction[in] The fraction (integrated fraction), i.e.,
+     * @param scatter_fraction[in] The fraction (integrated fraction), i.e.,
      * the area the scattered light will have in the computed decay.
      * @param excitation_period[in] The excitation period (in units of the fluorescence
      * lifetime, usually nanoseconds) that was used to excite the sample
-     * @param constant_background A constant offset that is added to the fluorescence
+     * @param constant_offset A constant offset that is added to the fluorescence
      * decay.
-     * @param total_area[in] the area to which the model fluorescence decay is scaled
+     * @param number_of_photons[in] the area to which the model fluorescence decay is scaled
      * to. If this value is negative (default value is -1) the model fluorescence
      * decay is scaled to the data in the range defined by the parameters start,
      * stop
@@ -153,17 +173,17 @@ public:
      * considered.
      * @param amplitude_threshold The threshold that is used to discriminate
      * fluorescence lifetimes that are smaller.
-     * @param pile_up if set to true (default is false) pile up will be added
+     * @param add_pile_up if set to true (default is false) pile up will be added
      * to the model function.
      * @param instrument_dead_time the dead time of the instrument (used for
      * pile up (in units of the lifetime, usually nano seconds)
      * @param acquisition_time the total time the acquisition of the decay in
      * seconds.
-     * @param add_corrected_irf if set to true (default is false) the background
+     * @param add_corrected_irf_as_scatter if set to true (default is false) the background
      * corrected irf will be added as scatter to the decay. If this is false the
      * irf prior to a background and shift corrected irf is added as a scatter
      * fraction.
-     * @param scale_model_to_area if set to true (default is true) the model is
+     * @param scale_model_to_data if set to true (default is true) the model is
      * either scaled to the area s provided by total_area (if total_area is larger
      * then zero) or to the total number of experimental counts.
      */
@@ -174,32 +194,34 @@ public:
             double *time_axis, int n_time_axis,
             double *instrument_response_function, int n_instrument_response_function,
             double *lifetime_spectrum, int n_lifetime_spectrum,
-            int start = 0, int stop = -1,
+            int convolution_start = 0, int convolution_stop = -1,
             double irf_background_counts = 0.0,
             double irf_shift_channels = 0.0,
-            double scatter_areal_fraction = 0.0,
+            double scatter_fraction = 0.0,
             double excitation_period = 1000.0,
-            double constant_background = 0.0,
-            double total_area = -1,
+            double constant_offset = 0.0,
+            double number_of_photons=1,
             bool use_amplitude_threshold = false,
             double amplitude_threshold = 1e10,
-            bool pile_up = false,
+            bool add_pile_up = false,
             double instrument_dead_time=120.0,
             double acquisition_time=100000.0,
-            bool add_corrected_irf = false,
-            bool scale_model_to_area = true
+            bool add_corrected_irf_as_scatter = false,
+            bool scale_model_to_data = false
     );
-
-protected:
-
-    bool is_valid() const {
-        return _is_valid;
-    }
 
 public:
 
+    bool get_is_valid() const {
+        return _is_valid;
+    }
+
+    void set_is_valid(bool v){
+        _is_valid = v;
+    }
+
     void set_data(double *input, int n_input) {
-        _is_valid = false;
+        set_is_valid(false);
         _data.assign(input, input + n_input);
     }
 
@@ -209,7 +231,7 @@ public:
     }
 
     void set_use_amplitude_threshold(bool v) {
-        _is_valid = false;
+        set_is_valid(false);
         _use_amplitude_threshold = v;
     }
 
@@ -218,7 +240,7 @@ public:
     }
 
     void set_amplitude_threshold(double v) {
-        _is_valid = false;
+        set_is_valid(false);
         _amplitude_threshold = v;
     }
 
@@ -226,30 +248,40 @@ public:
         return _amplitude_threshold;
     }
 
-    void set_total_area(double v) {
-        _is_valid = false;
-        _total_area = v;
+    void set_number_of_photons(double v) {
+        set_is_valid(false);
+        _number_of_photons = v;
     }
 
-    double get_total_area() const {
-        return _total_area;
+    double get_number_of_photons(){
+        if(_scale_model_to_data){
+            double re = 0.0;
+            double* model; int n_model;
+            get_model(&model, &n_model);
+            for(int i=get_convolution_start();
+            i<get_convolution_stop();i++){
+                re += model[i];
+            }
+            return re;
+        }
+        return _number_of_photons;
     }
 
-    void set_period(double v) {
-        _is_valid = false;
-        _period = v;
+    void set_excitation_period(double v) {
+        set_is_valid(false);
+        _excitation_period = v;
+    }
+
+    double get_excitation_period() const {
+        return _excitation_period;
     }
 
     void set_score_range(int vmin, int vmax){
         x_min = vmin; x_max = vmax;
     }
 
-    double get_period() const {
-        return _period;
-    }
-
     void set_irf_shift_channels(double v) {
-        _is_valid = false;
+        set_is_valid(false);
         _irf_shift_channels = std::fmod(v, (double)_irf.size());
     }
 
@@ -258,7 +290,7 @@ public:
     }
 
     void set_areal_scatter_fraction(double v) {
-        _is_valid = false;
+        set_is_valid(false);
         _areal_scatter_fraction = std::min(1., std::max(0.0, v));
     }
 
@@ -266,17 +298,17 @@ public:
         return _areal_scatter_fraction;
     }
 
-    void set_constant_background(double v) {
-        _is_valid = false;
-        _constant_background = v;
+    void set_constant_offset(double v) {
+        set_is_valid(false);
+        _constant_offset = v;
     }
 
-    double get_constant_background() const {
-        return _constant_background;
+    double get_constant_offset() const {
+        return _constant_offset;
     }
 
     void set_convolution_start(int v) {
-        _is_valid = false;
+        set_is_valid(false);
         _convolution_start = v;
     }
 
@@ -285,7 +317,7 @@ public:
     }
 
     void set_convolution_stop(int v) {
-        _is_valid = false;
+        set_is_valid(false);
         _convolution_stop = v;
     }
 
@@ -293,17 +325,17 @@ public:
         return _convolution_stop;
     }
 
-    void set_correct_pile_up(bool v) {
-        _is_valid = false;
-        _correct_pile_up = v;
+    void set_add_pile_up(bool v) {
+        set_is_valid(false);
+        _add_pile_up = v;
     }
 
-    bool get_correct_pile_up() const {
-        return _correct_pile_up;
+    bool get_add_pile_up() const {
+        return _add_pile_up;
     }
 
     void set_irf(double *input, int n_input) {
-        _is_valid = false;
+        set_is_valid(false);
         _irf.clear();
         _irf.assign(input, input + n_input);
     }
@@ -313,7 +345,7 @@ public:
         *n_output = _irf.size();
     }
 
-    void get_model(double **output_view, int *n_output) {
+    void get_model(double **output_view, int *n_output){
         if (!_is_valid) {
             evaluate();
         }
@@ -322,7 +354,7 @@ public:
     }
 
     void set_lifetime_spectrum(double *input, int n_input = -1) {
-        _is_valid = false;
+        set_is_valid(false);
         if(n_input < 0) n_input = _lifetime_spectrum.size();
         _lifetime_spectrum.resize(n_input);
         for (int i = 0; i < n_input; i++) {
@@ -336,7 +368,7 @@ public:
     }
 
     void set_weights(double *input, int n_input) {
-        _is_valid = false;
+        set_is_valid(false);
         _weights.clear();
         _weights.assign(input, input + n_input);
     }
@@ -347,7 +379,7 @@ public:
     }
 
     void set_time_axis(double *input, int n_input) {
-        _is_valid = false;
+        set_is_valid(false);
         _time_axis.assign(input, input + n_input);
     }
 
@@ -360,11 +392,51 @@ public:
             double irf_background_counts
     ) {
         _irf_background_counts = irf_background_counts;
-        _is_valid = false;
+        set_is_valid(false);
     }
 
     double get_irf_background_counts() const {
         return _irf_background_counts;
+    }
+
+    void set_instrument_dead_time(
+            double instrument_dead_time
+    ) {
+        _instrument_dead_time = instrument_dead_time;
+        set_is_valid(false);
+    }
+
+    double get_instrument_dead_time() const {
+        return _instrument_dead_time;
+    }
+
+    void set_acquisition_time(
+            double acquisition_time
+    ) {
+        _acquisition_time = acquisition_time;
+        set_is_valid(false);
+    }
+
+    double get_acquisition_time() const {
+        return _acquisition_time;
+    }
+
+    void set_use_corrected_irf_as_scatter(bool v) {
+        set_is_valid(false);
+        _use_corrected_irf_as_scatter = v;
+    }
+
+    bool get_use_corrected_irf_as_scatter() const {
+        return _use_corrected_irf_as_scatter;
+    }
+
+    void set_scale_model_to_data(bool v) {
+        set_is_valid(false);
+        _scale_model_to_data = v;
+    }
+
+    bool get_scale_model_to_data() const {
+        return _scale_model_to_data;
     }
 
     /*!
@@ -382,15 +454,15 @@ public:
      * (nullptr / None) the weights are computed assuming Poisson noise.
      * @param instrument_response_function The instrument response function (IRF)
      * that is used for convolution. If no IRF is provided
-     * @param start The start index in the IRF used for convolution. Points in the
+     * @param convolution_start The start index in the IRF used for convolution. Points in the
      * IRF before the start index are not used for convolution.
-     * @param stop The stop index in the IRF used for convolution. Points beyond the
+     * @param convolution_stop The stop index in the IRF used for convolution. Points beyond the
      * stop index are not convolved.
      * @param use_amplitude_threshold If this is set to true (default value is true)
      * the values that are smaller then a specified threshold are omitted
      * @param amplitude_threshold The amplitude threshold that is used if the
      * parameter use_amplitude_threshold is set to true (the default value is 1e10)
-     * @param correct_pile_up If this is set to true (the default value is false)
+     * @param add_pile_up If this is set to true (the default value is false)
      * the convolved model function is 'piled up' to match pile up artifacts in the
      * data.
      * @param excitation_period the repetition period, .i.e, the time between subsequent
@@ -404,30 +476,43 @@ public:
             std::vector<double> time_axis = std::vector<double>(),
             std::vector<double> weights = std::vector<double>(),
             std::vector<double> instrument_response_function = std::vector<double>(),
-            int start = 0, int stop = -1,
+            int convolution_start = 0,
+            int convolution_stop = -1,
             bool use_amplitude_threshold = false,
             double amplitude_threshold = 1e10,
-            bool correct_pile_up = false,
+            bool add_pile_up = false,
             double excitation_period = 100.0,
             double dt = 1.0,
             double irf_background_counts = 0.0,
-            double areal_scatter_fraction = 0.0,
+            double scatter_fraction = 0.0,
             double constant_background = 0.0,
             int x_min = -1,
             int x_max = -1,
-            std::vector<double> lifetime_spectrum = std::vector<double>()
+            std::vector<double> lifetime_spectrum = std::vector<double>(),
+            double instrument_dead_time = 100.0,
+            bool scale_model_to_data = false,
+            bool use_corrected_irf_as_scatter = false,
+            double acquisition_time = 1e6,
+            double number_of_photons=1,
+            double irf_shift_channels=0.0
     ) {
-        _convolution_start = std::max(0, start);
-        _convolution_stop = std::min(stop, (int) decay_histogram.size());
+        _irf_shift_channels = irf_shift_channels;
+        _number_of_photons = number_of_photons;
+        _scale_model_to_data = scale_model_to_data;
+        _use_corrected_irf_as_scatter = use_corrected_irf_as_scatter;
+        _acquisition_time = acquisition_time;
+        _instrument_dead_time = instrument_dead_time;
+        _convolution_start = std::max(0, convolution_start);
+        _convolution_stop = std::min(convolution_stop, (int) decay_histogram.size());
         _amplitude_threshold = amplitude_threshold;
         _use_amplitude_threshold = use_amplitude_threshold;
-        _correct_pile_up = correct_pile_up;
-        _period = (tttr_data == nullptr) ?
-                  excitation_period :
-                  tttr_data->get_header().macro_time_resolution;
+        _add_pile_up = add_pile_up;
+        _excitation_period = (tttr_data == nullptr) ?
+                             excitation_period :
+                             tttr_data->get_header().macro_time_resolution;
         _irf_background_counts = irf_background_counts;
-        _areal_scatter_fraction = areal_scatter_fraction;
-        _constant_background = constant_background;
+        _areal_scatter_fraction = scatter_fraction;
+        _constant_offset = constant_background;
         this->x_min = x_min;
         this->x_max = x_max;
         set_lifetime_spectrum(lifetime_spectrum.data(), lifetime_spectrum.size());
@@ -490,6 +575,9 @@ public:
             }
         }
 
+#if VERBOSE
+        std::clog << "-- Setting weights..." << std::endl;
+#endif
         // set weights
         if (!weights.empty()) {
             _weights = weights;
@@ -501,8 +589,10 @@ public:
             for (int i = 0; i < _data.size(); i++)
                 _weights[i] = (_data[i] <= 0.0) ? 0.0 : 1. / std::sqrt(_data[i]);
         }
-        // set squared weights
-        for(int i=0; i<weights.size(); i++){
+#if VERBOSE
+        std::clog << "-- Setting squared weights..." << std::endl;
+#endif
+        for(int i=0; i<_weights.size(); i++){
             _sq_weights.emplace_back(_weights[i] * _weights[i]);
         }
 
@@ -593,29 +683,45 @@ public:
                     lifetime_spectrum.size()
             );
         }
-        std::vector<double> lt = lifetime_spectrum;
-        if(abs_lifetime_spectrum) {
-            for(auto &l: lt){
-                l = std::abs(l);
+        if (!get_is_valid()) {
+            std::vector<double> lt;
+            lt = _lifetime_spectrum;
+            if(_abs_lifetime_spectrum) {
+#if VERBOSE
+                std::cout << "-- Taking abs(lifetime spectrum)" << std::endl;
+#endif
+                for(auto &l: lt) l = std::abs(l);
             }
-        }
-        if (!_is_valid) {
+#if VERBOSE
+            std::cout << "-- lifetime spectrum: ";
+            for (auto i: lt) std::cout << i << ' ';
+            std::cout << std::endl;
+#endif
             compute_decay(
-                    _model_function.data(),_model_function.size(),
-                    _data.data(),_data.size(),
-                    _sq_weights.data(),_sq_weights.size(),
-                    _time_axis.data(),_time_axis.size(),
-                    _irf.data(),_irf.size(),
-                    lt.data(),lt.size(),
+                    _model_function.data(),
+                    _model_function.size(),
+                    _data.data(),
+                    _data.size(),
+                    _sq_weights.data(),
+                    _sq_weights.size(),
+                    _time_axis.data(),
+                    _time_axis.size(),
+                    _irf.data(),
+                    _irf.size(),
+                    lt.data(), lt.size(),
                     _convolution_start, _convolution_stop,
                     _irf_background_counts, _irf_shift_channels,
                     _areal_scatter_fraction,
-                    _period,
-                    _constant_background,
-                    _total_area,
+                    _excitation_period,
+                    _constant_offset,
+                    _number_of_photons,
                     _use_amplitude_threshold,
                     _amplitude_threshold,
-                    _correct_pile_up
+                    _add_pile_up,
+                    _instrument_dead_time,
+                    _acquisition_time,
+                    _use_corrected_irf_as_scatter,
+                    _scale_model_to_data
             );
             if ((_model_function.size() == _data.size()) &&
                 (_weights.size() == _data.size())) {
@@ -660,7 +766,7 @@ public:
                 x_max = std::min(this->x_max, (int)_data.size());
             }
         }
-        if(!is_valid()) {
+        if(!get_is_valid()) {
             evaluate();
 #if VERBOSE
             std::cout << "-- evaluate" << std::endl;
@@ -686,7 +792,7 @@ public:
      * @param irf_background
      * @param irf_shift_channels
      * @param areal_scatter_fraction
-     * @param constant_background
+     * @param constant_offset
      * @param lifetime_spectrum
      * @param n_lifetime_spectrum
      */
@@ -694,12 +800,12 @@ public:
         double irf_background = 0.0,
         double irf_shift_channels = 0.0,
         double areal_scatter_fraction = 0.0,
-        double constant_background = 0.0,
+        double constant_offset = 0.0,
         double *lifetime_spectrum = nullptr, int n_lifetime_spectrum = -1
     ){
         set_irf_background_counts(irf_background);
         set_irf_shift_channels(irf_shift_channels);
-        set_constant_background(constant_background);
+        set_constant_offset(constant_offset);
         set_lifetime_spectrum(lifetime_spectrum, n_lifetime_spectrum);
         set_areal_scatter_fraction(areal_scatter_fraction);
     }

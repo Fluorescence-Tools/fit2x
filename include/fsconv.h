@@ -220,13 +220,29 @@ void shift_lamp(double *lampsh, double *lamp, double ts, int n_points, double ou
  * @param pile_up_model[in] The model used to compute the pile up distortion of
  * the data (currently only Coates)
  */
-void add_pile_up(
+void add_pile_up_to_model(
         double* model, int n_model,
         double* data, int n_data,
         double repetition_rate,
         double dead_time,
         double measurement_time,
         std::string pile_up_model="coates"
+);
+
+
+/*!
+ * Threshold the amplitudes
+ *
+ * Amplitudes with absolute values smaller than the specified threshold are
+ * set to zero.
+ *
+ * @param lifetime_spectrum
+ * @param number_of_exponentials
+ * @param amplitude_threshold
+ */
+void discriminate_small_amplitudes(
+        double* lifetime_spectrum, int number_of_exponentials,
+        double amplitude_threshold
 );
 
 

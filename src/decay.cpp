@@ -81,24 +81,25 @@ void Decay::compute_decay(
         double* time_axis, int n_time_axis,
         double* instrument_response_function, int n_instrument_response_function,
         double* lifetime_spectrum, int n_lifetime_spectrum,
-        int start, int stop,
+        int convolution_start, int convolution_stop,
         double irf_background_counts,
         double irf_shift_channels,
-        double scatter_areal_fraction,
+        double scatter_fraction,
         double excitation_period,
         double constant_background,
-        double total_area,
+        double number_of_photons,
         bool use_amplitude_threshold,
         double amplitude_threshold,
-        bool pile_up,
+        bool add_pile_up,
         double instrument_dead_time,
         double acquisition_time,
-        bool add_corrected_irf,
-        bool scale_model_to_area
+        bool use_corrected_irf_as_scatter,
+        bool scale_model_to_data
 ){
-    stop = stop > 0 ?
-                   std::min(n_time_axis, std::min(n_instrument_response_function, std::min(n_model_function, stop))) :
-                   std::min(n_time_axis, std::min(n_instrument_response_function, n_model_function));
+    convolution_stop = convolution_stop > 0 ?
+                       std::min({n_time_axis, n_instrument_response_function, n_model_function, convolution_stop}) :
+                       std::min({n_time_axis, n_instrument_response_function, n_model_function});
+    convolution_stop -= 1;
 #if VERBOSE
     std::clog << "compute_decay..." << std::endl;
     std::clog << "-- n_model_function: " << n_model_function << std::endl;
@@ -107,18 +108,19 @@ void Decay::compute_decay(
     std::clog << "-- n_time_axis: " << n_time_axis << std::endl;
     std::clog << "-- n_instrument_response_function: " << n_instrument_response_function << std::endl;
     std::clog << "-- n_lifetime_spectrum: " << n_lifetime_spectrum << std::endl;
-    std::clog << "-- start: " << start << std::endl;
-    std::clog << "-- stop: " << stop << std::endl;
+    std::clog << "-- convolution_start: " << convolution_start << std::endl;
+    std::clog << "-- convolution_stop: " << convolution_stop << std::endl;
+    std::clog << "-- scale_model_to_data: " << scale_model_to_data << std::endl;
     std::clog << "-- irf_background_counts: " << irf_background_counts << std::endl;
     std::clog << "-- irf_shift_channels: " << irf_shift_channels << std::endl;
-    std::clog << "-- irf_areal_fraction: " << scatter_areal_fraction << std::endl;
+    std::clog << "-- irf_areal_fraction: " << scatter_fraction << std::endl;
     std::clog << "-- period: " << excitation_period << std::endl;
     std::clog << "-- constant_background: " << constant_background << std::endl;
-    std::clog << "-- total_area: " << total_area << std::endl;
+    std::clog << "-- total_area: " << number_of_photons << std::endl;
     std::clog << "-- use_amplitude_threshold: " << use_amplitude_threshold << std::endl;
     std::clog << "-- amplitude_threshold: " << amplitude_threshold << std::endl;
-    std::clog << "-- correct_pile_up: " << pile_up << std::endl;
-    std::clog << "-- add_corrected_irf: " << add_corrected_irf << std::endl;
+    std::clog << "-- correct_pile_up: " << add_pile_up << std::endl;
+    std::clog << "-- add_corrected_irf: " << use_corrected_irf_as_scatter << std::endl;
 #endif
     // correct irf for background counts
     auto irf_bg_corrected = std::vector<double>(n_instrument_response_function);
@@ -134,14 +136,13 @@ void Decay::compute_decay(
         &irf_bg_shift_corrected, &n_irf_bg_shift_corrected,
         irf_shift_channels
     );
-
     // convolve lifetime spectrum with irf
     fconv_per_cs_time_axis(
             model_function, n_model_function,
             time_axis, n_time_axis,
             irf_bg_shift_corrected, n_irf_bg_shift_corrected,
             lifetime_spectrum, n_lifetime_spectrum,
-            start, stop,
+            convolution_start, convolution_stop,
             use_amplitude_threshold, amplitude_threshold,
             excitation_period
     );
@@ -149,55 +150,65 @@ void Decay::compute_decay(
 
     // add scatter fraction (irf)
     double* decay_irf; int n_decay_irf;
-    if(add_corrected_irf){
+    if(use_corrected_irf_as_scatter){
         add_curve(
                 &decay_irf, &n_decay_irf,
                 model_function, n_model_function,
                 irf_bg_shift_corrected, n_irf_bg_shift_corrected,
-                scatter_areal_fraction,
-                start, stop
+                scatter_fraction,
+                convolution_start, convolution_stop
         );
     } else{
         add_curve(
                 &decay_irf, &n_decay_irf,
                 model_function, n_model_function,
                 instrument_response_function, n_instrument_response_function,
-                scatter_areal_fraction,
-                start, stop
+                scatter_fraction,
+                convolution_start, convolution_stop
         );
     }
 
-    if(pile_up){
-        add_pile_up(
-            decay_irf, n_decay_irf,
-            data, n_data,
-            excitation_period, instrument_dead_time,
-            acquisition_time
+    if(add_pile_up){
+        double rep_rate = 1. / excitation_period * 1000.;
+        add_pile_up_to_model(
+                decay_irf, n_decay_irf,
+                data, n_data,
+                rep_rate, instrument_dead_time,
+                acquisition_time
         );
     }
 
     // scale model function
-    double scale = 1.0;
-    if(scale_model_to_area){
-        if(total_area < 0){
-            // scale the area to the data in the range start, stop
-            rescale_w_bg(
-                    decay_irf,
-                    data, squared_weights,
-                    constant_background,
-                    &scale, start, stop
-            );
-        } else{
-            // normalize model to total_area
-            double sum = std::accumulate( decay_irf + start, decay_irf + stop, 0.0);
-            scale = total_area / sum;
-        }
+    double scale = 0.0;
+    if(scale_model_to_data || (number_of_photons < 0)){
+        // scale the area to the data in the range start, stop
+#if VERBOSE
+        std::clog << "-- scaling model to data..." << std::endl;
+#endif
+        rescale_w_bg(
+                decay_irf,
+                data, squared_weights,
+                constant_background,
+                &scale, convolution_start, convolution_stop
+        );
+    } else{
+#if VERBOSE
+        std::clog << "-- scaling decay to " << number_of_photons << " photons." << std::endl;
+#endif
+        // normalize model to total_area
+        double number_of_photons_model = std::accumulate(
+                decay_irf + convolution_start,
+                decay_irf + convolution_stop,
+                0.0
+        );
+        scale = number_of_photons / number_of_photons_model;
+        for(int i=convolution_start; i < convolution_stop; i++) decay_irf[i] *= scale;
     }
 #if VERBOSE
     std::clog << "Adding Background" << std::endl;
     std::clog << "-- add constant background: " << constant_background << std::endl;
 #endif
     for(int i=0; i<n_model_function;i++)
-        model_function[i] = decay_irf[i] * scale + constant_background;
+        model_function[i] = decay_irf[i] + constant_background;
 }
 

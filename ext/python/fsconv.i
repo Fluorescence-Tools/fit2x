@@ -30,7 +30,7 @@ void fconv_per_cs_time_axis(
         double period = 100.0
 );
 
-void add_pile_up(
+void add_pile_up_to_model(
         double* model, int n_model,
         double* data, int n_data,
         double repetition_rate,

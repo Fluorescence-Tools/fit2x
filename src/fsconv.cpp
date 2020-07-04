@@ -51,9 +51,12 @@ void rescale_w(double *fit, double *decay, double *w_sq, double *scale, int star
 /* rescaling -- new version + background. scale = sum(fit*decay/w^2)/sum(fit^2/w^2) */
 void rescale_w_bg(double *fit, double *decay, double *w_sq, double bg, double *scale, int start, int stop)
 {
+#if VERBOSE
+    std::clog << "RESCALE_W_BG" << std::endl;
+    std::clog << "-- initial scale: " << *scale << std::endl;
+#endif
     int i;
     double sumnom=0., sumdenom=0.;
-
     /* scaling */
     if (*scale==0.){
       for (i=start; i<=stop; i++){
@@ -64,9 +67,11 @@ void rescale_w_bg(double *fit, double *decay, double *w_sq, double bg, double *s
       }
       if (sumdenom!=0.) *scale = sumnom/sumdenom;
      }
+#if VERBOSE
+    std::clog << "-- final scale: " << *scale << std::endl;
+#endif
     for (i=start; i<=stop; i++)
       fit[i] *= *scale;
-
 }
 
 /* fast convolution */
@@ -217,7 +222,7 @@ void shift_lamp(double *lampsh, double *lamp, double ts, int n_points, double ou
 }
 
 
-void add_pile_up(
+void add_pile_up_to_model(
         double* model, int n_model,
         double* data, int n_data,
         double repetition_rate,
@@ -234,7 +239,9 @@ void add_pile_up(
     std::clog << "-- n_model: " << n_model << std::endl;
 #endif
     if(pile_up_model == "coates"){
+#if VERBOSE
         std::clog << "-- pile_up_model: " << pile_up_model << std::endl;
+#endif
         repetition_rate *= 1e6;
         dead_time *= 1e-9;
         std::vector<double> cum_sum(n_data);
@@ -266,6 +273,36 @@ void add_pile_up(
     }
 }
 
+
+void discriminate_small_amplitudes(
+        double* lifetime_spectrum, int number_of_exponentials,
+        double amplitude_threshold
+        ){
+#if VERBOSE
+    std::clog << "APPLY_AMPLITUDE_THRESHOLD" << std::endl;
+    std::clog << "-- amplitude_threshold spectrum: " << amplitude_threshold << std::endl;
+    std::clog << "-- lifetime spectrum before: ";
+    for (int i=0; i < number_of_exponentials * 2; i++){
+        std::clog << lifetime_spectrum[i] << ' ';
+    }
+    std::clog << std::endl;
+#endif
+    for(int ne = 0; ne<number_of_exponentials; ne++){
+        double amplitude = lifetime_spectrum[2 * ne];
+        if(std::abs(amplitude) < amplitude_threshold){
+            lifetime_spectrum[2 * ne] = 0.0;
+        } else{
+            lifetime_spectrum[2 * ne] = amplitude;
+        }
+    }
+#if VERBOSE
+    std::clog << "-- lifetime spectrum after: ";
+    for (int i=0; i < number_of_exponentials * 2; i++){
+        std::clog << lifetime_spectrum[i] << ' ';
+    }
+    std::clog << std::endl;
+#endif
+}
 
 
 /* fast convolution, high repetition rate, with time axis */
@@ -300,9 +337,10 @@ void fconv_per_cs_time_axis(
     std::clog << "-- period: " << period << std::endl;
 #endif
     if(use_amplitude_threshold){
-        for(int ne = 0; ne<number_of_exponentials; ne++){
-            lifetime_spectrum[2 * ne] *= (std::abs(lifetime_spectrum[2 * ne]) < amplitude_threshold);
-        }
+        discriminate_small_amplitudes(
+                lifetime_spectrum, number_of_exponentials,
+                amplitude_threshold
+        );
     }
     for(int ne=0; ne < number_of_exponentials; ne++){
         double x_curr = lifetime_spectrum[2 * ne];
@@ -312,18 +350,15 @@ void fconv_per_cs_time_axis(
         double fit_curr = 0.;
         double exp_curr = std::exp(-dt/lt_curr);
         model[0] += dt_2 * instrument_response_function[0] * (exp_curr + 1.) * x_curr;
-
         for(int i=convolution_start; i<convolution_stop; i++){
             fit_curr = (fit_curr + dt_2 * instrument_response_function[i - 1]) *
                        exp_curr + dt_2 * instrument_response_function[i];
             model[i] += fit_curr * x_curr;
         }
-
         for(int i=convolution_stop; i<stop1; i++){
             fit_curr *= exp_curr;
             model[i] += fit_curr * x_curr;
         }
-
         fit_curr *= exp(-(period_n - stop1) * dt / lt_curr);
         for(int i=0; i < convolution_stop; i++) {
             fit_curr *= exp_curr;
@@ -359,10 +394,7 @@ void fconv_cs_time_axis(
 #endif
     for(int i=0; i<n_output; i++) output[i] = 0.0;
     if(use_amplitude_threshold){
-        for(int ne = 0; ne<number_of_exponentials; ne++){
-            double a = std::abs(lifetime_spectrum[2 * ne]);
-            lifetime_spectrum[2 * ne] *= (a < amplitude_threshold);
-        }
+        discriminate_small_amplitudes(lifetime_spectrum, number_of_exponentials, amplitude_threshold);
     }
     for(int ne=0; ne<number_of_exponentials; ne++){
         double a = lifetime_spectrum[2 * ne];
