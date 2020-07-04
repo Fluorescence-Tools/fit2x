@@ -2,7 +2,6 @@ from __future__ import division
 
 import unittest
 import numpy as np
-import scipy.stats
 
 import fit2x
 from compute_irf import model_irf
@@ -21,8 +20,6 @@ bg = np.zeros_like(irf) + 0.2
 class Tests(unittest.TestCase):
 
     def test_fit25(self):
-        import fit2x
-        import scipy.stats
         n_channels = 32
         irf_position_p = 2.0
         irf_position_s = 18.0
