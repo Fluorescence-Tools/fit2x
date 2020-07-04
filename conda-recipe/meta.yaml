@@ -21,7 +21,7 @@ requirements:
     - python {{ python }}
     - {{ pin_compatible('numpy') }}
     - cmake
-    - swig 3.0.12.*
+    - swig 4.0.*
     - tttrlib
   run:
     - python {{ python }}
