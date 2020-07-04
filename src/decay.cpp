@@ -74,6 +74,42 @@ void Decay::add_curve(
 }
 
 
+void Decay::scale_model(
+        bool scale_model_to_data,
+        double number_of_photons,
+        int convolution_start, int convolution_stop,
+        double constant_background,
+        double* model,
+        double* data,
+        double* squared_data_weights
+        ){
+    double scale = 0.0;
+    if(scale_model_to_data || (number_of_photons < 0)){
+        // scale the area to the data in the range start, stop
+#if VERBOSE
+        std::clog << "-- scaling model to data..." << std::endl;
+#endif
+        rescale_w_bg(
+                model,
+                data, squared_data_weights,
+                constant_background,
+                &scale, convolution_start, convolution_stop
+        );
+    } else{
+#if VERBOSE
+        std::clog << "-- scaling decay to " << number_of_photons << " photons." << std::endl;
+#endif
+        // normalize model to total_area
+        double number_of_photons_model = std::accumulate(
+                model + convolution_start,
+                model + convolution_stop,
+                0.0
+        );
+        scale = number_of_photons / number_of_photons_model;
+        for(int i=convolution_start; i < convolution_stop; i++) model[i] *= scale;
+    }
+}
+
 void Decay::compute_decay(
         double* model_function, int n_model_function,
         double* data, int n_data,
@@ -116,11 +152,11 @@ void Decay::compute_decay(
     std::clog << "-- irf_areal_fraction: " << scatter_fraction << std::endl;
     std::clog << "-- period: " << excitation_period << std::endl;
     std::clog << "-- constant_background: " << constant_background << std::endl;
-    std::clog << "-- total_area: " << number_of_photons << std::endl;
+    std::clog << "-- number_of_photons: " << number_of_photons << std::endl;
     std::clog << "-- use_amplitude_threshold: " << use_amplitude_threshold << std::endl;
     std::clog << "-- amplitude_threshold: " << amplitude_threshold << std::endl;
-    std::clog << "-- correct_pile_up: " << add_pile_up << std::endl;
-    std::clog << "-- add_corrected_irf: " << use_corrected_irf_as_scatter << std::endl;
+    std::clog << "-- add_pile_up: " << add_pile_up << std::endl;
+    std::clog << "-- use_corrected_irf_as_scatter: " << use_corrected_irf_as_scatter << std::endl;
 #endif
     // correct irf for background counts
     auto irf_bg_corrected = std::vector<double>(n_instrument_response_function);
@@ -149,10 +185,10 @@ void Decay::compute_decay(
     free(irf_bg_shift_corrected);
 
     // add scatter fraction (irf)
-    double* decay_irf; int n_decay_irf;
+    double* model_with_scatter; int n_decay_irf;
     if(use_corrected_irf_as_scatter){
         add_curve(
-                &decay_irf, &n_decay_irf,
+                &model_with_scatter, &n_decay_irf,
                 model_function, n_model_function,
                 irf_bg_shift_corrected, n_irf_bg_shift_corrected,
                 scatter_fraction,
@@ -160,7 +196,7 @@ void Decay::compute_decay(
         );
     } else{
         add_curve(
-                &decay_irf, &n_decay_irf,
+                &model_with_scatter, &n_decay_irf,
                 model_function, n_model_function,
                 instrument_response_function, n_instrument_response_function,
                 scatter_fraction,
@@ -171,7 +207,7 @@ void Decay::compute_decay(
     if(add_pile_up){
         double rep_rate = 1. / excitation_period * 1000.;
         add_pile_up_to_model(
-                decay_irf, n_decay_irf,
+                model_with_scatter, n_decay_irf,
                 data, n_data,
                 rep_rate, instrument_dead_time,
                 acquisition_time
@@ -179,36 +215,18 @@ void Decay::compute_decay(
     }
 
     // scale model function
-    double scale = 0.0;
-    if(scale_model_to_data || (number_of_photons < 0)){
-        // scale the area to the data in the range start, stop
-#if VERBOSE
-        std::clog << "-- scaling model to data..." << std::endl;
-#endif
-        rescale_w_bg(
-                decay_irf,
-                data, squared_weights,
-                constant_background,
-                &scale, convolution_start, convolution_stop
-        );
-    } else{
-#if VERBOSE
-        std::clog << "-- scaling decay to " << number_of_photons << " photons." << std::endl;
-#endif
-        // normalize model to total_area
-        double number_of_photons_model = std::accumulate(
-                decay_irf + convolution_start,
-                decay_irf + convolution_stop,
-                0.0
-        );
-        scale = number_of_photons / number_of_photons_model;
-        for(int i=convolution_start; i < convolution_stop; i++) decay_irf[i] *= scale;
-    }
+    scale_model(
+            scale_model_to_data,
+            number_of_photons,
+            convolution_start, convolution_stop,
+            constant_background, model_with_scatter, data, squared_weights
+    );
+
 #if VERBOSE
     std::clog << "Adding Background" << std::endl;
     std::clog << "-- add constant background: " << constant_background << std::endl;
 #endif
     for(int i=0; i<n_model_function;i++)
-        model_function[i] = decay_irf[i] + constant_background;
+        model_function[i] = model_with_scatter[i] + constant_background;
 }
 

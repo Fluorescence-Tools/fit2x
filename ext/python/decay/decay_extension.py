@@ -20,12 +20,20 @@ def irf(self, v):
     self.set_irf(v)
 
 @property
+def corrected_irf(self):
+    return self.get_corrected_irf()
+
+@property
 def weighted_residuals(self):
     return self.get_weighted_residuals()
 
 @property
 def time_axis(self):
     return self.get_time_axis()
+
+@time_axis.setter
+def time_axis(self, v):
+    return self.set_time_axis(v)
 
 @property
 def lifetime_spectrum(self):
@@ -36,12 +44,16 @@ def lifetime_spectrum(self, v):
     self.set_lifetime_spectrum(v)
 
 @property
-def chi2_mle(self):
-    return self.get_chi2_mle()
+def chi2(self):
+    return self.get_score()
 
 @property
-def chi2(self):
-    return self.get_chi2()
+def score_range(self):
+    return self.get_score_range()
+
+@score_range.setter
+def score_range(self, v):
+    self.set_score_range(v[0], v[1])
 
 def __repr__(self):
     s = 'DECAY \n'

@@ -54,6 +54,18 @@ void rescale_w_bg(double *fit, double *decay, double *w_sq, double bg, double *s
 #if VERBOSE
     std::clog << "RESCALE_W_BG" << std::endl;
     std::clog << "-- initial scale: " << *scale << std::endl;
+    std::clog << "w_sq [:64]: ";
+    for(int i=0; i<64; i++) std::clog << w_sq[i] << " ";
+    std::clog << std::endl;
+
+    std::clog << "decay [:64]: ";
+    for(int i=0; i<64; i++) std::clog << decay[i] << " ";
+    std::clog << std::endl;
+
+    std::clog << "fit [:64]: ";
+    for(int i=0; i<64; i++) std::clog << fit[i] << " ";
+    std::clog << std::endl;
+
 #endif
     int i;
     double sumnom=0., sumdenom=0.;
@@ -335,6 +347,7 @@ void fconv_per_cs_time_axis(
     std::clog << "-- use_amplitude_threshold: " << use_amplitude_threshold << std::endl;
     std::clog << "-- amplitude_threshold: " << amplitude_threshold << std::endl;
     std::clog << "-- period: " << period << std::endl;
+    std::clog << "-- n_model: " << n_model << std::endl;
 #endif
     if(use_amplitude_threshold){
         discriminate_small_amplitudes(

@@ -55,6 +55,9 @@ private:
     /// The repetiotion period (usually in nano seconds)
     double _excitation_period = 100.;
 
+    /// The background corrected instrument response function
+    std::vector<double> _corrected_irf = std::vector<double>();
+
     /// The instrument response function
     std::vector<double> _irf = std::vector<double>();
 
@@ -100,8 +103,8 @@ private:
 public:
 
     /// The range on which the scoring function is evaluated
-    int x_min = -1;
-    int x_max = -1;
+    int score_range_min = -1;
+    int score_range_max = -1;
 
     void set_abs_lifetime_spectrum(bool v){
         set_is_valid(false);
@@ -220,9 +223,25 @@ public:
         _is_valid = v;
     }
 
+    void set_weights_by_data(std::vector<double> data){
+        _sq_weights.resize(data.size());
+        _weights.resize(data.size());
+#if VERBOSE
+        std::clog << "-- Using Poisson noise" << std::endl;
+#endif
+        for (int i = 0; i < data.size(); i++){
+            double w = (data[i] <= 0.0) ? 0.0 : 1. / std::sqrt(data[i]);
+            _weights[i] = w;
+            _sq_weights[i] = w * w;
+        }
+    }
+
     void set_data(double *input, int n_input) {
         set_is_valid(false);
+        _model_function.resize(n_input);
+        _data.resize(n_input);
         _data.assign(input, input + n_input);
+        set_weights_by_data(_data);
     }
 
     void get_data(double **output_view, int *n_output) {
@@ -274,10 +293,6 @@ public:
 
     double get_excitation_period() const {
         return _excitation_period;
-    }
-
-    void set_score_range(int vmin, int vmax){
-        x_min = vmin; x_max = vmax;
     }
 
     void set_irf_shift_channels(double v) {
@@ -335,14 +350,38 @@ public:
     }
 
     void set_irf(double *input, int n_input) {
+#if VERBOSE
+        std::clog << "-- set_irf" << std::endl;
+#endif
         set_is_valid(false);
-        _irf.clear();
-        _irf.assign(input, input + n_input);
+        if(n_input>0){
+            _irf.resize(n_input);
+            _irf.assign(input, input + n_input);
+            _corrected_irf.resize(n_input);
+            for(int i=0;i<n_input;i++)
+                _corrected_irf[i] = std::max(_irf[i] - _irf_background_counts, 0.0);
+        }
+        else {
+            if (!_data.empty()) {
+#if VERBOSE
+                std::clog << "-- Setting empty IRF..." << std::endl;
+                std::clog << "-- IRF length: " << _data.size() << std::endl;
+#endif
+                _irf.reserve(_data.size());
+                for (int i = 0; i < _data.size(); i++) _irf.emplace_back(0.0);
+                _irf[0] = 1.0;
+            }
+        }
     }
 
     void get_irf(double **output_view, int *n_output) {
         *output_view = _irf.data();
         *n_output = _irf.size();
+    }
+
+    void get_corrected_irf(double **output_view, int *n_output){
+        *output_view = _corrected_irf.data();
+        *n_output = _corrected_irf.size();
     }
 
     void get_model(double **output_view, int *n_output){
@@ -369,8 +408,18 @@ public:
 
     void set_weights(double *input, int n_input) {
         set_is_valid(false);
-        _weights.clear();
-        _weights.assign(input, input + n_input);
+#if VERBOSE
+        std::clog << "-- Setting weights..." << std::endl;
+#endif
+        if (n_input > 0) {
+            _weights.assign(input, input+n_input);
+            for(auto &v: _weights) _sq_weights.emplace_back(v * v);
+        } else {
+#if VERBOSE
+            std::clog << "-- WARNING: No weights provided" << std::endl;
+#endif
+            set_weights_by_data(_data);
+        }
     }
 
     void get_weights(double **output_view, int *n_output) {
@@ -380,6 +429,7 @@ public:
 
     void set_time_axis(double *input, int n_input) {
         set_is_valid(false);
+        _time_axis.resize(n_input);
         _time_axis.assign(input, input + n_input);
     }
 
@@ -392,6 +442,9 @@ public:
             double irf_background_counts
     ) {
         _irf_background_counts = irf_background_counts;
+        _corrected_irf.resize(_irf.size());
+        for(int i=0;i<_irf.size();i++)
+            _corrected_irf[i] = std::max(_irf[i] - _irf_background_counts, 0.0);
         set_is_valid(false);
     }
 
@@ -437,6 +490,45 @@ public:
 
     bool get_scale_model_to_data() const {
         return _scale_model_to_data;
+    }
+
+    void set_tttr_data(std::shared_ptr<TTTR> tttr_data, int micro_time_coarsening){
+        double *hist; int n_hist;
+        double *time; int n_time;
+        TTTR::compute_microtime_histogram(
+                tttr_data.get(),
+                &hist, &n_hist,
+                &time, &n_time,
+                micro_time_coarsening
+        );
+        set_data(hist, n_hist);
+        set_time_axis(time, n_time);
+        free(hist); free(time);
+    }
+
+    void set_time_axis_by_dt(double dt){
+#if VERBOSE
+        std::clog << "-- Filling time axis, dt: " << dt << std::endl;
+#endif
+        _time_axis.clear();
+        _time_axis.reserve(_data.size());
+        for (int i = 0; i < _data.size(); i++) _time_axis.emplace_back(i * dt);
+    }
+
+    void set_tttr_irf(std::shared_ptr<TTTR> tttr_irf, double micro_time_coarsening){
+#if VERBOSE
+        std::clog << "-- Setting IRF from TTTR..." << std::endl;
+#endif
+        double *hist; int n_hist;
+        double *time; int n_time;
+        TTTR::compute_microtime_histogram(
+                tttr_irf.get(),
+                &hist, &n_hist,
+                &time, &n_time,
+                micro_time_coarsening
+        );
+        set_irf(hist, n_hist);
+        free(time); free(hist);
     }
 
     /*!
@@ -513,89 +605,33 @@ public:
         _irf_background_counts = irf_background_counts;
         _areal_scatter_fraction = scatter_fraction;
         _constant_offset = constant_background;
-        this->x_min = x_min;
-        this->x_max = x_max;
+        this->score_range_min = x_min; this->score_range_max = x_max;
+
         set_lifetime_spectrum(lifetime_spectrum.data(), lifetime_spectrum.size());
+
         // set data
         if (tttr_data != nullptr) {
-            double *hist; int n_hist;
-            double *time; int n_time;
-            TTTR::compute_microtime_histogram(
-                    tttr_data.get(),
-                    &hist, &n_hist,
-                    &time, &n_time,
-                    micro_time_coarsening
-            );
-            set_data(hist, n_hist);
-            set_time_axis(time, n_time);
-            free(hist); free(time);
+            set_tttr_data(tttr_data, micro_time_coarsening);
         } else {
             set_data(decay_histogram.data(), decay_histogram.size());
         }
+
         // set time axis
         if(time_axis.empty()) {
-#if VERBOSE
-            std::clog << "-- Filling time axis, dt: " << dt << std::endl;
-#endif
-            _time_axis.clear();
-            _time_axis.reserve(_data.size());
-            for (int i = 0; i < _data.size(); i++) _time_axis.emplace_back(i * dt);
+            set_time_axis_by_dt(dt);
         } else{
             set_time_axis(time_axis.data(), time_axis.size());
         }
+
         // set irf
         if (tttr_irf != nullptr) {
-#if VERBOSE
-            std::clog << "-- Setting IRF from TTTR..." << std::endl;
-#endif
-            double *hist; int n_hist;
-            double *time; int n_time;
-            TTTR::compute_microtime_histogram(
-                    tttr_irf.get(),
-                    &hist, &n_hist,
-                    &time, &n_time,
-                    micro_time_coarsening
-            );
-            set_irf(hist, n_hist);
-            free(time); free(hist);
+            set_tttr_irf(tttr_irf, micro_time_coarsening);
         } else {
-#if VERBOSE
-            std::clog << "-- Setting IRF from argument" << std::endl;
-#endif
-            if (instrument_response_function.empty() && !_data.empty()) {
-#if VERBOSE
-                std::clog << "-- Setting empty IRF..." << std::endl;
-                std::clog << "-- IRF length: " << _data.size() << std::endl;
-#endif
-                _irf.reserve(_data.size());
-                for (int i = 0; i < _data.size(); i++) _irf.emplace_back(0.0);
-                _irf[0] = 1.0;
-            } else{
-                set_irf(instrument_response_function.data(), instrument_response_function.size());
-            }
+            set_irf(instrument_response_function.data(), instrument_response_function.size());
         }
 
-#if VERBOSE
-        std::clog << "-- Setting weights..." << std::endl;
-#endif
         // set weights
-        if (!weights.empty()) {
-            _weights = weights;
-        } else {
-#if VERBOSE
-            std::clog << "-- Assuming Poisson noise" << std::endl;
-#endif
-            _weights.resize(_data.size());
-            for (int i = 0; i < _data.size(); i++)
-                _weights[i] = (_data[i] <= 0.0) ? 0.0 : 1. / std::sqrt(_data[i]);
-        }
-#if VERBOSE
-        std::clog << "-- Setting squared weights..." << std::endl;
-#endif
-        for(int i=0; i<_weights.size(); i++){
-            _sq_weights.emplace_back(_weights[i] * _weights[i]);
-        }
-
+        set_weights(weights.data(), weights.size());
         // set model function
         _model_function.resize(_data.size());
 
@@ -666,10 +702,22 @@ public:
         std::clog << "-- points in weights:" << _weights.size() << std::endl;
         std::clog << "-- points in data:" << _data.size() << std::endl;
 #endif
-        evaluate();
+        if(!get_is_valid()){
+            evaluate();
+        }
         *n_output = _weighted_residuals.size();
         *output_view = _weighted_residuals.data();
     }
+
+    static void scale_model(
+            bool scale_model_to_data,
+            double number_of_photons,
+            int convolution_start, int convolution_stop,
+            double constant_background,
+            double* model,
+            double* data,
+            double* squared_data_weights
+    );
 
     void evaluate(
             std::vector<double> lifetime_spectrum = std::vector<double>()
@@ -734,6 +782,15 @@ public:
         }
     }
 
+    std::vector<int> get_score_range(){
+        return std::vector<int>({score_range_min, score_range_max});
+    }
+
+    void set_score_range(int min, int max){
+        score_range_min = min;
+        score_range_max = max;
+    }
+
     /*!
      * Computes the chi2 for the model and the data
      *
@@ -746,30 +803,31 @@ public:
      * respectively.
      * @return the chi2 value
      */
-    double get_chi2(
+    double get_score(
             int x_min = -1,
             int x_max = -1,
-            std::string type="poisson"
+            std::string type= "poisson"
     ){
 #if VERBOSE
-        std::cout << "CHI2" << std::endl;
+        std::clog << "CHI2" << std::endl;
+        std::clog << "-- data range: " << x_min << ", " << x_max << std::endl;
 #endif
         if(x_min < 0){
-            x_min = std::max(this->x_min, 0);
+            x_min = std::max(this->score_range_min, 0);
         } else{
             x_min = std::max(x_min, 0);
         }
         if(x_max < 0){
-            if(this->x_max < 0){
+            if(this->score_range_max < 0){
                 x_max = (int)_data.size();
             } else{
-                x_max = std::min(this->x_max, (int)_data.size());
+                x_max = std::min(this->score_range_max, (int)_data.size());
             }
         }
         if(!get_is_valid()) {
             evaluate();
 #if VERBOSE
-            std::cout << "-- evaluate" << std::endl;
+            std::clog << "-- evaluate" << std::endl;
 #endif
         }
         double v = statistics::chi2_counting(
@@ -778,10 +836,10 @@ public:
                 x_min, x_max, type
         );
 #if VERBOSE
-        std::cout << "-- x_min: " << x_min << std::endl;
-        std::cout << "-- x_max: " << x_max << std::endl;
-        std::cout << "-- type: " << type << std::endl;
-        std::cout << "-- chi2: " << v << std::endl;
+        std::clog << "-- x_min: " << x_min << std::endl;
+        std::clog << "-- x_max: " << x_max << std::endl;
+        std::clog << "-- type: " << type << std::endl;
+        std::clog << "-- chi2: " << v << std::endl;
 #endif
         return v;
     }

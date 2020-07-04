@@ -85,6 +85,246 @@
 %feature("docstring") Decay "
 ";
 
+%feature("docstring") Decay::set_abs_lifetime_spectrum "
+";
+
+%feature("docstring") Decay::get_abs_lifetime_spectrum "
+";
+
+%feature("docstring") Decay::get_is_valid "
+";
+
+%feature("docstring") Decay::set_is_valid "
+";
+
+%feature("docstring") Decay::set_weights_by_data "
+";
+
+%feature("docstring") Decay::set_data "
+";
+
+%feature("docstring") Decay::get_data "
+";
+
+%feature("docstring") Decay::set_use_amplitude_threshold "
+";
+
+%feature("docstring") Decay::get_use_amplitude_threshold "
+";
+
+%feature("docstring") Decay::set_amplitude_threshold "
+";
+
+%feature("docstring") Decay::get_amplitude_threshold "
+";
+
+%feature("docstring") Decay::set_number_of_photons "
+";
+
+%feature("docstring") Decay::get_number_of_photons "
+";
+
+%feature("docstring") Decay::set_excitation_period "
+";
+
+%feature("docstring") Decay::get_excitation_period "
+";
+
+%feature("docstring") Decay::set_irf_shift_channels "
+";
+
+%feature("docstring") Decay::get_irf_shift_channels "
+";
+
+%feature("docstring") Decay::set_areal_scatter_fraction "
+";
+
+%feature("docstring") Decay::get_areal_scatter_fraction "
+";
+
+%feature("docstring") Decay::set_constant_offset "
+";
+
+%feature("docstring") Decay::get_constant_offset "
+";
+
+%feature("docstring") Decay::set_convolution_start "
+";
+
+%feature("docstring") Decay::get_convolution_start "
+";
+
+%feature("docstring") Decay::set_convolution_stop "
+";
+
+%feature("docstring") Decay::get_convolution_stop "
+";
+
+%feature("docstring") Decay::set_add_pile_up "
+";
+
+%feature("docstring") Decay::get_add_pile_up "
+";
+
+%feature("docstring") Decay::set_irf "
+";
+
+%feature("docstring") Decay::get_irf "
+";
+
+%feature("docstring") Decay::get_corrected_irf "
+";
+
+%feature("docstring") Decay::get_model "
+";
+
+%feature("docstring") Decay::set_lifetime_spectrum "
+";
+
+%feature("docstring") Decay::get_lifetime_spectrum "
+";
+
+%feature("docstring") Decay::set_weights "
+";
+
+%feature("docstring") Decay::get_weights "
+";
+
+%feature("docstring") Decay::set_time_axis "
+";
+
+%feature("docstring") Decay::get_time_axis "
+";
+
+%feature("docstring") Decay::set_irf_background_counts "
+";
+
+%feature("docstring") Decay::get_irf_background_counts "
+";
+
+%feature("docstring") Decay::set_instrument_dead_time "
+";
+
+%feature("docstring") Decay::get_instrument_dead_time "
+";
+
+%feature("docstring") Decay::set_acquisition_time "
+";
+
+%feature("docstring") Decay::get_acquisition_time "
+";
+
+%feature("docstring") Decay::set_use_corrected_irf_as_scatter "
+";
+
+%feature("docstring") Decay::get_use_corrected_irf_as_scatter "
+";
+
+%feature("docstring") Decay::set_scale_model_to_data "
+";
+
+%feature("docstring") Decay::get_scale_model_to_data "
+";
+
+%feature("docstring") Decay::set_tttr_data "
+";
+
+%feature("docstring") Decay::set_time_axis_by_dt "
+";
+
+%feature("docstring") Decay::set_tttr_irf "
+";
+
+%feature("docstring") Decay::Decay "
+
+Parameters
+----------
+* `tttr_data` :  
+    pointer to TTTR object that is used to construct a decay histogram  
+* `micro_time_coarsening` :  
+    an (optional) integer by which the micro times are divided to coarsen the
+    time axis (default is 1)  
+* `decay_histogram` :  
+    the data to which the decay is fitted  
+* `time_axis` :  
+    the time axis that belongs to the data  
+* `dt` :  
+    the spacing between the points in the time axis. This optional parameter is
+    used to compute a time axis if not time axis was provided by the parameter
+    time_axis  
+* `weights` :  
+    the weights of the data points. If the weights are not provided (nullptr /
+    None) the weights are computed assuming Poisson noise.  
+* `instrument_response_function` :  
+    The instrument response function (IRF) that is used for convolution. If no
+    IRF is provided  
+* `convolution_start` :  
+    The start index in the IRF used for convolution. Points in the IRF before
+    the start index are not used for convolution.  
+* `convolution_stop` :  
+    The stop index in the IRF used for convolution. Points beyond the stop index
+    are not convolved.  
+* `use_amplitude_threshold` :  
+    If this is set to true (default value is true) the values that are smaller
+    then a specified threshold are omitted  
+* `amplitude_threshold` :  
+    The amplitude threshold that is used if the parameter
+    use_amplitude_threshold is set to true (the default value is 1e10)  
+* `add_pile_up` :  
+    If this is set to true (the default value is false) the convolved model
+    function is 'piled up' to match pile up artifacts in the data.  
+* `excitation_period` :  
+    the repetition period, .i.e, the time between subsequent excitation pulses.  
+";
+
+%feature("docstring") Decay::get_weighted_residuals "
+";
+
+%feature("docstring") Decay::evaluate "
+";
+
+%feature("docstring") Decay::get_score_range "
+";
+
+%feature("docstring") Decay::set_score_range "
+";
+
+%feature("docstring") Decay::get_score "
+
+Computes the chi2 for the model and the data  
+
+The \"normal\" chi2 is the sum of the squared weighted deviations between the
+data and the model.  
+
+Parameters
+----------
+* `x_min` :  
+    minimum index number of data / model used to compute the chi2  
+* `x_max` :  
+    maximum index number of data / model used to compute the chi2  
+* `type` :  
+    is either neyman or poisson for large count and low count data,
+    respectively.  
+
+Returns
+-------
+the chi2 value  
+";
+
+%feature("docstring") Decay::set "
+
+Convenience method to update parameters that are frequently changed.  
+
+Parameters
+----------
+* `irf_background` :  
+* `irf_shift_channels` :  
+* `areal_scatter_fraction` :  
+* `constant_offset` :  
+* `lifetime_spectrum` :  
+* `n_lifetime_spectrum` :  
+";
+
 %feature("docstring") Decay::compute_decay "
 
 Computes a fluorescence decay for a lifetime spectrum.  
@@ -132,9 +372,9 @@ Parameters
     amplitude2, lifetime2, ...)  
 * `n_lifetime_spectrum[in]` :  
     The number of points in the fluorescence lifetime spectrum  
-* `start[in]` :  
+* `convolution_start[in]` :  
     The start of the convolution  
-* `stop[in]` :  
+* `convolution_stop[in]` :  
     The stop of the convoution. The decay will be computed in the range [start,
     stop]  
 * `irf_background_counts[in]` :  
@@ -143,15 +383,15 @@ Parameters
 * `irf_shift_channels[in]` :  
     The number of micro time channels the IRF will be shifted before the
     fluorescence lifetimes are convoluted with the IRF.  
-* `scatter_areal_fraction[in]` :  
+* `scatter_fraction[in]` :  
     The fraction (integrated fraction), i.e., the area the scattered light will
     have in the computed decay.  
 * `excitation_period[in]` :  
     The excitation period (in units of the fluorescence lifetime, usually
     nanoseconds) that was used to excite the sample  
-* `constant_background` :  
+* `constant_offset` :  
     A constant offset that is added to the fluorescence decay.  
-* `total_area[in]` :  
+* `number_of_photons[in]` :  
     the area to which the model fluorescence decay is scaled to. If this value
     is negative (default value is -1) the model fluorescence decay is scaled to
     the data in the range defined by the parameters start, stop  
@@ -162,7 +402,7 @@ Parameters
 * `amplitude_threshold` :  
     The threshold that is used to discriminate fluorescence lifetimes that are
     smaller.  
-* `pile_up` :  
+* `add_pile_up` :  
     if set to true (default is false) pile up will be added to the model
     function.  
 * `instrument_dead_time` :  
@@ -170,11 +410,11 @@ Parameters
     usually nano seconds)  
 * `acquisition_time` :  
     the total time the acquisition of the decay in seconds.  
-* `add_corrected_irf` :  
+* `add_corrected_irf_as_scatter` :  
     if set to true (default is false) the background corrected irf will be added
     as scatter to the decay. If this is false the irf prior to a background and
     shift corrected irf is added as a scatter fraction.  
-* `scale_model_to_area` :  
+* `scale_model_to_data` :  
     if set to true (default is true) the model is either scaled to the area s
     provided by total_area (if total_area is larger then zero) or to the total
     number of experimental counts.  
@@ -230,193 +470,7 @@ Parameters
     stop index used for the area calculation  
 ";
 
-%feature("docstring") Decay::is_valid "
-";
-
-%feature("docstring") Decay::set_data "
-";
-
-%feature("docstring") Decay::get_data "
-";
-
-%feature("docstring") Decay::set_use_amplitude_threshold "
-";
-
-%feature("docstring") Decay::get_use_amplitude_threshold "
-";
-
-%feature("docstring") Decay::set_amplitude_threshold "
-";
-
-%feature("docstring") Decay::get_amplitude_threshold "
-";
-
-%feature("docstring") Decay::set_total_area "
-";
-
-%feature("docstring") Decay::get_total_area "
-";
-
-%feature("docstring") Decay::set_period "
-";
-
-%feature("docstring") Decay::set_score_range "
-";
-
-%feature("docstring") Decay::get_period "
-";
-
-%feature("docstring") Decay::set_irf_shift_channels "
-";
-
-%feature("docstring") Decay::get_irf_shift_channels "
-";
-
-%feature("docstring") Decay::set_areal_scatter_fraction "
-";
-
-%feature("docstring") Decay::get_areal_scatter_fraction "
-";
-
-%feature("docstring") Decay::set_constant_background "
-";
-
-%feature("docstring") Decay::get_constant_background "
-";
-
-%feature("docstring") Decay::set_convolution_start "
-";
-
-%feature("docstring") Decay::get_convolution_start "
-";
-
-%feature("docstring") Decay::set_convolution_stop "
-";
-
-%feature("docstring") Decay::get_convolution_stop "
-";
-
-%feature("docstring") Decay::set_correct_pile_up "
-";
-
-%feature("docstring") Decay::get_correct_pile_up "
-";
-
-%feature("docstring") Decay::set_irf "
-";
-
-%feature("docstring") Decay::get_irf "
-";
-
-%feature("docstring") Decay::get_model "
-";
-
-%feature("docstring") Decay::set_lifetime_spectrum "
-";
-
-%feature("docstring") Decay::get_lifetime_spectrum "
-";
-
-%feature("docstring") Decay::set_weights "
-";
-
-%feature("docstring") Decay::get_weights "
-";
-
-%feature("docstring") Decay::set_time_axis "
-";
-
-%feature("docstring") Decay::get_time_axis "
-";
-
-%feature("docstring") Decay::set_irf_background_counts "
-";
-
-%feature("docstring") Decay::get_irf_background_counts "
-";
-
-%feature("docstring") Decay::Decay "
-
-Parameters
-----------
-* `tttr_data` :  
-    pointer to TTTR object that is used to construct a decay histogram  
-* `micro_time_coarsening` :  
-    an (optional) integer by which the micro times are divided to coarsen the
-    time axis (default is 1)  
-* `decay_histogram` :  
-    the data to which the decay is fitted  
-* `time_axis` :  
-    the time axis that belongs to the data  
-* `dt` :  
-    the spacing between the points in the time axis. This optional parameter is
-    used to compute a time axis if not time axis was provided by the parameter
-    time_axis  
-* `weights` :  
-    the weights of the data points. If the weights are not provided (nullptr /
-    None) the weights are computed assuming Poisson noise.  
-* `instrument_response_function` :  
-    The instrument response function (IRF) that is used for convolution. If no
-    IRF is provided  
-* `start` :  
-    The start index in the IRF used for convolution. Points in the IRF before
-    the start index are not used for convolution.  
-* `stop` :  
-    The stop index in the IRF used for convolution. Points beyond the stop index
-    are not convolved.  
-* `use_amplitude_threshold` :  
-    If this is set to true (default value is true) the values that are smaller
-    then a specified threshold are omitted  
-* `amplitude_threshold` :  
-    The amplitude threshold that is used if the parameter
-    use_amplitude_threshold is set to true (the default value is 1e10)  
-* `correct_pile_up` :  
-    If this is set to true (the default value is false) the convolved model
-    function is 'piled up' to match pile up artifacts in the data.  
-* `excitation_period` :  
-    the repetition period, .i.e, the time between subsequent excitation pulses.  
-";
-
-%feature("docstring") Decay::get_weighted_residuals "
-";
-
-%feature("docstring") Decay::evaluate "
-";
-
-%feature("docstring") Decay::get_chi2 "
-
-Computes the chi2 for the model and the data  
-
-The \"normal\" chi2 is the sum of the squared weighted deviations between the
-data and the model.  
-
-Parameters
-----------
-* `x_min` :  
-    minimum index number of data / model used to compute the chi2  
-* `x_max` :  
-    maximum index number of data / model used to compute the chi2  
-* `type` :  
-    is either neyman or poisson for large count and low count data,
-    respectively.  
-
-Returns
--------
-the chi2 value  
-";
-
-%feature("docstring") Decay::set "
-
-Convenience method to update parameters that are frequently changed.  
-
-Parameters
-----------
-* `irf_background` :  
-* `irf_shift_channels` :  
-* `areal_scatter_fraction` :  
-* `constant_background` :  
-* `lifetime_spectrum` :  
-* `n_lifetime_spectrum` :  
+%feature("docstring") Decay::scale_model "
 ";
 
 // File: struct_l_v_double_array.xml
@@ -1410,7 +1464,7 @@ Parameters
     the value of the shifted response function outside of the valid indices  
 ";
 
-%feature("docstring") add_pile_up "
+%feature("docstring") add_pile_up_to_model "
 
 Correct the model function for pile up.  
 
@@ -1441,6 +1495,20 @@ Parameters
 * `pile_up_model[in]` :  
     The model used to compute the pile up distortion of the data (currently only
     Coates)  
+";
+
+%feature("docstring") discriminate_small_amplitudes "
+
+Threshold the amplitudes  
+
+Amplitudes with absolute values smaller than the specified threshold are set to
+zero.  
+
+Parameters
+----------
+* `lifetime_spectrum` :  
+* `number_of_exponentials` :  
+* `amplitude_threshold` :  
 ";
 
 %feature("docstring") fconv_per_cs_time_axis "
@@ -1604,14 +1672,12 @@ Returns
 
 // File: statistics_8h.xml
 
-// File: two_istar_8h.xml
-
-%feature("docstring") init_fact "
+%feature("docstring") statistics::init_fact "
 
 Initialize an array containing pre-computed logratithms  
 ";
 
-%feature("docstring") loggammaf "
+%feature("docstring") statistics::loggammaf "
 
 Approximation of log(gamma function). See wikipedia  
 
@@ -1627,7 +1693,7 @@ Returns
 approximation of the logarithm of the gamma function  
 ";
 
-%feature("docstring") wcm "
+%feature("docstring") statistics::wcm "
 
 log-likelihood w(C|m) for Cp + 2Cs  
 
@@ -1643,7 +1709,7 @@ Returns
 log-likelihood w(C|m) for Cp + 2Cs  
 ";
 
-%feature("docstring") wcm_p2s "
+%feature("docstring") statistics::wcm_p2s "
 
 Compute the -log-likelihood for Cp + 2Cs of a single micro time channel.  
 
@@ -1670,7 +1736,7 @@ Returns
 -------  
 ";
 
-%feature("docstring") Wcm_p2s "
+%feature("docstring") statistics::Wcm_p2s "
 
 Compute the overall -log-likelihood for Cp + 2Cs for all micro time channels  
 
@@ -1689,7 +1755,7 @@ Returns
 -log-likelihood for Cp + 2Cs for all micro time channels  
 ";
 
-%feature("docstring") twoIstar_p2s "
+%feature("docstring") statistics::twoIstar_p2s "
 
 Compute overall 2I* for Cp + 2Cs  
 
@@ -1716,7 +1782,7 @@ Returns
 2I* for Cp + 2Cs  
 ";
 
-%feature("docstring") twoIstar "
+%feature("docstring") statistics::twoIstar "
 
 Compute overall 2I* for Cp & Cs  
 
@@ -1739,7 +1805,7 @@ Returns
 2I* for Cp & Cs  
 ";
 
-%feature("docstring") Wcm "
+%feature("docstring") statistics::Wcm "
 
 Compute overall -log-likelihood for Cp & Cs  
 
