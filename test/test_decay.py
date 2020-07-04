@@ -14,20 +14,20 @@ class Tests(unittest.TestCase):
     def test_getter_setter(self):
         decay = fit2x.Decay()
 
-        decay.set_use_amplitude_threshold(True)
-        self.assertEqual(decay.get_use_amplitude_threshold(), True)
-        decay.set_use_amplitude_threshold(False)
-        self.assertEqual(decay.get_use_amplitude_threshold(), False)
+        decay.use_amplitude_threshold = True
+        self.assertEqual(decay.use_amplitude_threshold, True)
+        decay.use_amplitude_threshold = False
+        self.assertEqual(decay.use_amplitude_threshold, False)
 
-        decay.set_amplitude_threshold(11)
-        self.assertEqual(decay.get_amplitude_threshold(), 11)
-        decay.set_amplitude_threshold(2.2)
-        self.assertEqual(decay.get_amplitude_threshold(), 2.2)
+        decay.amplitude_threshold = 11
+        self.assertEqual(decay.amplitude_threshold, 11)
+        decay.amplitude_threshold = 2.2
+        self.assertEqual(decay.amplitude_threshold, 2.2)
 
-        decay.background = 11
-        self.assertEqual(decay.background, 11)
-        decay.background = 2.2
-        self.assertEqual(decay.background, 2.2)
+        decay.constant_offset = 11
+        self.assertEqual(decay.constant_offset, 11)
+        decay.constant_offset = 2.2
+        self.assertEqual(decay.constant_offset, 2.2)
 
         # This does not work because there is no IRF
         # decay.set_irf_shift_channels(11)
@@ -35,10 +35,10 @@ class Tests(unittest.TestCase):
         # decay.set_irf_shift_channels(2.2)
         # self.assertEqual(decay.get_irf_shift_channels(), 2.2)
 
-        decay.set_total_area(11)
-        self.assertEqual(decay.get_total_area(), 11)
-        decay.set_total_area(2.2)
-        self.assertEqual(decay.get_total_area(), 2.2)
+        decay.number_of_photons = 11
+        self.assertEqual(decay.number_of_photons, 11)
+        decay.number_of_photons = 2.2
+        self.assertEqual(decay.number_of_photons, 2.2)
 
         decay.scatter_fraction = 0.2
         self.assertEqual(decay.scatter_fraction, 0.2)
@@ -55,10 +55,10 @@ class Tests(unittest.TestCase):
         decay.convolution_stop = 3
         self.assertEqual(decay.convolution_stop, 3)
 
-        decay.correct_pile_up = True
-        self.assertEqual(decay.correct_pile_up, True)
-        decay.correct_pile_up = False
-        self.assertEqual(decay.correct_pile_up, False)
+        decay.add_pile_up = True
+        self.assertEqual(decay.add_pile_up, True)
+        decay.add_pile_up = False
+        self.assertEqual(decay.add_pile_up, False)
 
         decay.set_irf([1, 2, 3])
         self.assertListEqual(list(decay.get_irf()), [1, 2, 3])
@@ -89,12 +89,12 @@ class Tests(unittest.TestCase):
     def test_constructor_1(self):
         decay = fit2x.Decay()
         # default values
-        self.assertEqual(decay.is_valid(), False)
+        self.assertEqual(decay.is_valid, False)
         self.assertEqual(decay.convolution_start, 0)
         self.assertEqual(decay.convolution_stop, -1)
-        self.assertEqual(decay.correct_pile_up, False)
-        self.assertEqual(decay.get_use_amplitude_threshold(), False)
-        self.assertEqual(decay.get_period(), 100.0)
+        self.assertEqual(decay.add_pile_up, False)
+        self.assertEqual(decay.use_amplitude_threshold, False)
+        self.assertEqual(decay.excitation_period, 100.0)
 
     def test_constructor_2(self):
         decay = fit2x.Decay(
@@ -120,8 +120,8 @@ class Tests(unittest.TestCase):
         data = np.linspace(1, 22, 12)
         decay = fit2x.Decay(
             decay_histogram=data,
-            start=2, stop=32,
-            correct_pile_up=True,
+            convolution_start=2, convolution_stop=32,
+            add_pile_up=True,
             excitation_period=123.2
         )
         self.assertEqual(
@@ -132,8 +132,8 @@ class Tests(unittest.TestCase):
         self.assertEqual(len(decay.get_time_axis()), len(data))
         self.assertEqual(decay.convolution_start, 2)
         self.assertEqual(decay.convolution_stop, min(len(data), 12))
-        self.assertEqual(decay.correct_pile_up, True)
-        self.assertEqual(decay.get_period(), 123.2)
+        self.assertEqual(decay.add_pile_up, True)
+        self.assertEqual(decay.excitation_period, 123.2)
 
     def test_convolve_lifetime_spectrum_variable_time_axis(self):
         time_axis = np.linspace(0, 25, 32)
@@ -148,14 +148,18 @@ class Tests(unittest.TestCase):
             lifetime_spectrum=lifetime_spectrum,
             instrument_response_function=irf
         )
-        reference = np.array([9.27891810e-07, 2.47480878e-05, 5.46047490e-04, 6.34298717e-03,
-                              3.99865961e-02, 1.41117009e-01, 2.92769678e-01, 3.83528048e-01,
-                              3.50102902e-01, 2.53687767e-01, 1.68661294e-01, 1.14128726e-01,
-                              8.12945833e-02, 6.06527275e-02, 4.67915552e-02, 3.69092130e-02,
-                              2.95268812e-02, 2.38266486e-02, 1.93277486e-02, 1.57274176e-02,
-                              1.28215151e-02, 1.04639958e-02, 8.54548307e-03, 6.98137666e-03,
-                              5.70483169e-03, 4.66231736e-03, 3.81060979e-03, 3.11463317e-03,
-                              2.54583913e-03, 2.08095096e-03, 1.70097037e-03, 1.39038160e-03])
+        reference = np.array(
+            [
+                9.27891810e-07, 2.47480878e-05, 5.46047490e-04, 6.34298717e-03,
+                3.99865961e-02, 1.41117009e-01, 2.92769678e-01, 3.83528048e-01,
+                3.50102902e-01, 2.53687767e-01, 1.68661294e-01, 1.14128726e-01,
+                8.12945833e-02, 6.06527275e-02, 4.67915552e-02, 3.69092130e-02,
+                2.95268812e-02, 2.38266486e-02, 1.93277486e-02, 1.57274176e-02,
+                1.28215151e-02, 1.04639958e-02, 8.54548307e-03, 6.98137666e-03,
+                5.70483169e-03, 4.66231736e-03, 3.81060979e-03, 3.11463317e-03,
+                2.54583913e-03, 2.08095096e-03, 1.70097037e-03, 1.39038160e-03
+            ]
+        )
         self.assertEqual(
             np.allclose(reference, model_decay),
             True
@@ -303,7 +307,7 @@ class Tests(unittest.TestCase):
 
     def test_compute_decay(self):
         np.random.seed(0)
-        time_axis = np.linspace(0, 10, 64)
+        time_axis = np.linspace(0, 10, 16)
         irf_position = 2.0
         irf_width = 0.5
         n_peak = 1000
@@ -324,7 +328,7 @@ class Tests(unittest.TestCase):
         data_decay = np.random.poisson(
             np.clip(data_decay, 1e-9, None)
         )
-        data_weight = 1. / np.clip(data_decay, 1, None)
+        data_weight = 1. / np.clip(data_decay, 1, 1e6)
         model = np.zeros_like(time_axis)
         irf += 0.0
         fit2x.Decay.compute_decay(
@@ -336,29 +340,26 @@ class Tests(unittest.TestCase):
             lifetime_spectrum=lifetime_spectrum,
             irf_background_counts=0.0,
             irf_shift_channels=-4.5,
-            scatter_areal_fraction=0.1,
+            scatter_fraction=0.1,
             excitation_period=5.,
-            constant_background=10,
-            total_area=-1,
+            constant_offset=10,
+            number_of_photons=-1,
             use_amplitude_threshold=False
         )
+        # import pylab as p
+        # p.plot(model)
+        # p.show()
+        print(model)
         ref = np.array(
-            [200.14178357, 193.01541012, 186.6902567, 181.919255,
-             180.2246366, 184.21582932, 197.621866, 224.62048753,
-             268.24316442, 328.28031062, 399.87860574, 474.21554589,
-             541.63228454, 595.78940302, 636.23678854, 667.56363864,
-             695.68428619, 723.87049036, 751.10880506, 773.40438611,
-             786.57771931, 788.51156644, 779.7515296, 762.70243287,
-             740.34886113, 715.2820183, 689.29929699, 663.44266721,
-             638.22297216, 613.84669358, 590.37261652, 567.79789123,
-             546.09766628, 525.24077317, 505.19512305, 485.92931803,
-             467.41305141, 449.61716818, 432.51364251, 416.07553804,
-             400.27696623, 385.09304576, 370.4998633, 356.4744359,
-             342.99467477, 330.03935048, 317.58805956, 305.62119233,
-             294.11990206, 283.06607524, 272.44230308, 262.23185408,
-             252.4186477, 242.98722903, 233.92274441, 225.2109181,
-             216.83802974, 208.7908928, 201.05683373, 193.62367211,
-             186.47970135, 179.61367034, 173.01476571, 166.67259476]
+            [
+                293.92133328, 259.26501305, 343.18437388, 497.96130874,
+                288.77278004,
+                196.06217784, 355.75320104, 588.64815649, 679.22653859,
+                620.52197926,
+                529.51847919, 449.79420922, 382.27782274, 325.12637355,
+                276.74871624,
+                10.
+            ]
         )
         self.assertEqual(np.allclose(ref, model), True)
 
@@ -391,64 +392,20 @@ class Tests(unittest.TestCase):
         )
         m = decay_object.model
         wres = decay_object.weighted_residuals
-        ref = np.array([ 140.00000006,  140.00000045,  140.00000081, 2344.53220855,
-                         8139.54820575, 6332.78619895, 4934.09570572, 3851.31069245,
-                         3013.08136965, 2364.17287072, 1861.82556729, 1472.93743639,
-                         1171.88281279,  938.82379353,  758.40302532,  618.73173647,
-                         510.60632983,  426.90191456,  362.10281367,  311.93911008,
-                         273.10528178,  243.04238545,  219.76943567,  201.7528685 ,
-                         187.8054877 ,  177.00823485,  168.64962827,  162.17888011,
-                         157.16960238,  153.29171026,  150.28967121,  147.96566679,
-                         146.16655743,  144.77379137,  143.6955927 ,  142.86091386,
-                         142.21475395,  141.71453443,  141.32729351,  141.02751407,
-                         140.79544222,  140.61578566,  140.47670597,  140.36903855,
-                         140.28568868,  140.22116405,  140.17121283,  140.13254349,
-                         140.10260793,  140.07943355,  140.0614933 ,  140.047605  ,
-                         140.03685348,  140.02853028,  140.02208694,  140.01709888,
-                         140.01323741,  140.01024809,  140.00793392,  140.00614244,
-                         140.00475557,  140.00368194,  140.00285079,  140.00220737,
-                         140.00170927,  140.00132367,  140.00102516,  140.00079407,
-                         140.00061518,  140.00047668,  140.00036947,  140.00028648,
-                         140.00022223,  140.00017249,  140.00013398,  140.00010417,
-                         140.0000811 ,  140.00006323,  140.0000494 ,  140.0000387 ,
-                         140.00003041,  140.00002399,  140.00001902,  140.00001518,
-                         140.0000122 ,  140.0000099 ,  140.00000811,  140.00000673,
-                         140.00000566,  140.00000484,  140.0000042 ,  140.0000037 ,
-                         140.00000332,  140.00000302,  140.00000279,  140.00000261,
-                         140.00000247,  140.00000237,  140.00000228,  140.00000222,
-                         140.00000217])
+        ref = np.array([140.,         140.00919308, 140.00118584, 140.00015296, 140.00001973,
+                        140.00000255, 140.00000033, 140.00000004, 140.00000001, 140.,
+                        140.,         140.,         140.,        ])
+
         # import pylab as p
-        # p.plot(m[::8] - ref)
+        # p.plot(m[::64])
         # p.show()
+        # print(m[::64])
         self.assertEqual(
-            np.allclose(m[::8], ref), True
+            np.allclose(m[::64], ref), True
         )
-        wres_ref = np.array([ -0.        ,  -9.7010882 ,  -6.25656291,  30.70939668,
-                              281.92169267, 226.87425997, 189.08683514, 159.53979761,
-                              136.28861233, 118.93110622, 104.4235999 ,  90.33292967,
-                              78.94600023,  69.66316889,  60.26153022,  53.12379246,
-                              47.7774063 ,  42.81162417,  36.86148161,  32.67637617,
-                              27.4406338 ,  25.72759958,  21.22527589,  17.76088218,
-                              16.77410101,  14.35359234,  11.81458929,   9.84275823,
-                              7.98011084,   6.36922016,   4.23828278,   2.31961497,
-                              0.70951918,   0.3462245 ,  -1.96422667,  -2.08690637,
-                              -3.18139644,  -3.35598071,  -4.13272935,  -5.11147168,
-                              -5.76747679,  -6.17728865,  -5.73330468,  -6.445782  ,
-                              -7.37407422,  -5.02740388,  -7.19902783,  -7.19462105,
-                              -7.85376621,  -7.35041514,  -7.18652413,  -8.92418531,
-                              -7.67662829,  -6.55872559,  -8.73396094,  -8.01589198,
-                              -8.36818244,  -5.00541437,  -6.70909097,  -6.70889068,
-                              -6.86357124,  -5.82336679,  -6.55587231,  -6.55580082,
-                              -6.25675044,  -9.30276928,  -8.3667228 ,  -8.36669517,
-                              -6.86310541,  -6.40508115,  -9.50004618,  -8.01391062,
-                              -9.50002778, -10.76715014, -11.95038747,  -5.96559889,
-                              -8.54740533,  -7.67235151,  -9.90601618,  -7.67234866,
-                              -9.90601377,  -8.73128541,  -6.86303834,  -8.91837129,
-                              -8.01387829,  -7.50555464,  -6.25656371, -12.20340525,
-                              -6.70820457,  -8.91837003,  -7.67234464,  16.41207357,
-                              6.19711648,  -8.36660063, -12.46249314,  -7.67234446,
-                              -7.1795166 ,  -7.50555377,  -7.50555376,  -6.40502876,
-                              -9.50000027])
+        wres_ref = np.array([ -0.,         154.7475065,   54.30542351,  18.72900653,   1.20482741,
+                              -5.68219671,  -7.8417569,   -8.36660027,  -6.25656282,  -9.5,
+                              -9.90600991,  -6.70820393,  -7.17951632])
         self.assertEqual(
-            np.allclose(wres[::8], wres_ref), True
+            np.allclose(wres[::64], wres_ref), True
         )

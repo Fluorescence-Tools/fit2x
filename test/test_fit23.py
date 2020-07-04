@@ -81,7 +81,7 @@ class Tests(unittest.TestCase):
             irf_width=irf_width
         )
         dt = time_axis[1] - time_axis[0]
-        conv_stop = len(time_axis) / 2
+        conv_stop = len(time_axis) / 2 - 1
         param = np.array([tau, gamma, r0, rho])
         corrections = np.array([period, g, l1, l2, conv_stop])
         # compute a model function that is later used as "data"
@@ -106,6 +106,10 @@ class Tests(unittest.TestCase):
              6.21619684e-04, 4.82208333e-04, 3.74060853e-04, 2.90167144e-04,
              2.25088434e-04, 1.74605311e-04, 1.35444470e-04, 1.05066633e-04]
         )
+        # import pylab as p
+        # p.plot(model)
+        # p.show()
+        print(model)
         self.assertEqual(
             np.allclose(model, model_ref), True
         )
