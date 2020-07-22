@@ -861,16 +861,21 @@ public:
             std::vector<double> decay_histogram,
             double micro_time_resolution
             ){
-        double m0_irf = std::accumulate(irf_histogram.begin(), irf_histogram.end(), 0.0);
+        double m0_irf = std::accumulate(
+                irf_histogram.begin(),
+                irf_histogram.end(),
+                0.0);
         double m1_irf = 0.0;
         for(int i = 0; i<irf_histogram.size(); i++)
-            m1_irf += micro_time_resolution * i * irf_histogram[i];
+            m1_irf += i * irf_histogram[i];
 
-        double mu0 = std::accumulate(decay_histogram.begin(), decay_histogram.end(), 0.0);
+        double mu0 = std::accumulate(
+                decay_histogram.begin(),
+                decay_histogram.end(),
+                0.0);
         double mu1 = 0.0;
         for(int i = 0; i<decay_histogram.size(); i++)
-            mu1 += micro_time_resolution * i * decay_histogram[i];
-
+            mu1 += i * decay_histogram[i];
 
         double g1 = mu0 / m0_irf;
         double g2 = (mu1 - g1 * m1_irf) / m0_irf;
