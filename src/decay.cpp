@@ -114,9 +114,9 @@ void Decay::compute_decay(
         double* data, int n_data,
         double* squared_weights, int n_weights,
         double* time_axis, int n_time_axis,
-        double* irf, int n_irf,
-        double* scatter, int n_scatter,
+        double* irf_histogram, int n_irf_histogram,
         double* lifetime_spectrum, int n_lifetime_spectrum,
+        double* scatter, int n_scatter,
         int convolution_start, int convolution_stop,
         double scatter_fraction,
         double excitation_period,
@@ -131,8 +131,8 @@ void Decay::compute_decay(
         bool scale_model_to_data
 ){
     convolution_stop = convolution_stop > 0 ?
-                       std::min({n_time_axis, n_irf, n_model_function, convolution_stop}):
-                       std::min({n_time_axis, n_irf, n_model_function});
+                       std::min({n_time_axis, n_irf_histogram, n_model_function, convolution_stop}) :
+                       std::min({n_time_axis, n_irf_histogram, n_model_function});
     // decremente to make sure to stay in bounds
     convolution_stop = convolution_stop - 1;
 #if VERBOSE
@@ -141,7 +141,7 @@ void Decay::compute_decay(
     std::clog << "-- n_data: " << n_data << std::endl;
     std::clog << "-- n_weights: " << n_weights << std::endl;
     std::clog << "-- n_time_axis: " << n_time_axis << std::endl;
-    std::clog << "-- n_instrument_response_function: " << n_irf << std::endl;
+    std::clog << "-- n_instrument_response_function: " << n_irf_histogram << std::endl;
     std::clog << "-- n_lifetime_spectrum: " << n_lifetime_spectrum << std::endl;
     std::clog << "-- convolution_start: " << convolution_start << std::endl;
     std::clog << "-- convolution_stop: " << convolution_stop << std::endl;
@@ -160,7 +160,7 @@ void Decay::compute_decay(
     fconv_per_cs_time_axis(
             model_function, n_model_function,
             time_axis, n_time_axis,
-            irf, n_irf,
+            irf_histogram, n_irf_histogram,
             lifetime_spectrum, n_lifetime_spectrum,
             convolution_start, convolution_stop,
             use_amplitude_threshold, amplitude_threshold,
@@ -173,11 +173,11 @@ void Decay::compute_decay(
 #endif
     // add scatter fraction (irf)
     double* model_with_scatter; int n_decay_irf;
-    if(use_corrected_irf_as_scatter){
+    if(use_corrected_irf_as_scatter || (scatter == nullptr) || (n_scatter <= 0)){
         add_curve(
                 &model_with_scatter, &n_decay_irf,
                 model_function, n_model_function,
-                irf, n_irf,
+                irf_histogram, n_irf_histogram,
                 scatter_fraction,
                 convolution_start, convolution_stop
         );
@@ -237,6 +237,6 @@ void Decay::compute_decay(
     for(int i=0; i<64; i++) std::clog << model_function[i] << " ";
     std::clog << std::endl;
 #endif
-
+    free(model_with_scatter);
 }
 
