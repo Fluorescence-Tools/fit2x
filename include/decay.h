@@ -20,6 +20,10 @@ class Decay {
 
 private:
 
+    /// Used to keep track of irf shifts and background
+    /// if false get_corrected_irf will recompute the irf
+    bool _irf_correct = true;
+
     /// The model function is multiplied by this vector is _use_linearization is true
     std::vector<double> _linearization;
 
@@ -201,11 +205,10 @@ public:
             double *data, int n_data,
             double *squared_weights, int n_weights,
             double *time_axis, int n_time_axis,
-            double *irf_histogram, int n_irf_histogram,
+            double* irf, int n_irf,
+            double* scatter, int n_scatter,
             double *lifetime_spectrum, int n_lifetime_spectrum,
             int convolution_start = 0, int convolution_stop = -1,
-            double irf_background_counts = 0.0,
-            double irf_shift_channels = 0.0,
             double scatter_fraction = 0.0,
             double excitation_period = 1000.0,
             double constant_offset = 0.0,
@@ -305,6 +308,7 @@ public:
         set_is_valid(false);
         double n_channels = std::max(1., (double)_irf.size());
         _irf_shift_channels = std::fmod(v, n_channels);
+        _irf_correct = false;
     }
 
     double get_irf_shift_channels() const {
@@ -313,7 +317,7 @@ public:
 
     void set_scatter_fraction(double v) {
         set_is_valid(false);
-        _scatter_fraction = std::min(1., std::max(0.0, v));
+        _scatter_fraction = v; //std::min(1., std::max(0.0, v));
     }
 
     double get_scatter_fraction() const {
@@ -331,7 +335,7 @@ public:
 
     void set_convolution_start(int v) {
         set_is_valid(false);
-        _convolution_start = v;
+        _convolution_start = std::max(0, v);
     }
 
     int get_convolution_start() const {
@@ -344,7 +348,18 @@ public:
     }
 
     int get_convolution_stop() const {
-        return _convolution_stop;
+        int v = (_convolution_stop < 0) ? (int) _data.size() : std::min((int) _data.size(), _convolution_stop);
+        return v;
+    }
+
+    void set_convolution_range(std::vector<int> v) {
+        set_is_valid(false);
+        set_convolution_start(v[0]);
+        set_convolution_stop(v[1]);
+    }
+
+    std::vector<int> get_convolution_range() const {
+        return std::vector<int>({_convolution_start, _convolution_stop});
     }
 
     void set_add_pile_up(bool v) {
@@ -364,9 +379,7 @@ public:
         if(n_input>0){
             _irf.resize(n_input);
             _irf.assign(input, input + n_input);
-            _corrected_irf.resize(n_input);
-            for(int i=0;i<n_input;i++)
-                _corrected_irf[i] = std::max(_irf[i] - _irf_background_counts, 0.0);
+            _irf_correct = false;
         }
         else {
             if (!_data.empty()) {
@@ -385,7 +398,6 @@ public:
         *output_view = _irf.data();
         *n_output = _irf.size();
     }
-
 
     void set_linearization(double *input, int n_input) {
 #if VERBOSE
@@ -415,6 +427,7 @@ public:
     }
 
     void get_corrected_irf(double **output_view, int *n_output){
+        if(!_irf_correct) compute_corrected_irf();
         *output_view = _corrected_irf.data();
         *n_output = _corrected_irf.size();
     }
@@ -484,13 +497,25 @@ public:
         *n_output = _time_axis.size();
     }
 
+    void compute_corrected_irf(){
+        // correct irf for background counts
+        _corrected_irf.resize(_irf.size());
+        for(int i=0;i<_irf.size();i++)
+            _corrected_irf[i] = std::max(_irf[i] - _irf_background_counts, 0.0);
+        // shift irf
+        double* irf_bg_shift_corrected; int n_irf_bg_shift_corrected;
+        _corrected_irf = shift_array(
+                _corrected_irf.data(), _corrected_irf.size(),
+                _irf_shift_channels
+        );
+        _irf_correct = true;
+    }
+
     void set_irf_background_counts(
             double irf_background_counts
     ) {
         _irf_background_counts = irf_background_counts;
-        _corrected_irf.resize(_irf.size());
-        for(int i=0;i<_irf.size();i++)
-            _corrected_irf[i] = std::max(_irf[i] - _irf_background_counts, 0.0);
+        _irf_correct = false;
         set_is_valid(false);
     }
 
@@ -643,25 +668,7 @@ public:
         excitation_period = (tttr_data == nullptr) ?
                             excitation_period :
                             tttr_data->get_header().macro_time_resolution;
-        set(
-            irf_background_counts,
-            irf_shift_channels,
-            scatter_fraction,
-            constant_offset,
-            lifetime_spectrum.data(), lifetime_spectrum.size(),
-            number_of_photons,
-            acquisition_time,
-            instrument_dead_time,
-            convolution_range,
-            excitation_period,
-            scale_model_to_data,
-            score_range,
-            use_corrected_irf_as_scatter,
-            amplitude_threshold,
-            use_amplitude_threshold,
-            add_pile_up,
-            use_linearization
-        );
+
         // set data
         if (tttr_data != nullptr) set_tttr_data(tttr_data, micro_time_coarsening);
         else set_data(decay_histogram.data(), decay_histogram.size());
@@ -691,6 +698,25 @@ public:
             std::clog << "WARNING: The size of the data, time, weight array, or "
                          "irf do not match" << std::endl;
         }
+        set(
+                irf_background_counts,
+                irf_shift_channels,
+                scatter_fraction,
+                constant_offset,
+                lifetime_spectrum.data(), lifetime_spectrum.size(),
+                number_of_photons,
+                acquisition_time,
+                instrument_dead_time,
+                convolution_range,
+                excitation_period,
+                scale_model_to_data,
+                score_range,
+                use_corrected_irf_as_scatter,
+                amplitude_threshold,
+                use_amplitude_threshold,
+                add_pile_up,
+                use_linearization
+        );
     }
 
     /*!
@@ -702,9 +728,8 @@ public:
      * @param n_output length of the output array
      * @param shift[in] the shift of the output
      */
-    static void shift_array(
+    static std::vector<double> shift_array(
             double *input, int n_input,
-            double **output_view, int *n_output,
             double shift,
             bool set_outside = true,
             double outside_value = 0.0
@@ -790,47 +815,49 @@ public:
             );
         }
         if (!get_is_valid()) {
-            std::vector<double> lt;
-            lt = _lifetime_spectrum;
-            if(_abs_lifetime_spectrum) {
-#if VERBOSE
-                std::cout << "-- Taking abs(lifetime spectrum)" << std::endl;
-#endif
-                for(auto &l: lt) l = std::abs(l);
-            }
-#if VERBOSE
-            std::cout << "-- lifetime spectrum: ";
-            for (auto i: lt) std::cout << i << ' ';
-            std::cout << std::endl;
-#endif
-            compute_decay(
-                    _model_function.data(),
-                    _model_function.size(),
-                    _data.data(),
-                    _data.size(),
-                    _sq_weights.data(),
-                    _sq_weights.size(),
-                    _time_axis.data(),
-                    _time_axis.size(),
-                    _irf.data(),
-                    _irf.size(),
-                    lt.data(), lt.size(),
-                    _convolution_start, _convolution_stop,
-                    _irf_background_counts,
-                    _irf_shift_channels,
-                    _scatter_fraction,
-                    _excitation_period,
-                    _constant_offset,
-                    _number_of_photons,
-                    _use_amplitude_threshold,
-                    _amplitude_threshold,
-                    _add_pile_up,
-                    _instrument_dead_time,
-                    _acquisition_time,
-                    _use_corrected_irf_as_scatter,
-                    _scale_model_to_data
-            );
-            _is_valid = true;
+                std::vector<double> lt;
+                lt = _lifetime_spectrum;
+                if(_abs_lifetime_spectrum) {
+    #if VERBOSE
+                    std::cout << "-- Taking abs(lifetime spectrum)" << std::endl;
+    #endif
+                    for(auto &l: lt) l = std::abs(l);
+                }
+    #if VERBOSE
+                std::cout << "-- lifetime spectrum: ";
+                for (auto i: lt) std::cout << i << ' ';
+                std::cout << std::endl;
+    #endif
+                double* irf; int n_irf;
+                get_corrected_irf(&irf, &n_irf);
+                double* scatter; int n_scatter;
+                get_irf(&scatter, &n_scatter);
+                compute_decay(
+                        _model_function.data(),
+                        _model_function.size(),
+                        _data.data(),
+                        _data.size(),
+                        _sq_weights.data(),
+                        _sq_weights.size(),
+                        _time_axis.data(),
+                        _time_axis.size(),
+                        irf, n_irf,
+                        scatter, n_scatter,
+                        lt.data(), lt.size(),
+                        _convolution_start, _convolution_stop,
+                        _scatter_fraction,
+                        _excitation_period,
+                        _constant_offset,
+                        _number_of_photons,
+                        _use_amplitude_threshold,
+                        _amplitude_threshold,
+                        _add_pile_up,
+                        _instrument_dead_time,
+                        _acquisition_time,
+                        _use_corrected_irf_as_scatter,
+                        _scale_model_to_data
+                );
+                _is_valid = true;
             compute_weighted_residuals();
         }
     }
@@ -915,13 +942,21 @@ public:
         std::clog << "-- data range: " << x_min << ", " << x_max << std::endl;
 #endif
         x_min = (x_min < 0) ? std::max(this->_score_range_min, 0) : x_min;
-        x_max = (x_max < 0) ? (int)_data.size() - 1: std::min(this->_score_range_max, (int)_data.size() - 1);
+        x_max = (x_max < 0) ? (int)_data.size() - 1: std::min(x_max, (int)_data.size() - 1);
         if(!get_is_valid()) evaluate();
-        double v = statistics::chi2_counting(
-                _data,
-                _model_function,
-                x_min, x_max, type
-        );
+        double v = 0.0;
+        if(type != "normal") {
+            v = statistics::chi2_counting(
+                    _data,
+                    _model_function,
+                    x_min, x_max, type
+            );
+        } else{
+            double* wres; int nwres;
+            get_weighted_residuals(&wres, &nwres);
+            auto sr = get_score_range();
+            for(int i=sr[0];i<sr[1];i++) v += wres[i] * wres[i];
+        }
 #if VERBOSE
         std::clog << "-- x_min: " << x_min << std::endl;
         std::clog << "-- x_max: " << x_max << std::endl;
@@ -960,10 +995,6 @@ public:
         else if(score_range.size() < 2){
             score_range.emplace_back(-1);
         }
-        int convolution_start = convolution_range[0];
-        int convolution_stop = convolution_range[1];
-        convolution_start = std::max(0, convolution_start);
-        convolution_stop = std::min(convolution_stop, (int) _data.size());
         _use_linearization = use_linearization;
 
 #if VERBOSE
@@ -975,7 +1006,7 @@ public:
         std::clog << "number_of_photons: " << number_of_photons << std::endl;
         std::clog << "acquisition_time: " << acquisition_time << std::endl;
         std::clog << "instrument_dead_time: " << instrument_dead_time << std::endl;
-        std::clog << "convolution_range: (" << convolution_start << ", " << convolution_stop << std::endl;
+        std::clog << "convolution_range: (" << _convolution_start << ", " << _convolution_stop << std::endl;
         std::clog << "excitation_period: " << excitation_period << std::endl;
         std::clog << "scale_model_to_data: " << scale_model_to_data << std::endl;
         std::clog << "score_range: (" << score_range[0] << ", " << score_range[1] << std::endl;
@@ -994,8 +1025,7 @@ public:
         set_scatter_fraction(scatter_fraction);
         set_acquisition_time(acquisition_time);
         set_instrument_dead_time(instrument_dead_time);
-        set_convolution_start(convolution_start);
-        set_convolution_stop(convolution_stop);
+        set_convolution_range(convolution_range);
         set_excitation_period(excitation_period);
         set_scale_model_to_data(scale_model_to_data);
         set_score_range(score_range[0], score_range[1]);
