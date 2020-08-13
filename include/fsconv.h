@@ -236,12 +236,12 @@ void add_pile_up_to_model(
  * Amplitudes with absolute values smaller than the specified threshold are
  * set to zero.
  *
- * @param lifetime_spectrum
- * @param number_of_exponentials
+ * @param lifetime_spectrum interleaved lifetime spectrum (amplitude, lifetime)
+ * @param n_lifetime_spectrum number of elements in lifetime spectrum
  * @param amplitude_threshold
  */
 void discriminate_small_amplitudes(
-        double* lifetime_spectrum, int number_of_exponentials,
+        double* lifetime_spectrum, int n_lifetime_spectrum,
         double amplitude_threshold
 );
 
@@ -276,11 +276,6 @@ void discriminate_small_amplitudes(
 * @param n_lifetime_spectrum[in] number of elements in the lifetime spectrum
 * @param convolution_start[in] Start channel of convolution (position in array of IRF)
 * @param convolution_stop[in] convolution stop channel (the index on the time-axis)
-* @param use_amplitude_threshold[in] If this value is True (default False)
-* fluorescence lifetimes in the lifetime spectrum which have an amplitude
-* with an absolute value of that is smaller than `amplitude_threshold` are
-* not omitted in the convolution.
-* @param amplitude_threshold[in] Threshold value for the amplitudes
 * @param period Period of repetition in units of the lifetime (usually,
 * nano-seconds)
 */
@@ -291,8 +286,6 @@ void fconv_per_cs_time_axis(
     double *lifetime_spectrum, int n_lifetime_spectrum,
     int convolution_start = 0,
     int convolution_stop = -1,
-    bool use_amplitude_threshold = false,
-    double amplitude_threshold = 1e10,
     double period = 100.0
 );
 
@@ -340,9 +333,7 @@ void fconv_cs_time_axis(
         double *instrument_response_function, int n_instrument_response_function,
         double *lifetime_spectrum, int n_lifetime_spectrum,
         int convolution_start = 0,
-        int convolution_stop = -1,
-        bool use_amplitude_threshold = false,
-        double amplitude_threshold = 1e10
+        int convolution_stop = -1
 );
 
 

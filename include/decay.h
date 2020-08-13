@@ -8,11 +8,11 @@
 #include <numeric>
 #include <algorithm>
 #include <memory> /* shared_ptr */
-
 #include "omp.h"
+
+#include "fsconv.h"
 #include "tttrlib/tttr.h"
 #include "statistics.h"
-#include "fsconv.h"
 
 
 
@@ -115,6 +115,16 @@ private:
     int _score_range_max = -1;
 
 public:
+
+    /// The method used for convolution
+    /*!
+     * 0 - fconv_per_cs_time_axis
+     * 1 - fconv_cs_time_axis
+     * 2 - fconv_per
+     * 3 - fconv
+     */
+    int convolution_method = 0;
+
 
     void set_abs_lifetime_spectrum(bool v){
         set_is_valid(false);
@@ -219,7 +229,8 @@ public:
             double instrument_dead_time=120.0,
             double acquisition_time=100000.0,
             bool add_corrected_irf_as_scatter = false,
-            bool scale_model_to_data = false
+            bool scale_model_to_data = false,
+            int convolution_method = 0
     );
 
 public:
@@ -660,7 +671,8 @@ public:
             double number_of_photons=1,
             double irf_shift_channels=0.0,
             std::vector<double> linearization = std::vector<double>(),
-            bool use_linearization = false
+            bool use_linearization = false,
+            int convolution_method = 0
     ) {
 #if VERBOSE
         std::clog << "NEW DECAY" << std::endl;
@@ -668,7 +680,6 @@ public:
         excitation_period = (tttr_data == nullptr) ?
                             excitation_period :
                             tttr_data->get_header().macro_time_resolution;
-
         // set data
         if (tttr_data != nullptr) set_tttr_data(tttr_data, micro_time_coarsening);
         else set_data(decay_histogram.data(), decay_histogram.size());
@@ -715,7 +726,8 @@ public:
                 amplitude_threshold,
                 use_amplitude_threshold,
                 add_pile_up,
-                use_linearization
+                use_linearization,
+                convolution_method
         );
     }
 
@@ -745,11 +757,12 @@ public:
      * the area of the first input curve while the areal fraction of
      * the second input curve will be equal to the specified value in
      * the range specified by the input parameters.
+     * modifies curve1 inplace
      *
      * @param output the computed output curve (array)
      * @param n_output the number of points in the output
-     * @param curve1[in] the first input curve / array
-     * @param n_curve1[in] number of points in the first array
+     * @param curve1[in, out] the first input curve / array
+     * @param n_curve1[in, out] number of points in the first array
      * @param curve2[in] second curve / array
      * @param n_curve2[in] number of points in the second array
      * @param areal_fraction_curve2[in] areal fraction of the second curve in the
@@ -784,7 +797,7 @@ public:
             double* squared_data_weights
     );
 
-    void compute_weighted_residuals(){
+    void update_weighted_residuals(){
         double *m; int nm; get_model(&m, &nm);
         double *d; int nd; get_data(&d, &nd);
         double *w; int nw; get_weights(&w, &nw);
@@ -802,18 +815,10 @@ public:
         }
     }
 
-    void evaluate(
-            std::vector<double> lifetime_spectrum = std::vector<double>()
-    ) {
+    void evaluate(bool update_wres = true) {
 #if VERBOSE
         std::cout << "evaluate..." << std::endl;
 #endif
-        if (!lifetime_spectrum.empty()) {
-            set_lifetime_spectrum(
-                    lifetime_spectrum.data(),
-                    lifetime_spectrum.size()
-            );
-        }
         if (!get_is_valid()) {
                 std::vector<double> lt;
                 lt = _lifetime_spectrum;
@@ -855,10 +860,11 @@ public:
                         _instrument_dead_time,
                         _acquisition_time,
                         _use_corrected_irf_as_scatter,
-                        _scale_model_to_data
+                        _scale_model_to_data,
+                        this->convolution_method
                 );
                 _is_valid = true;
-            compute_weighted_residuals();
+            if(update_wres) update_weighted_residuals();
         }
     }
 
@@ -935,7 +941,8 @@ public:
     double get_score(
             int x_min = -1,
             int x_max = -1,
-            std::string type= "poisson"
+            std::string type= "poisson",
+            bool update_wres = true
     ){
 #if VERBOSE
         std::clog << "CHI2" << std::endl;
@@ -943,7 +950,7 @@ public:
 #endif
         x_min = (x_min < 0) ? std::max(this->_score_range_min, 0) : x_min;
         x_max = (x_max < 0) ? (int)_data.size() - 1: std::min(x_max, (int)_data.size() - 1);
-        if(!get_is_valid()) evaluate();
+        evaluate(update_wres);
         double v = 0.0;
         if(type != "normal") {
             v = statistics::chi2_counting(
@@ -986,7 +993,8 @@ public:
         double amplitude_threshold = 1e-9,
         bool use_amplitude_threshold = false,
         bool add_pile_up = false,
-        bool use_linearization = false
+        bool use_linearization = false,
+        int convolution_method = 0
     ){
         if(score_range.empty() < 1){
             score_range.emplace_back(0);
@@ -995,8 +1003,8 @@ public:
         else if(score_range.size() < 2){
             score_range.emplace_back(-1);
         }
+        this->convolution_method = convolution_method;
         _use_linearization = use_linearization;
-
 #if VERBOSE
         std::clog << "SET" << std::endl;
         std::clog << "irf_background_counts: " << irf_background_counts << std::endl;
@@ -1006,10 +1014,10 @@ public:
         std::clog << "number_of_photons: " << number_of_photons << std::endl;
         std::clog << "acquisition_time: " << acquisition_time << std::endl;
         std::clog << "instrument_dead_time: " << instrument_dead_time << std::endl;
-        std::clog << "convolution_range: (" << _convolution_start << ", " << _convolution_stop << std::endl;
+        std::clog << "convolution_range: " << _convolution_start << ", " << _convolution_stop << std::endl;
         std::clog << "excitation_period: " << excitation_period << std::endl;
         std::clog << "scale_model_to_data: " << scale_model_to_data << std::endl;
-        std::clog << "score_range: (" << score_range[0] << ", " << score_range[1] << std::endl;
+        std::clog << "score_range: " << score_range[0] << ", " << score_range[1] << std::endl;
         std::clog << "use_corrected_irf_as_scatter: " << use_corrected_irf_as_scatter << std::endl;
         std::clog << "amplitude_threshold: " << amplitude_threshold << std::endl;
         std::clog << "use_amplitude_threshold: " << use_amplitude_threshold << std::endl;

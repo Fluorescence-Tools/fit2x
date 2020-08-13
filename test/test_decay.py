@@ -2,7 +2,7 @@ from __future__ import division
 import unittest
 
 import scipy.stats
-#import tttrlib
+# import tttrlib
 import fit2x
 import numpy as np
 
@@ -51,7 +51,9 @@ class Tests(unittest.TestCase):
         self.assertEqual(decay.convolution_start, 3)
 
         decay.convolution_stop = 12
-        self.assertEqual(decay.convolution_stop, 12)
+        self.assertEqual(decay.convolution_stop, 0)  # no data set
+        decay.data = np.arange(20, dtype=np.float)
+        self.assertEqual(decay.convolution_stop, 12)  # data set
         decay.convolution_stop = 3
         self.assertEqual(decay.convolution_stop, 3)
 
@@ -91,7 +93,7 @@ class Tests(unittest.TestCase):
         # default values
         self.assertEqual(decay.is_valid, False)
         self.assertEqual(decay.convolution_start, 0)
-        self.assertEqual(decay.convolution_stop, -1)
+        self.assertEqual(decay.convolution_stop, 0)
         self.assertEqual(decay.add_pile_up, False)
         self.assertEqual(decay.use_amplitude_threshold, False)
         self.assertEqual(decay.excitation_period, 100.0)
@@ -103,7 +105,7 @@ class Tests(unittest.TestCase):
         self.assertListEqual(list(decay.get_data()), [1, 2, 3, 4, 56])
 
         decay = fit2x.Decay(
-            instrument_response_function=[1., 2, 3, 4, 56]
+            irf_histogram=[1., 2, 3, 4, 56]
         )
         self.assertListEqual(list(decay.get_irf()), [1, 2, 3, 4, 56])
 
@@ -120,7 +122,7 @@ class Tests(unittest.TestCase):
         data = np.linspace(1, 22, 12)
         decay = fit2x.Decay(
             decay_histogram=data,
-            convolution_start=2, convolution_stop=32,
+            convolution_range=(2, 32),
             add_pile_up=True,
             excitation_period=123.2
         )
@@ -176,7 +178,7 @@ class Tests(unittest.TestCase):
     #         model_decay,
     #         time_axis=time_axis,
     #         lifetime_spectrum=lifetime_spectrum,
-    #         instrument_response_function=irf,
+    #         irf_histogram=irf,
     #         period=16.0
     #     )
     #     reference = np.array(
@@ -336,10 +338,8 @@ class Tests(unittest.TestCase):
             data=data_decay,
             squared_weights=data_weight,
             time_axis=time_axis,
-            instrument_response_function=irf,
+            irf_histogram=irf,
             lifetime_spectrum=lifetime_spectrum,
-            irf_background_counts=0.0,
-            irf_shift_channels=-4.5,
             scatter_fraction=0.1,
             excitation_period=5.,
             constant_offset=10,
@@ -352,13 +352,10 @@ class Tests(unittest.TestCase):
         print(model)
         ref = np.array(
             [
-                293.92133328, 259.26501305, 343.18437388, 497.96130874,
-                288.77278004,
-                196.06217784, 355.75320104, 588.64815649, 679.22653859,
-                620.52197926,
-                529.51847919, 449.79420922, 382.27782274, 325.12637355,
-                276.74871624,
-                10.
+                159.8453894, 150.93787478, 332.10434096, 752.30770162,
+                773.90059838, 642.39549668, 543.50074262, 461.57573646,
+                392.25056234, 333.56811533, 283.89449639, 241.84668574,
+                206.25398245, 176.12540958, 150.62212325, 10.
             ]
         )
         self.assertEqual(np.allclose(ref, model), True)
@@ -383,29 +380,29 @@ class Tests(unittest.TestCase):
         decay_object = fit2x.Decay(
             decay_histogram=data,
             weights=weights,
-            instrument_response_function=irf,
+            irf_histogram=irf,
             time_axis=time_axis,
-            constant_background=140.0
-        )
-        decay_object.evaluate(
+            constant_offset=140.0,
             lifetime_spectrum=[1, 2]
         )
         m = decay_object.model
         wres = decay_object.weighted_residuals
-        ref = np.array([140.,         140.00919308, 140.00118584, 140.00015296, 140.00001973,
-                        140.00000255, 140.00000033, 140.00000004, 140.00000001, 140.,
-                        140.,         140.,         140.,        ])
+        ref = np.array(
+            [140., 140.00919308, 140.00118584, 140.00015296, 140.00001973,
+             140.00000255, 140.00000033, 140.00000004, 140.00000001, 140.,
+             140., 140., 140., ])
 
         # import pylab as p
         # p.plot(m[::64])
         # p.show()
-        # print(m[::64])
+        print(m[::64])
         self.assertEqual(
             np.allclose(m[::64], ref), True
         )
-        wres_ref = np.array([ -0.,         154.7475065,   54.30542351,  18.72900653,   1.20482741,
-                              -5.68219671,  -7.8417569,   -8.36660027,  -6.25656282,  -9.5,
-                              -9.90600991,  -6.70820393,  -7.17951632])
+        wres_ref = np.array(
+            [-0., 154.7475065, 54.30542351, 18.72900653, 1.20482741,
+             -5.68219671, -7.8417569, -8.36660027, -6.25656282, -9.5,
+             -9.90600991, -6.70820393, -7.17951632])
         self.assertEqual(
             np.allclose(wres[::64], wres_ref), True
         )

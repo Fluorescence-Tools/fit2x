@@ -25,8 +25,6 @@ void fconv_per_cs_time_axis(
         double *lifetime_spectrum, int n_lifetime_spectrum,
         int convolution_start = 0,
         int convolution_stop = -1,
-        bool use_amplitude_threshold = false,
-        double amplitude_threshold = 1e10,
         double period = 100.0
 );
 

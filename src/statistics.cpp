@@ -43,11 +43,9 @@ double statistics::chi2_counting(
         for(int i = x_min; i < x_max; i++){
             double mu = model[i];
             double m = data[i];
-            if (mu > 0) {
-                if (m <= 1e-12)
-                    chi2 += 2 * mu;
-                else
-                    chi2 += 2 * (mu - m - m * log(mu / m));
+            chi2 += 2 * std::abs(mu);
+            if ((mu > 0) && (m > 0)) {
+                chi2 -= 2 * (m + m * log(mu / m));
             }
         }
     } else if(type == "pearson"){
@@ -74,6 +72,13 @@ double statistics::chi2_counting(
             chi2 += (mu - m) * (mu - m) / (3. / (1./m + 2./mu));
         }
     }
+#if VERBOSE
+    std::cout << "CHI2_COUNTING" << std::endl;
+    std::cout << "-- type: " << type << std::endl;
+    std::cout << "-- x_min: " << x_min << std::endl;
+    std::cout << "-- x_max: " << x_max << std::endl;
+    std::cout << "-- chi2: " << chi2 << std::endl;
+#endif
     return chi2;
 }
 

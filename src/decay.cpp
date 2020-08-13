@@ -57,19 +57,13 @@ void Decay::add_curve(
     *n_output = std::min(n_curve1, n_curve2);
     start = std::min(0, start);
     stop = stop < 0? *n_output: std::min(*n_output, stop);
-    auto tmp  = (double*) malloc(*n_output * sizeof(double));
-    auto tmp1 = (double*) malloc(n_curve1 * sizeof(double));
-    auto tmp2 = (double*) malloc(n_curve2 * sizeof(double));
     double sum_curve_1 = std::accumulate( curve1 + start, curve1 + stop, 0.0);
     double sum_curve_2 = std::accumulate( curve2 + start, curve2 + stop, 0.0);
-    for(int i=0; i<n_curve1;i++) tmp1[i]  = curve1[i] / sum_curve_1;
-    for(int i=0; i<n_curve2;i++) tmp2[i]  = curve2[i] / sum_curve_2;
-    for(int i=start; i<stop;i++)
-        tmp[i] = (
-                    (1. - areal_fraction_curve2) * tmp1[i] + areal_fraction_curve2 * tmp2[i]
-                ) * sum_curve_1;
-    free(tmp1); free(tmp2);
-    *output = tmp;
+    double f1 = (1. - areal_fraction_curve2);
+    double f2 = areal_fraction_curve2 * sum_curve_1 / sum_curve_2;
+    for(int i=start; i<stop;i++) curve1[i] = (f1 * curve1[i] + f2 * curve2[i]);
+    *output = curve1;
+    *n_output = n_curve1;
 }
 
 
@@ -128,7 +122,8 @@ void Decay::compute_decay(
         double instrument_dead_time,
         double acquisition_time,
         bool use_corrected_irf_as_scatter,
-        bool scale_model_to_data
+        bool scale_model_to_data,
+        int convolution_method
 ){
     convolution_stop = convolution_stop > 0 ?
                        std::min({n_time_axis, n_irf_histogram, n_model_function, convolution_stop}) :
@@ -155,27 +150,56 @@ void Decay::compute_decay(
     std::clog << "-- add_pile_up: " << add_pile_up << std::endl;
     std::clog << "-- use_corrected_irf_as_scatter: " << use_corrected_irf_as_scatter << std::endl;
 #endif
-
-    // convolve lifetime spectrum with irf
-    fconv_per_cs_time_axis(
-            model_function, n_model_function,
-            time_axis, n_time_axis,
-            irf_histogram, n_irf_histogram,
-            lifetime_spectrum, n_lifetime_spectrum,
-            convolution_start, convolution_stop,
-            use_amplitude_threshold, amplitude_threshold,
-            excitation_period
-    );
+    if(use_amplitude_threshold){
+        discriminate_small_amplitudes(
+                lifetime_spectrum, n_lifetime_spectrum,
+                amplitude_threshold
+        );
+    }
+    if(convolution_method == 0){
+        fconv_per_cs_time_axis(
+                model_function, n_model_function,
+                time_axis, n_time_axis,
+                irf_histogram, n_irf_histogram,
+                lifetime_spectrum, n_lifetime_spectrum,
+                convolution_start, convolution_stop,
+                excitation_period
+        );
+    } else if(convolution_method == 1){
+        fconv_cs_time_axis(
+                model_function, n_model_function,
+                time_axis, n_time_axis,
+                irf_histogram, n_irf_histogram,
+                lifetime_spectrum, n_lifetime_spectrum,
+                convolution_start, convolution_stop
+        );
+    } else if (convolution_method == 2) {
+        double dt = time_axis[1] - time_axis[0];
+        fconv_per(
+                model_function, lifetime_spectrum,
+                irf_histogram, n_lifetime_spectrum,
+                convolution_start, convolution_stop,
+                n_model_function, excitation_period,
+                dt
+        );
+    } else if (convolution_method == 3) {
+        double dt = time_axis[1] - time_axis[0];
+        fconv(
+                model_function, lifetime_spectrum,
+                irf_histogram, n_lifetime_spectrum,
+                convolution_start, convolution_stop,
+                dt
+        );
+    }
 #if VERBOSE
     std::clog << "fconv_per_cs_time_axis - model_function [:64]: ";
     for(int i=0; i<64; i++) std::clog << model_function[i] << " ";
     std::clog << std::endl;
 #endif
     // add scatter fraction (irf)
-    double* model_with_scatter; int n_decay_irf;
     if(use_corrected_irf_as_scatter || (scatter == nullptr) || (n_scatter <= 0)){
         add_curve(
-                &model_with_scatter, &n_decay_irf,
+                &model_function, &n_model_function,
                 model_function, n_model_function,
                 irf_histogram, n_irf_histogram,
                 scatter_fraction,
@@ -183,7 +207,7 @@ void Decay::compute_decay(
         );
     } else{
         add_curve(
-                &model_with_scatter, &n_decay_irf,
+                &model_function, &n_model_function,
                 model_function, n_model_function,
                 scatter, n_scatter,
                 scatter_fraction,
@@ -192,51 +216,45 @@ void Decay::compute_decay(
     }
 #if VERBOSE
     std::clog << "model_with_scatter [:64]: ";
-    for(int i=0; i<64; i++) std::clog << model_with_scatter[i] << " ";
+    for(int i=0; i<64; i++) std::clog << model_function[i] << " ";
     std::clog << std::endl;
 #endif
     if(add_pile_up){
         double rep_rate = 1. / excitation_period * 1000.;
         add_pile_up_to_model(
-                model_with_scatter, n_decay_irf,
+                model_function, n_model_function,
                 data, n_data,
                 rep_rate, instrument_dead_time,
                 acquisition_time
         );
     }
-
 #if VERBOSE
     std::clog << "model_with_scatter - pile up [:64]: ";
-    for(int i=0; i<64; i++) std::clog << model_with_scatter[i] << " ";
+    for(int i=0; i<64; i++) std::clog << model_function[i] << " ";
     std::clog << std::endl;
 #endif
-
     // scale model function
     scale_model(
             scale_model_to_data,
             number_of_photons,
             convolution_start, convolution_stop,
-            constant_background, model_with_scatter, data, squared_weights
+            constant_background, model_function, data, squared_weights
     );
-
 #if VERBOSE
     std::clog << "model_with_scatter - scaled [:64]: ";
-    for(int i=0; i<64; i++) std::clog << model_with_scatter[i] << " ";
+    for(int i=0; i<64; i++) std::clog << model_function[i] << " ";
     std::clog << std::endl;
 #endif
-
 #if VERBOSE
     std::clog << "Adding Background" << std::endl;
     std::clog << "-- add constant background: " << constant_background << std::endl;
 #endif
     for(int i=0; i<n_model_function;i++)
-        model_function[i] = model_with_scatter[i] + constant_background;
-
+        model_function[i] += constant_background;
 #if VERBOSE
     std::clog << "model final [:64]: ";
     for(int i=0; i<64; i++) std::clog << model_function[i] << " ";
     std::clog << std::endl;
 #endif
-    free(model_with_scatter);
 }
 

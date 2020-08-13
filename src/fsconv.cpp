@@ -57,15 +57,12 @@ void rescale_w_bg(double *fit, double *decay, double *w_sq, double bg, double *s
     std::clog << "w_sq [:64]: ";
     for(int i=0; i<64; i++) std::clog << w_sq[i] << " ";
     std::clog << std::endl;
-
     std::clog << "decay [:64]: ";
     for(int i=0; i<64; i++) std::clog << decay[i] << " ";
     std::clog << std::endl;
-
     std::clog << "fit [:64]: ";
     for(int i=0; i<64; i++) std::clog << fit[i] << " ";
     std::clog << std::endl;
-
 #endif
     int i;
     double sumnom=0., sumdenom=0.;
@@ -93,9 +90,7 @@ void fconv(double *fit, double *x, double *lamp, int numexp, int start, int stop
 #endif
     int ne, i;
     double fitcurr, expcurr, deltathalf = dt * 0.5;
-
     for (i = 0; i <= stop; i++) fit[i] = 0;
-
     /* convolution */
     for (ne = 0; ne < numexp; ne++) {
 #if VERBOSE
@@ -274,7 +269,6 @@ void add_pile_up_to_model(
             rescaled_data[i] = -std::log(1.0 - data[i] / (n_excitation_pulses - cum_sum[i]));
         for(int i=0;i<n_data;i++)
             rescaled_data[i] = (rescaled_data[i] == 0) ? 1.0 : rescaled_data[i];
-
         // rescale model function to preserve data counting statistics
         std::vector<double> sf(n_data);
         for(int i=0;i<n_data;i++)
@@ -287,9 +281,10 @@ void add_pile_up_to_model(
 
 
 void discriminate_small_amplitudes(
-        double* lifetime_spectrum, int number_of_exponentials,
+        double* lifetime_spectrum, int n_lifetime_spectrum,
         double amplitude_threshold
         ){
+    int number_of_exponentials = n_lifetime_spectrum / 2;
 #if VERBOSE
     std::clog << "APPLY_AMPLITUDE_THRESHOLD" << std::endl;
     std::clog << "-- amplitude_threshold spectrum: " << amplitude_threshold << std::endl;
@@ -303,8 +298,6 @@ void discriminate_small_amplitudes(
         double amplitude = lifetime_spectrum[2 * ne];
         if(std::abs(amplitude) < amplitude_threshold){
             lifetime_spectrum[2 * ne] = 0.0;
-        } else{
-            lifetime_spectrum[2 * ne] = amplitude;
         }
     }
 #if VERBOSE
@@ -325,13 +318,11 @@ void fconv_per_cs_time_axis(
         double* lifetime_spectrum, int n_lifetime_spectrum,
         int convolution_start,
         int convolution_stop,
-        bool use_amplitude_threshold,
-        double amplitude_threshold,
         double period
 ){
     convolution_stop = convolution_stop > 0 ?
-                       std::min(n_time_axis, std::min(n_instrument_response_function, std::min(n_model, convolution_stop))) :
-                       std::min(n_time_axis, std::min(n_instrument_response_function, n_model));
+            std::min({n_time_axis, n_instrument_response_function, n_model, convolution_stop}):
+            std::min({n_time_axis, n_instrument_response_function, n_model});
     int number_of_exponentials = n_lifetime_spectrum / 2;
     double dt = time_axis[1] - time_axis[0];
     double dt_2 = dt / 2;
@@ -344,38 +335,30 @@ void fconv_per_cs_time_axis(
     std::clog << "-- number_of_exponentials: " << number_of_exponentials << std::endl;
     std::clog << "-- convolution_start: " << convolution_start << std::endl;
     std::clog << "-- convolution_stop: " << convolution_stop << std::endl;
-    std::clog << "-- use_amplitude_threshold: " << use_amplitude_threshold << std::endl;
-    std::clog << "-- amplitude_threshold: " << amplitude_threshold << std::endl;
     std::clog << "-- period: " << period << std::endl;
     std::clog << "-- n_model: " << n_model << std::endl;
 #endif
-    if(use_amplitude_threshold){
-        discriminate_small_amplitudes(
-                lifetime_spectrum, number_of_exponentials,
-                amplitude_threshold
-        );
-    }
     for(int ne=0; ne < number_of_exponentials; ne++){
-        double x_curr = lifetime_spectrum[2 * ne];
-        if(x_curr == 0.0) continue;
+        double x = lifetime_spectrum[2 * ne];
+        if(x == 0.0) continue;
         double lt_curr = lifetime_spectrum[2 * ne + 1];
         double tail_a = 1./(1.-exp(-period/lt_curr));
         double fit_curr = 0.;
         double exp_curr = std::exp(-dt/lt_curr);
-        model[0] += dt_2 * instrument_response_function[0] * (exp_curr + 1.) * x_curr;
+        model[0] += dt_2 * instrument_response_function[0] * (exp_curr + 1.) * x;
         for(int i=convolution_start; i<convolution_stop; i++){
             fit_curr = (fit_curr + dt_2 * instrument_response_function[i - 1]) *
                        exp_curr + dt_2 * instrument_response_function[i];
-            model[i] += fit_curr * x_curr;
+            model[i] += fit_curr * x;
         }
         for(int i=convolution_stop; i<stop1; i++){
             fit_curr *= exp_curr;
-            model[i] += fit_curr * x_curr;
+            model[i] += fit_curr * x;
         }
         fit_curr *= exp(-(period_n - stop1) * dt / lt_curr);
         for(int i=0; i < convolution_stop; i++) {
             fit_curr *= exp_curr;
-            model[i] += fit_curr * x_curr * tail_a;
+            model[i] += fit_curr * x * tail_a;
         }
     }
 }
@@ -387,9 +370,7 @@ void fconv_cs_time_axis(
         double *instrument_response_function, int n_instrument_response_function,
         double* lifetime_spectrum, int n_lifetime_spectrum,
         int convolution_start,
-        int convolution_stop,
-        bool use_amplitude_threshold,
-        double amplitude_threshold
+        int convolution_stop
 ){
     int number_of_exponentials = n_lifetime_spectrum / 2;
     convolution_stop = convolution_stop > 0 ?
@@ -402,13 +383,8 @@ void fconv_cs_time_axis(
     std::clog << "-- number_of_exponentials: " << number_of_exponentials << std::endl;
     std::clog << "-- convolution_start: " << convolution_start << std::endl;
     std::clog << "-- convolution_stop: " << convolution_stop << std::endl;
-    std::clog << "-- use_amplitude_threshold: " << use_amplitude_threshold << std::endl;
-    std::clog << "-- amplitude_threshold: " << amplitude_threshold << std::endl;
 #endif
     for(int i=0; i<n_output; i++) output[i] = 0.0;
-    if(use_amplitude_threshold){
-        discriminate_small_amplitudes(lifetime_spectrum, number_of_exponentials, amplitude_threshold);
-    }
     for(int ne=0; ne<number_of_exponentials; ne++){
         double a = lifetime_spectrum[2 * ne];
         double current_lifetime = (lifetime_spectrum[2 * ne + 1]);
