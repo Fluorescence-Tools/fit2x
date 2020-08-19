@@ -4,6 +4,7 @@ SET(PROJECT_NAME fit2x)
 PROJECT(${PROJECT_NAME})
 ENABLE_LANGUAGE(CXX)
 SET(CMAKE_CXX_STANDARD 11)
+add_definitions(-D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES)
 
 ## Check for Conda
 ###########################
@@ -31,7 +32,16 @@ if (MSVC)
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++latest")
     ADD_DEFINITIONS(-DMS_WIN64)
     ADD_DEFINITIONS(-D_USE_MATH_DEFINES)
+    # Requires AVX
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX")
 endif (MSVC)
+
+# if(NOT LINUX) should work, too, if you need that
+if(LINUX)
+    # Requires AVX
+    STRING(APPEND CMAKE_CXX_FLAGS " -march=native -Ofast -mavx -ffast-math -funroll-loops")
+    STRING(APPEND CMAKE_C_FLAGS " -march=native -Ofast -mavx -ffast-math -funroll-loops")
+endif()
 
 # MACOSX
 ##############
@@ -46,8 +56,10 @@ if (APPLE)
     SET(CMAKE_MACOSX_RPATH 0)
     LINK_DIRECTORIES(/usr/local/lib)
     INCLUDE_DIRECTORIES(/usr/local/include)
+    # Requires AVX
+    STRING(APPEND CMAKE_CXX_FLAGS " -march=native -Ofast -mavx -ffast-math -funroll-loops")
+    STRING(APPEND CMAKE_C_FLAGS " -march=native -Ofast -mavx -ffast-math -funroll-loops")
 endif (APPLE)
-
 
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include)
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR})
@@ -58,26 +70,19 @@ OPTION(BUILD_PYTHON_INTERFACE "Build Python interface" ON)
 ################################################################################
 FILE(GLOB SRC_files "${CMAKE_SOURCE_DIR}/src/*.cpp")
 
-# Optimize compiler flags
-###########################
-INCLUDE(CMakeHostSystemInformationExtra)
-INCLUDE(GetCPUSIMDFeatures)
-INCLUDE(CMakeCompilerMachineOption)
-# SET(TARGET_ARCHITECTURE skylake)
-# CMAKE_COMPILER_MACHINE_OPTION(ARCHITECTURE_FLAG ${TARGET_ARCHITECTURE})
-MESSAGE(STATUS "Use compiler option: ${ARCHITECTURE_FLAG}")
-ADD_COMPILE_OPTIONS(${ARCHITECTURE_FLAG})
-
 
 # Debug build detection
 ###########################
 IF (CMAKE_BUILD_TYPE STREQUAL "Release")
     MESSAGE("Release build")
     ADD_DEFINITIONS("-DVERBOSE=0")
+    string(APPEND CMAKE_CXX_FLAGS " -Wall -Wextra")
+    set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 ELSE (CMAKE_BUILD_TYPE STREQUAL "Debug")
     MESSAGE("Debug build")
     ADD_DEFINITIONS("-DVERBOSE=1")
 ENDIF (CMAKE_BUILD_TYPE STREQUAL "Release")
+
 
 
 ## TTTRLIB
