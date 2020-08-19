@@ -6,6 +6,10 @@
 #include <cmath>
 #include <numeric> /* accumulate */
 #include <string>
+#include <vector>
+#include "omp.h"
+#include <immintrin.h>
+
 
 
 /*!
@@ -97,6 +101,26 @@ void fconv(double *fit, double *x, double *lamp, int numexp, int start, int stop
 
 /*!
  * @brief Convolve lifetime spectrum with instrument response (fast convolution,
+ * AVX optimized for large lifetime spectra)
+ *
+ * This function is a modification of fconv for large lifetime spectra. The
+ * lifetime spectrum is processed by AVX intrinsics. Four lifetimes are convolved
+ * at once. Spectra with lifetimes that are not multiple of four are zero padded.
+ *
+ * @param fit
+ * @param x
+ * @param lamp
+ * @param numexp
+ * @param start
+ * @param stop
+ * @param n_points
+ * @param dt
+ */
+void fconv_avx(double *fit, double *x, double *lamp, int numexp, int start, int stop, double dt=0.05);
+
+
+/*!
+ * @brief Convolve lifetime spectrum with instrument response (fast convolution,
  * high repetition rate)
  *
  * This function computes the convolution of a lifetime spectrum (a set of
@@ -116,6 +140,30 @@ void fconv(double *fit, double *x, double *lamp, int numexp, int start, int stop
  * @param dt[in] time difference between two micro time channels
  */
 void fconv_per(
+        double *fit, double *x, double *lamp, int numexp, int start, int stop,
+        int n_points, double period, double dt=0.05
+);
+/*!
+ * @brief Convolve lifetime spectrum with instrument response (fast convolution,
+ * high repetition rate), AVX optimized version
+ *
+ * This function computes the convolution of a lifetime spectrum (a set of
+ * lifetimes with corresponding amplitudes) with a instrument response function
+ * (irf). This function does consider periodic excitation and is suited for experiments
+ * at high repetition rate.
+ *
+ * @param fit[out] model function. The convoluted decay is written to this array
+ * @param x[in] lifetime spectrum (amplitude1, lifetime1, amplitude2, lifetime2, ...)
+ * @param lamp[in] instrument response function
+ * @param numexp[in] number of fluorescence lifetimes
+ * @param start[in] start micro time index for convolution (not used)
+ * @param stop[in] stop micro time index for convolution.
+ * @param n_points number of points in the model function.
+ * @param period excitation period in units of the fluorescence lifetimes (typically
+ * nanoseconds)
+ * @param dt[in] time difference between two micro time channels
+ */
+void fconv_per_avx(
         double *fit, double *x, double *lamp, int numexp, int start, int stop,
         int n_points, double period, double dt=0.05
 );

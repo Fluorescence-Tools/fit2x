@@ -61,14 +61,14 @@ double my_rescale(
         );
     }
     if(stop < 0){
-        stop = len1 - 1;
+        stop = len1;
     }
     if (start >= len1) {
         PyErr_Format(PyExc_ValueError,
                      "Start index (%d) too large for array of lengths (%d).",
                      start, len1);
     }
-    if (stop >= len1) {
+    if (stop > len1) {
         PyErr_Format(PyExc_ValueError,
                      "Stop index (%d) too large for array of lengths (%d).",
                      stop, len1);
@@ -110,14 +110,14 @@ double my_rescale_w(
         );
     }
     if(stop < 0){
-        stop = len1 - 1;
+        stop = len1;
     }
-    if (start >= len1) {
+    if (start > len1) {
         PyErr_Format(PyExc_ValueError,
                      "Start index (%d) too large for array of lengths (%d).",
                      start, len1);
     }
-    if (stop >= len1) {
+    if (stop > len1) {
         PyErr_Format(PyExc_ValueError,
                      "Stop index (%d) too large for array of lengths (%d).",
                      stop, len1);
@@ -159,14 +159,14 @@ double my_rescale_w_bg(
         );
     }
     if(stop < 0){
-        stop = len1 - 1;
+        stop = len1;
     }
-    if (start >= len1) {
+    if (start > len1) {
         PyErr_Format(PyExc_ValueError,
                      "Start index (%d) too large for array of lengths (%d).",
                      start, len1);
     }
-    if (stop >= len1) {
+    if (stop > len1) {
         PyErr_Format(PyExc_ValueError,
                      "Stop index (%d) too large for array of lengths (%d).",
                      stop, len1);
@@ -202,14 +202,14 @@ void my_fconv(
         );
     }
     if(stop < 0){
-        stop = len1 - 1;
+        stop = len1;
     }
-    if (start >= len1) {
+    if (start > len1) {
         PyErr_Format(PyExc_ValueError,
                      "Start index (%d) too large for array of lengths (%d).",
                      start, len1);
     }
-    if (stop >= len1) {
+    if (stop > len1) {
         PyErr_Format(PyExc_ValueError,
                      "Stop index (%d) too large for array of lengths (%d).",
                      stop, len1);
@@ -217,6 +217,49 @@ void my_fconv(
     fconv(fit, x, irf, len3 / 2, start, stop, dt);
 }
 %}
+
+
+//// fconv_avx
+///////////////////
+%rename (fconv_avx) my_fconv_avx;
+%exception my_fconv_avx{$action if (PyErr_Occurred()) SWIG_fail;}
+%inline %{
+void my_fconv_avx(
+        double* fit, int len1,
+        double* irf, int len2,
+        double* x, int len3,
+        int start,
+        int stop,
+        double dt
+){
+    if (len1 != len2) {
+        PyErr_Format(PyExc_ValueError,
+                     "Model and decay array should have same length. "
+                     "Arrays of lengths (%d,%d) given",
+                     len1, len2);
+    }
+    if(start < 0){
+        PyErr_Format(PyExc_ValueError,
+                     "Start index needs to be larger or equal to zero."
+        );
+    }
+    if(stop < 0){
+        stop = len1;
+    }
+    if (start > len1) {
+        PyErr_Format(PyExc_ValueError,
+                     "Start index (%d) too large for array of lengths (%d).",
+                     start, len1);
+    }
+    if (stop > len1) {
+        PyErr_Format(PyExc_ValueError,
+                     "Stop index (%d) too large for array of lengths (%d).",
+                     stop, len1);
+    }
+    fconv_avx(fit, x, irf, len3 / 2, start, stop, dt);
+}
+%}
+
 
 //// fconv_per
 ///////////////////
@@ -244,14 +287,14 @@ void my_fconv_per(
         );
     }
     if(stop < 0){
-        stop = len1 - 1;
+        stop = len1;
     }
-    if (start >= len1) {
+    if (start > len1) {
         PyErr_Format(PyExc_ValueError,
                      "Start index (%d) too large for array of lengths (%d).",
                      start, len1);
     }
-    if (stop >= len1) {
+    if (stop > len1) {
         PyErr_Format(PyExc_ValueError,
                      "Stop index (%d) too large for array of lengths (%d).",
                      stop, len1);
@@ -259,6 +302,49 @@ void my_fconv_per(
     fconv_per(fit, x, irf, len3 / 2, start, stop, len1, period, dt);
 }
 %}
+
+//// fconv_per_avx
+///////////////////
+%rename (fconv_per_avx) my_fconv_per_avx;
+%exception my_fconv_per_avx{$action if (PyErr_Occurred()) SWIG_fail;}
+%inline %{
+void my_fconv_per_avx(
+        double* fit, int len1,
+        double* irf, int len2,
+        double* x, int len3,
+        double period,
+        int start = 0,
+        int stop = -1,
+        double dt = 1.0
+){
+    if (len1 != len2) {
+        PyErr_Format(PyExc_ValueError,
+                     "Model and decay array should have same length. "
+                     "Arrays of lengths (%d,%d) given",
+                     len1, len2);
+    }
+    if(start < 0){
+        PyErr_Format(PyExc_ValueError,
+                     "Start index needs to be larger or equal to zero."
+        );
+    }
+    if(stop < 0){
+        stop = len1;
+    }
+    if (start > len1) {
+        PyErr_Format(PyExc_ValueError,
+                     "Start index (%d) too large for array of lengths (%d).",
+                     start, len1);
+    }
+    if (stop > len1) {
+        PyErr_Format(PyExc_ValueError,
+                     "Stop index (%d) too large for array of lengths (%d).",
+                     stop, len1);
+    }
+    fconv_per_avx(fit, x, irf, len3 / 2, start, stop, len1, period, dt);
+}
+%}
+
 
 //// fconv_per_cs
 ///////////////////
@@ -281,12 +367,12 @@ void my_fconv_per_cs(
                      len1, len2);
     }
     if(stop < 0){
-        stop = len1 - 1;
+        stop = len1;
     }
     if(conv_stop < 0){
-        conv_stop = len1 - 1;
+        conv_stop = len1;
     }
-    if (stop >= len1) {
+    if (stop > len1) {
         PyErr_Format(PyExc_ValueError,
                      "Stop index (%d) too large for array of lengths (%d).",
                      stop, len1);
@@ -321,14 +407,14 @@ void my_fconv_ref(
         );
     }
     if(stop < 0){
-        stop = len1 - 1;
+        stop = len1;
     }
-    if (start >= len1) {
+    if (start > len1) {
         PyErr_Format(PyExc_ValueError,
                      "Start index (%d) too large for array of lengths (%d).",
                      start, len1);
     }
-    if (stop >= len1) {
+    if (stop > len1) {
         PyErr_Format(PyExc_ValueError,
                      "Stop index (%d) too large for array of lengths (%d).",
                      stop, len1);
@@ -367,14 +453,14 @@ void my_sconv(
         );
     }
     if(stop < 0){
-        stop = len1 - 1;
+        stop = len1;
     }
-    if (start >= len1) {
+    if (start > len1) {
         PyErr_Format(PyExc_ValueError,
                      "Start index (%d) too large for array of lengths (%d).",
                      start, len1);
     }
-    if (stop >= len1) {
+    if (stop > len1) {
         PyErr_Format(PyExc_ValueError,
                      "Stop index (%d) too large for array of lengths (%d).",
                      stop, len1);

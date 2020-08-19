@@ -122,6 +122,8 @@ public:
      * 1 - fconv_cs_time_axis
      * 2 - fconv_per
      * 3 - fconv
+     * 4 - fconv with AVX optimization
+     * 5 - fconv_per with AVX optimization
      */
     int convolution_method = 0;
 
@@ -677,6 +679,16 @@ public:
 #if VERBOSE
         std::clog << "NEW DECAY" << std::endl;
 #endif
+        // sanity check
+        if (
+                (_data.size() != _time_axis.size()) ||
+                (_data.size() != _weights.size()) ||
+                (_data.size() != _irf.size())
+                ) {
+            std::clog << "WARNING: The size of the data, time, weight array, or "
+                         "irf do not match" << std::endl;
+        }
+
         excitation_period = (tttr_data == nullptr) ?
                             excitation_period :
                             tttr_data->get_header().macro_time_resolution;
@@ -697,18 +709,7 @@ public:
 
         // set weights
         set_weights(weights.data(), weights.size());
-        // set model function
-        _model_function.resize(_data.size());
 
-        // sanity check
-        if (
-                (_data.size() != _time_axis.size()) ||
-                (_data.size() != _weights.size()) ||
-                (_data.size() != _irf.size())
-                ) {
-            std::clog << "WARNING: The size of the data, time, weight array, or "
-                         "irf do not match" << std::endl;
-        }
         set(
                 irf_background_counts,
                 irf_shift_channels,
@@ -778,6 +779,76 @@ public:
             int start = 0,
             int stop = -1
     );
+
+    static double compute_score(
+            std::vector<double> decay_histogram = std::vector<double>(),
+            std::vector<double> time_axis = std::vector<double>(),
+            std::vector<double> weights = std::vector<double>(),
+            std::vector<double> irf_histogram = std::vector<double>(),
+            std::vector<int>  convolution_range = std::vector<int>({0, -1}),
+            bool use_amplitude_threshold = false,
+            double amplitude_threshold = 1e-9,
+            bool add_pile_up = false,
+            double excitation_period = 100.0,
+            double irf_background_counts = 0.0,
+            double scatter_fraction = 0.0,
+            double constant_offset = 0.0,
+            std::vector<int> score_range = std::vector<int>({0, -1}),
+            std::vector<double> lifetime_spectrum = std::vector<double>(),
+            double instrument_dead_time = 1e-9,
+            bool scale_model_to_data = false,
+            bool use_corrected_irf_as_scatter = false,
+            double acquisition_time = 1e6,
+            double number_of_photons=1,
+            double irf_shift_channels=0.0,
+            std::vector<double> linearization = std::vector<double>(),
+            bool use_linearization = false,
+            int convolution_method = 0,
+            std::string score_type ="poisson"
+            ){
+        std::vector<double> model_function(decay_histogram.size(), 0.0);
+        std::vector<double> irf(irf_histogram.size(), 0.0);
+        std::vector<double> sq_weights(irf_histogram.size(), 0.0);
+        for(size_t i=0; i < sq_weights.size(); i++) sq_weights[i] = std::max(1.0, weights[i] * weights[i]);
+        for(size_t i=0; i < irf_histogram.size(); i++) irf[i] = std::max(0.0, irf_histogram[i] - irf_background_counts);
+        irf = shift_array(irf.data(), irf.size(), irf_shift_channels);
+        // total 20 ms
+        compute_decay(
+                model_function.data(),
+                model_function.size(),
+                decay_histogram.data(),
+                decay_histogram.size(),
+                sq_weights.data(), sq_weights.size(),
+                time_axis.data(), time_axis.size(),
+                irf.data(), irf.size(),
+                lifetime_spectrum.data(), lifetime_spectrum.size(),
+                irf_histogram.data(), irf_histogram.size(),
+                convolution_range[0], convolution_range[1],
+                scatter_fraction,
+                excitation_period,
+                constant_offset,
+                number_of_photons,
+                use_amplitude_threshold, amplitude_threshold,
+                add_pile_up,
+                instrument_dead_time, acquisition_time,
+                use_corrected_irf_as_scatter,
+                scale_model_to_data,
+                convolution_method
+        );
+        if(use_linearization){
+            for(size_t i = 0; i < model_function.size(); i++){
+                model_function[i] *= linearization[i];
+            }
+        }
+        double score = statistics::chi2_counting(
+                decay_histogram,
+                model_function,
+                score_range[0], score_range[1],
+                score_type
+        );
+        return score;
+        return 0;
+    }
 
     void get_weighted_residuals(double **output_view, int *n_output) {
         if(!get_is_valid()){
@@ -1029,7 +1100,7 @@ public:
         set_irf_background_counts(irf_background_counts);
         set_irf_shift_channels(irf_shift_channels);
         set_constant_offset(constant_offset);
-        set_lifetime_spectrum(lifetime_spectrum, n_lifetime_spectrum);
+        if (lifetime_spectrum!= nullptr) set_lifetime_spectrum(lifetime_spectrum, n_lifetime_spectrum);
         set_scatter_fraction(scatter_fraction);
         set_acquisition_time(acquisition_time);
         set_instrument_dead_time(instrument_dead_time);

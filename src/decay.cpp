@@ -48,12 +48,6 @@ void Decay::add_curve(
         int start,
         int stop
 ){
-#if VERBOSE
-    std::clog << "add_curve..." << std::endl;
-    std::clog << "-- start: " << start << std::endl;
-    std::clog << "-- stop: " << stop << std::endl;
-    std::clog << "-- areal_fraction_curve2: " << areal_fraction_curve2 << std::endl;
-#endif
     *n_output = std::min(n_curve1, n_curve2);
     start = std::min(0, start);
     stop = stop < 0? *n_output: std::min(*n_output, stop);
@@ -61,7 +55,10 @@ void Decay::add_curve(
     double sum_curve_2 = std::accumulate( curve2 + start, curve2 + stop, 0.0);
     double f1 = (1. - areal_fraction_curve2);
     double f2 = areal_fraction_curve2 * sum_curve_1 / sum_curve_2;
-    for(int i=start; i<stop;i++) curve1[i] = (f1 * curve1[i] + f2 * curve2[i]);
+#pragma omp simd
+    for(int i=start; i<stop;i++) curve1[i] *= f1;
+#pragma omp simd
+    for(int i=start; i<stop;i++) curve1[i] += f2 * curve2[i];
     *output = curve1;
     *n_output = n_curve1;
 }
@@ -82,10 +79,7 @@ void Decay::scale_model(
 #if VERBOSE
         std::clog << "-- scaling model to data..." << std::endl;
 #endif
-        rescale_w_bg(
-                model,
-                data, squared_data_weights,
-                constant_background,
+        rescale_w_bg(model, data, squared_data_weights, constant_background,
                 &scale, convolution_start, convolution_stop
         );
     } else{
@@ -128,6 +122,7 @@ void Decay::compute_decay(
     convolution_stop = convolution_stop > 0 ?
                        std::min({n_time_axis, n_irf_histogram, n_model_function, convolution_stop}) :
                        std::min({n_time_axis, n_irf_histogram, n_model_function});
+    convolution_start = std::max(1, convolution_start);
     // decremente to make sure to stay in bounds
     convolution_stop = convolution_stop - 1;
 #if VERBOSE
@@ -156,6 +151,12 @@ void Decay::compute_decay(
                 amplitude_threshold
         );
     }
+
+    convolution_stop = convolution_stop > 0 ?
+                       std::min({n_time_axis, n_irf_histogram, n_model_function, convolution_stop}):
+                       std::min({n_time_axis, n_irf_histogram, n_model_function});
+    convolution_start = std::max(convolution_start, 1);
+
     if(convolution_method == 0){
         fconv_per_cs_time_axis(
                 model_function, n_model_function,
@@ -177,7 +178,7 @@ void Decay::compute_decay(
         double dt = time_axis[1] - time_axis[0];
         fconv_per(
                 model_function, lifetime_spectrum,
-                irf_histogram, n_lifetime_spectrum,
+                irf_histogram, n_lifetime_spectrum / 2,
                 convolution_start, convolution_stop,
                 n_model_function, excitation_period,
                 dt
@@ -186,8 +187,25 @@ void Decay::compute_decay(
         double dt = time_axis[1] - time_axis[0];
         fconv(
                 model_function, lifetime_spectrum,
-                irf_histogram, n_lifetime_spectrum,
+                irf_histogram, n_lifetime_spectrum / 2,
+                convolution_start, n_model_function,
+                dt
+        );
+    } else if (convolution_method == 4) {
+        double dt = time_axis[1] - time_axis[0];
+        fconv_avx(
+                model_function, lifetime_spectrum,
+                irf_histogram, n_lifetime_spectrum / 2,
+                convolution_start, n_model_function,
+                dt
+        );
+    }  else if (convolution_method == 5) {
+        double dt = time_axis[1] - time_axis[0];
+        fconv_per_avx(
+                model_function, lifetime_spectrum,
+                irf_histogram, n_lifetime_spectrum / 2,
                 convolution_start, convolution_stop,
+                n_model_function, excitation_period,
                 dt
         );
     }

@@ -40,13 +40,12 @@ double statistics::chi2_counting(
             chi2 += (mu - m) * (mu - m) / m;
         }
     } else if(type == "poisson"){
+#pragma omp simd
         for(int i = x_min; i < x_max; i++){
             double mu = model[i];
             double m = data[i];
             chi2 += 2 * std::abs(mu);
-            if ((mu > 0) && (m > 0)) {
-                chi2 -= 2 * (m + m * log(mu / m));
-            }
+            chi2 -= 2 * m * (1 + log(std::max(0.0, mu) / std::max(1.0, m)));
         }
     } else if(type == "pearson"){
         for(int i = x_min; i < x_max; i++){
