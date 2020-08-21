@@ -255,34 +255,34 @@ void fconv_per_avx(double *fit, double *x, double *lamp, int numexp, int start, 
 
 /* fast convolution, high repetition rate, with convolution stop for Paris */
 void fconv_per_cs(double *fit, double *x, double *lamp, int numexp, int stop,
-                  int n_points, double period, int conv_stop, double dt) {
-    int period_n = (int) ceil(period / dt - 0.5);
-    double deltathalf = dt * 0.5;
+           int n_points, double period, int conv_stop, double dt)
+{
+    int ne, i,
+      stop1, period_n = (int)ceil(period/dt-0.5);
+    double fitcurr, expcurr, tail_a, deltathalf = dt*0.5;
 
-    for (int i = 0; i < stop; i++) fit[i] = 0;
-    int stop1 = (period_n > n_points) ? n_points : period_n;
+    for (i=0; i<=stop; i++) fit[i]=0;
+    stop1 = (period_n > n_points-1) ? n_points-1 : period_n;
 
     /* convolution */
-    for (int ne = 0; ne < numexp; ne++) {
-        double expcurr = exp(-dt / x[2 * ne + 1]);
-        double tail_a = 1. / (1. - exp(-period / x[2 * ne + 1]));
-        double fitcurr = 0.;
-        fit[0] += deltathalf * lamp[0] * (expcurr + 1.) * x[2 * ne];
-
-        int i = 1;
-        for (; i < conv_stop; i++) {
-            fitcurr = (fitcurr + deltathalf * lamp[i - 1]) * expcurr + deltathalf * lamp[i];
-            fit[i] += fitcurr * x[2 * ne];
-        }
-        for (; i < stop1; i++) {
-            fitcurr = fitcurr * expcurr;
-            fit[i] += fitcurr * x[2 * ne];
-        }
-        fitcurr *= exp(-(period_n - stop1) * dt / x[2 * ne + 1]);
-        for (i = 0; i < stop; i++) {
-            fitcurr *= expcurr;
-            fit[i] += fitcurr * x[2 * ne] * tail_a;
-        }
+    for (ne=0; ne<numexp; ne++) {
+      expcurr = exp(-dt/x[2*ne+1]);
+      tail_a = 1./(1.-exp(-period/x[2*ne+1]));
+      fitcurr = 0.;
+      fit[0] += deltathalf*lamp[0]*(expcurr + 1.)*x[2*ne];
+      for (i=1; i<=conv_stop; i++) {
+        fitcurr=(fitcurr + deltathalf*lamp[i-1])*expcurr + deltathalf*lamp[i];
+        fit[i] += fitcurr*x[2*ne];
+      }
+      for (; i<=stop1; i++) {
+        fitcurr=fitcurr*expcurr;
+        fit[i] += fitcurr*x[2*ne];
+      }
+      fitcurr *= exp(-(period_n - stop1)*dt/x[2*ne+1]);
+      for (i=0; i<=stop; i++) {
+        fitcurr *= expcurr;
+        fit[i] += fitcurr*x[2*ne]*tail_a;
+      }
     }
 }
 
