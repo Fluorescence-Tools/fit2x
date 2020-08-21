@@ -120,7 +120,7 @@ def parameter(self) -> dict:
         'use_corrected_irf_as_scatter': self.use_corrected_irf_as_scatter,
         'amplitude_threshold': self.amplitude_threshold,
         'use_amplitude_threshold': self.use_amplitude_threshold,
-        'add_pile_up': self.add_pile_up,
+        'use_pile_up_correction': self.add_pile_up,
         'convolution_method': self.convolution_method,
         'use_linearization': self.use_linearization
     }
@@ -130,7 +130,7 @@ def parameter(self) -> dict:
 def __repr__(self):
     imin, imax = self.score_range[0], self.score_range[1]
     n_lifetime_parameter = len(self.lifetime_spectrum)
-    used_channels = imax - imin
+    used_channels = abs(imax - imin)
     nu = used_channels - n_lifetime_parameter
     s = 'DECAY \n'
     s += '-- Lifetime spectrum: %s \n' % self.lifetime_spectrum
@@ -142,5 +142,7 @@ def __repr__(self):
     s += '-- Score range: (%d, %d) \n' % (imin, imax)
     s += '-- Score: %s \n' % self.chi2
     s += '-- Score / n_channels: %s \n' % (self.get_score() / used_channels)
-    s += '-- Chi2 / (n_channels - n_lifetime_parameter): %s ' % (self.get_score(type='normal') / nu)
+    s += '-- Chi2 / (n_channels - n_lifetime_parameter): %s ' % (
+            self.get_score(score_type='normal') / nu
+    )
     return s

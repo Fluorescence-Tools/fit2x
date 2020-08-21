@@ -6,8 +6,10 @@
 %apply(double* IN_ARRAY1, int DIM1) {
     (double* time_axis, int n_time_axis),
     (double* squared_weights, int n_weights),
+    (double* weights, int n_weights),
     (double* irf_histogram, int n_irf_histogram),
     (double* lifetime_spectrum, int n_lifetime_spectrum),
+    (double* linearization, int n_linearization),
     (double* data, int n_data),
     (double* curve1, int n_curve1),
     (double* curve2, int n_curve2),
@@ -37,7 +39,8 @@
 %attribute(Decay, bool, scale_model_to_data, get_scale_model_to_data, set_scale_model_to_data);
 %attribute(Decay, bool, use_corrected_irf_as_scatter, get_use_corrected_irf_as_scatter, set_use_corrected_irf_as_scatter);
 %attribute(Decay, bool, use_linearization, get_use_linearization, set_use_linearization);
-%attribute(Decay, bool, is_valid, get_is_valid, set_is_valid);
+%attribute(Decay, bool, is_valid, get_is_valid);
+%attribute(Decay, int, convolution_method, get_convolution_method, set_convolution_method);
 
 %attribute(Decay, double, acquisition_time, get_acquisition_time, set_acquisition_time);
 %attribute(Decay, double, instrument_dead_time, get_instrument_dead_time, set_instrument_dead_time);
