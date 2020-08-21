@@ -8,33 +8,36 @@ std::vector<double> Decay::shift_array(
         bool set_outside,
         double outside_value
 ){
-    // mod
-    int r = (int) shift % n_input;
-    int ts_i = r < 0 ? r + n_input : r;
-    double ts_f = shift - std::floor(shift);
-#if VERBOSE
-    std::clog << "shift_array..." << std::endl;
-    std::clog << "-- n_input: " << n_input << std::endl;
-    std::clog << "-- shift: " << shift << std::endl;
-    std::clog << "-- shift integer: " << ts_i << std::endl;
-    std::clog << "-- shift float: " << ts_f << std::endl;
-#endif
     auto out = std::vector<double>(n_input);
-    std::vector<double> tmp1(input, input+n_input);
-    std::vector<double> tmp2(input, input+n_input);
-    std::rotate(tmp1.begin(), tmp1.begin()+ts_i, tmp1.end());
-    std::rotate(tmp2.begin(), tmp2.begin()+(ts_i + 1), tmp2.end());
-    for(int i=0; i < n_input; i++){
-        out[i] = tmp1[i] * (1.0 - ts_f) + tmp2[i] * ts_f;
-    }
-    if(set_outside){
-        if(shift > 0){
-            for(int i=0; i<r; i++)
-                out[i] = outside_value;
-        } else if(shift<0){
-            for(int i = n_input - r; i<n_input; i++)
-                out[i] = outside_value;
+    if (n_input > 0) {
+        // mod
+        int r = (int) shift % n_input;
+        int ts_i = r < 0 ? r + n_input : r;
+        double ts_f = shift - std::floor(shift);
+#if VERBOSE
+        std::clog << "shift_array..." << std::endl;
+        std::clog << "-- n_input: " << n_input << std::endl;
+        std::clog << "-- shift: " << shift << std::endl;
+        std::clog << "-- shift integer: " << ts_i << std::endl;
+        std::clog << "-- shift float: " << ts_f << std::endl;
+#endif
+        std::vector<double> tmp1(input, input + n_input);
+        std::vector<double> tmp2(input, input + n_input);
+        std::rotate(tmp1.begin(), tmp1.begin() + ts_i, tmp1.end());
+        std::rotate(tmp2.begin(), tmp2.begin() + (ts_i + 1), tmp2.end());
+        for (int i = 0; i < n_input; i++) {
+            out[i] = tmp1[i] * (1.0 - ts_f) + tmp2[i] * ts_f;
         }
+        if (set_outside) {
+            if (shift > 0) {
+                for (int i = 0; i < r; i++)
+                    out[i] = outside_value;
+            } else if (shift < 0) {
+                for (int i = n_input - r; i < n_input; i++)
+                    out[i] = outside_value;
+            }
+        }
+
     }
     return out;
 }
@@ -97,7 +100,7 @@ void Decay::scale_model(
     }
 }
 
-void Decay::compute_decay(
+int Decay::compute_decay(
         double* model_function, int n_model_function,
         double* data, int n_data,
         double* squared_weights, int n_weights,
@@ -117,14 +120,18 @@ void Decay::compute_decay(
         double acquisition_time,
         bool use_corrected_irf_as_scatter,
         bool scale_model_to_data,
-        int convolution_method
+        int convolution_method,
+        bool take_abs_of_lifetime_spectrum,
+        bool use_linearization,
+        double* linearization, int n_linearization
 ){
     convolution_stop = convolution_stop > 0 ?
-                       std::min({n_time_axis, n_irf_histogram, n_model_function, convolution_stop}) :
+                       std::min({n_time_axis, n_irf_histogram, n_model_function, convolution_stop}):
                        std::min({n_time_axis, n_irf_histogram, n_model_function});
-    convolution_start = std::max(1, convolution_start);
-    // decremente to make sure to stay in bounds
-    convolution_stop = convolution_stop - 1;
+    convolution_start = std::max(convolution_start, 1);
+    if(std::min({n_model_function, n_data, n_weights, n_irf_histogram, n_lifetime_spectrum, n_scatter}) <= 0){
+        return -1;
+    }
 #if VERBOSE
     std::clog << "compute_decay..." << std::endl;
     std::clog << "-- n_model_function: " << n_model_function << std::endl;
@@ -151,18 +158,20 @@ void Decay::compute_decay(
                 amplitude_threshold
         );
     }
-
-    convolution_stop = convolution_stop > 0 ?
-                       std::min({n_time_axis, n_irf_histogram, n_model_function, convolution_stop}):
-                       std::min({n_time_axis, n_irf_histogram, n_model_function});
-    convolution_start = std::max(convolution_start, 1);
+    // Take abs(lifetime_spectrum)
+    std::vector<double> lt; lt.resize(n_lifetime_spectrum);
+    if(take_abs_of_lifetime_spectrum) {
+        for(int i=0; i<n_lifetime_spectrum; i++) lt[i] = std::abs(lifetime_spectrum[i]);
+    } else{
+        for(int i=0; i<n_lifetime_spectrum; i++) lt[i] = lifetime_spectrum[i];
+    }
 
     if(convolution_method == 0){
         fconv_per_cs_time_axis(
                 model_function, n_model_function,
                 time_axis, n_time_axis,
                 irf_histogram, n_irf_histogram,
-                lifetime_spectrum, n_lifetime_spectrum,
+                lt.data(), lt.size(),
                 convolution_start, convolution_stop,
                 excitation_period
         );
@@ -171,14 +180,14 @@ void Decay::compute_decay(
                 model_function, n_model_function,
                 time_axis, n_time_axis,
                 irf_histogram, n_irf_histogram,
-                lifetime_spectrum, n_lifetime_spectrum,
+                lt.data(), lt.size(),
                 convolution_start, convolution_stop
         );
     } else if (convolution_method == 2) {
         double dt = time_axis[1] - time_axis[0];
         fconv_per(
-                model_function, lifetime_spectrum,
-                irf_histogram, n_lifetime_spectrum / 2,
+                model_function, lt.data(),
+                irf_histogram, lt.size() / 2,
                 convolution_start, convolution_stop,
                 n_model_function, excitation_period,
                 dt
@@ -186,24 +195,24 @@ void Decay::compute_decay(
     } else if (convolution_method == 3) {
         double dt = time_axis[1] - time_axis[0];
         fconv(
-                model_function, lifetime_spectrum,
-                irf_histogram, n_lifetime_spectrum / 2,
+                model_function, lt.data(),
+                irf_histogram, lt.size() / 2,
                 convolution_start, n_model_function,
                 dt
         );
     } else if (convolution_method == 4) {
         double dt = time_axis[1] - time_axis[0];
         fconv_avx(
-                model_function, lifetime_spectrum,
-                irf_histogram, n_lifetime_spectrum / 2,
+                model_function, lt.data(),
+                irf_histogram, lt.size() / 2,
                 convolution_start, n_model_function,
                 dt
         );
     }  else if (convolution_method == 5) {
         double dt = time_axis[1] - time_axis[0];
         fconv_per_avx(
-                model_function, lifetime_spectrum,
-                irf_histogram, n_lifetime_spectrum / 2,
+                model_function, lt.data(),
+                irf_histogram, lt.size() / 2,
                 convolution_start, convolution_stop,
                 n_model_function, excitation_period,
                 dt
@@ -251,6 +260,12 @@ void Decay::compute_decay(
     for(int i=0; i<64; i++) std::clog << model_function[i] << " ";
     std::clog << std::endl;
 #endif
+    // linearization
+    if(use_linearization && (n_linearization > 0) && (linearization!= nullptr)){
+        for(int i = 0; i < std::min(n_linearization, n_model_function); i++){
+            model_function[i] *= linearization[i];
+        }
+    }
     // scale model function
     scale_model(
             scale_model_to_data,
@@ -274,5 +289,6 @@ void Decay::compute_decay(
     for(int i=0; i<64; i++) std::clog << model_function[i] << " ";
     std::clog << std::endl;
 #endif
+    return 0;
 }
 
