@@ -73,14 +73,7 @@ class CMakeBuild(build_ext):
                     '-DBoost_DEBUG=ON',
                     '-DBoost_DETAILED_FAILURE_MESSAGE=ON'
                 ]
-
         env = os.environ.copy()
-        env['CXXFLAGS'] = '{} -DVERSION_INFO=\\"{}\\"'.format(
-            env.get(
-                'CXXFLAGS', ''
-            ),
-            self.distribution.get_version()
-        )
         if not os.path.exists(self.build_temp):
             os.makedirs(self.build_temp)
         try:
