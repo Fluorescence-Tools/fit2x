@@ -144,6 +144,7 @@ class Tests(unittest.TestCase):
         irf = scipy.stats.norm.pdf(time_axis, loc=irf_position, scale=irf_width)
         lifetime_spectrum = np.array([0.8, 1.1, 0.2, 4.0])
         model_decay = np.zeros_like(time_axis)
+
         fit2x.fconv_per_cs_time_axis(
             model_decay,
             time_axis=time_axis,
@@ -163,7 +164,7 @@ class Tests(unittest.TestCase):
             ]
         )
         self.assertEqual(
-            np.allclose(reference, model_decay),
+            np.allclose(reference, model_decay, atol=1e-9),
             True
         )
 
@@ -344,19 +345,14 @@ class Tests(unittest.TestCase):
             excitation_period=5.,
             constant_offset=10,
             number_of_photons=-1,
+            scale_model_to_data=False,
             use_amplitude_threshold=False
         )
-        # import pylab as p
-        # p.plot(model)
-        # p.show()
-        print(model)
         ref = np.array(
-            [
-                159.8453894, 150.93787478, 332.10434096, 752.30770162,
-                773.90059838, 642.39549668, 543.50074262, 461.57573646,
-                392.25056234, 333.56811533, 283.89449639, 241.84668574,
-                206.25398245, 176.12540958, 150.62212325, 10.
-            ]
+            [182.30544775, 150.93787478, 332.10434096, 752.30770162, 773.90059838,
+             642.39549668, 543.50074262, 461.57573646, 392.25056234, 333.56811533,
+             283.89449639, 241.84668574, 206.25398245, 176.12540958, 150.62212325,
+             10.]
         )
         self.assertEqual(np.allclose(ref, model), True)
 
