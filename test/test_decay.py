@@ -29,14 +29,21 @@ class Tests(unittest.TestCase):
         decay.constant_offset = 2.2
         self.assertEqual(decay.constant_offset, 2.2)
 
-        # This does not work because there is no IRF
-        # decay.set_irf_shift_channels(11)
-        # self.assertEqual(decay.get_irf_shift_channels(), 11)
-        # decay.set_irf_shift_channels(2.2)
-        # self.assertEqual(decay.get_irf_shift_channels(), 2.2)
+        decay.irf_shift_channels = 2.1
+        self.assertAlmostEqual(decay.irf_shift_channels, 0.1)
+        decay.irf_shift_channels = 2.2
+        self.assertAlmostEqual(decay.irf_shift_channels, 0.2)
 
+        # The number of photons is computed by scaling the model to the data
+        # Here the data is zero. Hence, the number of photons is zero
         decay.number_of_photons = 11
+        self.assertEqual(decay.number_of_photons, 0)
+
+        # If the scaling is turned off we get the number of photons that
+        # was specified by the attribute.
+        decay.scale_model_to_data = False
         self.assertEqual(decay.number_of_photons, 11)
+
         decay.number_of_photons = 2.2
         self.assertEqual(decay.number_of_photons, 2.2)
 
@@ -57,10 +64,10 @@ class Tests(unittest.TestCase):
         decay.convolution_stop = 3
         self.assertEqual(decay.convolution_stop, 3)
 
-        decay.add_pile_up = True
-        self.assertEqual(decay.add_pile_up, True)
-        decay.add_pile_up = False
-        self.assertEqual(decay.add_pile_up, False)
+        decay.use_pile_up_correction = True
+        self.assertEqual(decay.use_pile_up_correction, True)
+        decay.use_pile_up_correction = False
+        self.assertEqual(decay.use_pile_up_correction, False)
 
         decay.set_irf([1, 2, 3])
         self.assertListEqual(list(decay.get_irf()), [1, 2, 3])
@@ -72,10 +79,10 @@ class Tests(unittest.TestCase):
         decay.set_lifetime_spectrum([4, 5, 6, 7])
         self.assertListEqual(list(decay.get_lifetime_spectrum()), [4, 5, 6, 7])
 
-        decay.set_weights([1, 2, 3, 4])
-        self.assertListEqual(list(decay.get_weights()), [1, 2, 3, 4])
-        decay.set_weights([4, 5, 6, 7])
-        self.assertListEqual(list(decay.get_weights()), [4, 5, 6, 7])
+        decay.set_data_weights([1, 2, 3, 4])
+        self.assertListEqual(list(decay.get_data_weights()), [1, 2, 3, 4])
+        decay.set_data_weights([4, 5, 6, 7])
+        self.assertListEqual(list(decay.get_data_weights()), [4, 5, 6, 7])
 
         decay.set_time_axis([1, 2, 3, 4])
         self.assertListEqual(list(decay.get_time_axis()), [1, 2, 3, 4])
@@ -94,13 +101,13 @@ class Tests(unittest.TestCase):
         self.assertEqual(decay.is_valid, False)
         self.assertEqual(decay.convolution_start, 0)
         self.assertEqual(decay.convolution_stop, 0)
-        self.assertEqual(decay.add_pile_up, False)
+        self.assertEqual(decay.use_pile_up_correction, False)
         self.assertEqual(decay.use_amplitude_threshold, False)
         self.assertEqual(decay.excitation_period, 100.0)
 
     def test_constructor_2(self):
         decay = fit2x.Decay(
-            decay_histogram=[1, 2, 3, 4, 56]
+            data=[1, 2, 3, 4, 56]
         )
         self.assertListEqual(list(decay.get_data()), [1, 2, 3, 4, 56])
 
@@ -115,26 +122,26 @@ class Tests(unittest.TestCase):
         self.assertListEqual(list(decay.get_time_axis()), [1, 2, 3, 4, 56])
 
         decay = fit2x.Decay(
-            weights=[1., 2, 3, 4, 56]
+            data_weights=[1., 2, 3, 4, 56]
         )
-        self.assertListEqual(list(decay.get_weights()), [1, 2, 3, 4, 56])
+        self.assertListEqual(list(decay.get_data_weights()), [1, 2, 3, 4, 56])
 
         data = np.linspace(1, 22, 12)
         decay = fit2x.Decay(
-            decay_histogram=data,
+            data=data,
             convolution_range=(2, 32),
-            add_pile_up=True,
+            use_pile_up_correction=True,
             excitation_period=123.2
         )
         self.assertEqual(
-            np.allclose(1. / np.sqrt(data), decay.get_weights()),
+            np.allclose(1. / np.sqrt(data), decay.get_data_weights()),
             True
         )
         self.assertEqual(len(decay.get_irf()), len(data))
         self.assertEqual(len(decay.get_time_axis()), len(data))
         self.assertEqual(decay.convolution_start, 2)
         self.assertEqual(decay.convolution_stop, min(len(data), 12))
-        self.assertEqual(decay.add_pile_up, True)
+        self.assertEqual(decay.use_pile_up_correction, True)
         self.assertEqual(decay.excitation_period, 123.2)
 
     def test_convolve_lifetime_spectrum_variable_time_axis(self):
@@ -147,9 +154,12 @@ class Tests(unittest.TestCase):
 
         fit2x.fconv_per_cs_time_axis(
             model_decay,
+            convolution_stop=len(irf),
+            convolution_start=0,
             time_axis=time_axis,
             lifetime_spectrum=lifetime_spectrum,
             instrument_response_function=irf
+
         )
         reference = np.array(
             [
@@ -168,29 +178,32 @@ class Tests(unittest.TestCase):
             True
         )
 
-    # def test_convolve_lifetime_spectrum_periodic(self):
-    #     time_axis = np.linspace(0, 25, 25)
-    #     irf_position = 6.0
-    #     irf_width = 1.0
-    #     irf = scipy.stats.norm.pdf(time_axis, loc=irf_position, scale=irf_width)
-    #     lifetime_spectrum = np.array([0.2, 1.1, 0.8, 4.0])
-    #     model_decay = np.zeros_like(time_axis)
-    #     fit2x.Decay.convolve_lifetime_spectrum_periodic(
-    #         model_decay,
-    #         time_axis=time_axis,
-    #         lifetime_spectrum=lifetime_spectrum,
-    #         irf_histogram=irf,
-    #         period=16.0
-    #     )
-    #     reference = np.array(
-    #         [0.00560653, 0.00432208, 0.00342868, 0.00603476, 0.0454072,
-    #          0.21058509, 0.4551221, 0.55543513, 0.48165047, 0.36885986,
-    #          0.27946424, 0.21331303, 0.16359693, 0.12577494, 0.09681668,
-    #          0.07457228, 0.05745678, 0.04427657, 0.03412254, 0.02629821,
-    #          0.02026841, 0.01562132, 0.01203976, 0.00927939, 0.0071519])
-    #     self.assertEqual(
-    #         np.allclose(reference, model_decay), True
-    #     )
+    def test_convolve_lifetime_spectrum_periodic(self):
+        time_axis = np.linspace(0, 25, 25)
+        irf_position = 6.0
+        irf_width = 1.0
+        irf = scipy.stats.norm.pdf(time_axis, loc=irf_position, scale=irf_width)
+        lifetime_spectrum = np.array([0.2, 1.1, 0.8, 4.0])
+        model_decay = np.zeros_like(time_axis)
+        fit2x.fconv_per_cs_time_axis(
+            model_decay,
+            time_axis=time_axis,
+            lifetime_spectrum=lifetime_spectrum,
+            instrument_response_function=irf,
+            convolution_start=1,
+            convolution_stop=len(irf),
+            period=16.0
+        )
+        reference = np.array([5.36123008e-09, 5.60748058e-03, 4.41938415e-03, 6.79832226e-03,
+                              4.59956998e-02, 2.11038660e-01, 4.55471686e-01, 5.55704568e-01,
+                              4.81858132e-01, 3.69019916e-01, 2.79587601e-01, 2.13408101e-01,
+                              1.63670211e-01, 1.25831413e-01, 9.68602131e-02, 7.46058301e-02,
+                              5.74826397e-02, 4.42965024e-02, 3.41379004e-02, 2.63100464e-02,
+                              2.02775368e-02, 1.56283526e-02, 1.20451837e-02, 9.28356475e-03,
+                              7.15511599e-03])
+        self.assertEqual(
+            np.allclose(reference, model_decay), True
+        )
 
     def test_shift(self):
         time_axis = np.linspace(0, 12, 25)
@@ -282,7 +295,9 @@ class Tests(unittest.TestCase):
             model_decay,
             time_axis=time_axis,
             lifetime_spectrum=lifetime_spectrum,
-            instrument_response_function=irf
+            instrument_response_function=irf,
+            convolution_stop=len(irf),
+            convolution_start=1
         )
         model_incl_irf = fit2x.Decay.add_curve(
             curve1=model_decay,
@@ -326,7 +341,9 @@ class Tests(unittest.TestCase):
             data_decay,
             time_axis=time_axis,
             lifetime_spectrum=lifetime_spectrum,
-            instrument_response_function=irf
+            instrument_response_function=irf,
+            convolution_start=1,
+            convolution_stop=len(irf)
         )
         data_decay = np.random.poisson(
             np.clip(data_decay, 1e-9, None)
@@ -337,31 +354,33 @@ class Tests(unittest.TestCase):
         fit2x.Decay.compute_decay(
             model_function=model,
             data=data_decay,
-            squared_weights=data_weight,
+            squared_data_weights=data_weight,
             time_axis=time_axis,
             irf_histogram=irf,
             lifetime_spectrum=lifetime_spectrum,
+            scatter=irf,
             scatter_fraction=0.1,
             excitation_period=5.,
             constant_offset=10,
             number_of_photons=-1,
-            scale_model_to_data=False,
-            use_amplitude_threshold=False
+            scale_model_to_data=True,
+            use_amplitude_threshold=False,
+            linearization=np.ones_like(model),
+            convolution_start=1,
+            convolution_stop=len(irf) - 1
         )
-        ref = np.array(
-            [182.30544775, 150.93787478, 332.10434096, 752.30770162, 773.90059838,
-             642.39549668, 543.50074262, 461.57573646, 392.25056234, 333.56811533,
-             283.89449639, 241.84668574, 206.25398245, 176.12540958, 150.62212325,
-             10.]
-        )
+        ref = np.array([ 10.2597847 , 170.73924668, 344.6504775 , 753.37107994,
+                         772.56691075, 641.80820013, 543.05838788, 461.20196862,
+                         391.93417604, 333.30030011, 283.6677957 , 241.65478775,
+                         206.09154431, 175.98790867, 150.50573124,  10.        ])
         self.assertEqual(np.allclose(ref, model), True)
 
     def test_decay_class(self):
         time_axis, data = np.load('./data/reference/img_decay_histogram.npy').T
         data[0] = 0
         time_axis *= 4
-        irf_position = 1.6
-        irf_width = 0.08
+        irf_position = 12.6
+        irf_width = 0.1
         n_peak = 10000
         irf = scipy.stats.norm.pdf(
             time_axis,
@@ -369,36 +388,34 @@ class Tests(unittest.TestCase):
             scale=irf_width
         )
         irf *= n_peak
-        irf += 1e-6
+        #irf += 1e-6
 
         weights = 1. / (np.sqrt(data))
         weights[0] = 0
         decay_object = fit2x.Decay(
-            decay_histogram=data,
-            weights=weights,
+            data=data,
+            data_weights=weights,
             irf_histogram=irf,
             time_axis=time_axis,
-            constant_offset=140.0,
-            lifetime_spectrum=[1, 2]
+            constant_offset=0.0,
+            lifetime_spectrum=[1, 2],
+            scale_model_to_data=False,
+            convolution_range=(0, len(irf)),
+            excitation_period=20.0
         )
         m = decay_object.model
         wres = decay_object.weighted_residuals
-        ref = np.array(
-            [140., 140.00919308, 140.00118584, 140.00015296, 140.00001973,
-             140.00000255, 140.00000033, 140.00000004, 140.00000001, 140.,
-             140., 140., 140., ])
-
-        # import pylab as p
-        # p.plot(m[::64])
-        # p.show()
-        print(m[::64])
+        ref = np.array([2.01557198e-07, 1.32232576e-08, 1.70570280e-09, 3.86701187e-05,
+                        4.83024533e-03, 6.23066058e-04, 8.03709308e-05, 1.03672579e-05,
+                        1.33729989e-06, 1.72501832e-07, 2.22514654e-08, 2.87027509e-09,
+                        3.70244338e-10])
         self.assertEqual(
             np.allclose(m[::64], ref), True
         )
-        wres_ref = np.array(
-            [-0., 154.7475065, 54.30542351, 18.72900653, 1.20482741,
-             -5.68219671, -7.8417569, -8.36660027, -6.25656282, -9.5,
-             -9.90600991, -6.70820393, -7.17951632])
+        wres_ref = np.array([ -0.        , 155.64703659,  56.77147171,  24.45403694,
+                              12.44951162,   9.32731225,   8.54399434,   8.36659903,
+                              9.11043343,   7.99999998,   7.87400787,   8.94427191,
+                              8.77496439])
         self.assertEqual(
             np.allclose(wres[::64], wres_ref), True
         )

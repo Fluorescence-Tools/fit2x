@@ -14,7 +14,7 @@ std::vector<double> Decay::shift_array(
         int r = (int) shift % n_input;
         int ts_i = r < 0 ? r + n_input : r;
         double ts_f = shift - std::floor(shift);
-#if VERBOSE
+#if VERBOSE_FIT2X
         std::clog << "shift_array..." << std::endl;
         std::clog << "-- n_input: " << n_input << std::endl;
         std::clog << "-- shift: " << shift << std::endl;
@@ -79,14 +79,14 @@ void Decay::scale_model(
     double scale = 0.0;
     if(scale_model_to_data || (number_of_photons < 0)){
         // scale the area to the data in the range start, stop
-#if VERBOSE
+#if VERBOSE_FIT2X
         std::clog << "-- scaling model to data..." << std::endl;
 #endif
         rescale_w_bg(model, data, squared_data_weights, constant_background,
                 &scale, convolution_start, convolution_stop
         );
     } else{
-#if VERBOSE
+#if VERBOSE_FIT2X
         std::clog << "-- scaling decay to " << number_of_photons << " photons." << std::endl;
 #endif
         // normalize model to total_area
@@ -103,7 +103,7 @@ void Decay::scale_model(
 int Decay::compute_decay(
         double* model_function, int n_model_function,
         double* data, int n_data,
-        double* squared_weights, int n_weights,
+        double* squared_data_weights, int n_squared_data_weights,
         double* time_axis, int n_time_axis,
         double* irf_histogram, int n_irf_histogram,
         double* lifetime_spectrum, int n_lifetime_spectrum,
@@ -111,11 +111,11 @@ int Decay::compute_decay(
         int convolution_start, int convolution_stop,
         double scatter_fraction,
         double excitation_period,
-        double constant_background,
+        double constant_offset,
         double number_of_photons,
         bool use_amplitude_threshold,
         double amplitude_threshold,
-        bool add_pile_up,
+        bool use_pile_up_correction,
         double instrument_dead_time,
         double acquisition_time,
         bool use_corrected_irf_as_scatter,
@@ -125,18 +125,10 @@ int Decay::compute_decay(
         bool use_linearization,
         double* linearization, int n_linearization
 ){
-    convolution_stop = convolution_stop > 0 ?
-                       std::min({n_time_axis, n_irf_histogram, n_model_function, convolution_stop}):
-                       std::min({n_time_axis, n_irf_histogram, n_model_function});
-    convolution_start = std::max(convolution_start, 1);
-    if(std::min({n_model_function, n_data, n_weights, n_irf_histogram, n_lifetime_spectrum, n_scatter}) <= 0){
-        return -1;
-    }
-#if VERBOSE
+#if VERBOSE_FIT2X
     std::clog << "compute_decay..." << std::endl;
     std::clog << "-- n_model_function: " << n_model_function << std::endl;
     std::clog << "-- n_data: " << n_data << std::endl;
-    std::clog << "-- n_weights: " << n_weights << std::endl;
     std::clog << "-- n_time_axis: " << n_time_axis << std::endl;
     std::clog << "-- n_instrument_response_function: " << n_irf_histogram << std::endl;
     std::clog << "-- n_lifetime_spectrum: " << n_lifetime_spectrum << std::endl;
@@ -165,7 +157,6 @@ int Decay::compute_decay(
     } else{
         for(int i=0; i<n_lifetime_spectrum; i++) lt[i] = lifetime_spectrum[i];
     }
-
     if(convolution_method == 0){
         fconv_per_cs_time_axis(
                 model_function, n_model_function,
@@ -187,7 +178,7 @@ int Decay::compute_decay(
         double dt = time_axis[1] - time_axis[0];
         fconv_per(
                 model_function, lt.data(),
-                irf_histogram, lt.size() / 2,
+                irf_histogram, (int) lt.size() / 2,
                 convolution_start, convolution_stop,
                 n_model_function, excitation_period,
                 dt
@@ -196,7 +187,7 @@ int Decay::compute_decay(
         double dt = time_axis[1] - time_axis[0];
         fconv(
                 model_function, lt.data(),
-                irf_histogram, lt.size() / 2,
+                irf_histogram, (int) lt.size() / 2,
                 convolution_start, n_model_function,
                 dt
         );
@@ -204,7 +195,7 @@ int Decay::compute_decay(
         double dt = time_axis[1] - time_axis[0];
         fconv_avx(
                 model_function, lt.data(),
-                irf_histogram, lt.size() / 2,
+                irf_histogram, (int) lt.size() / 2,
                 convolution_start, n_model_function,
                 dt
         );
@@ -212,13 +203,13 @@ int Decay::compute_decay(
         double dt = time_axis[1] - time_axis[0];
         fconv_per_avx(
                 model_function, lt.data(),
-                irf_histogram, lt.size() / 2,
+                irf_histogram, (int) lt.size() / 2,
                 convolution_start, convolution_stop,
                 n_model_function, excitation_period,
                 dt
         );
     }
-#if VERBOSE
+#if VERBOSE_FIT2X
     std::clog << "fconv_per_cs_time_axis - model_function [:64]: ";
     for(int i=0; i<64; i++) std::clog << model_function[i] << " ";
     std::clog << std::endl;
@@ -241,12 +232,12 @@ int Decay::compute_decay(
                 convolution_start, convolution_stop
         );
     }
-#if VERBOSE
+#if VERBOSE_FIT2X
     std::clog << "model_with_scatter [:64]: ";
     for(int i=0; i<64; i++) std::clog << model_function[i] << " ";
     std::clog << std::endl;
 #endif
-    if(add_pile_up){
+    if(use_pile_up_correction){
         double rep_rate = 1. / excitation_period * 1000.;
         add_pile_up_to_model(
                 model_function, n_model_function,
@@ -255,7 +246,7 @@ int Decay::compute_decay(
                 acquisition_time
         );
     }
-#if VERBOSE
+#if VERBOSE_FIT2X
     std::clog << "model_with_scatter - pile up [:64]: ";
     for(int i=0; i<64; i++) std::clog << model_function[i] << " ";
     std::clog << std::endl;
@@ -271,20 +262,20 @@ int Decay::compute_decay(
             scale_model_to_data,
             number_of_photons,
             convolution_start, convolution_stop,
-            constant_background, model_function, data, squared_weights
+            constant_offset, model_function, data, squared_data_weights
     );
-#if VERBOSE
+#if VERBOSE_FIT2X
     std::clog << "model_with_scatter - scaled [:64]: ";
     for(int i=0; i<64; i++) std::clog << model_function[i] << " ";
     std::clog << std::endl;
 #endif
-#if VERBOSE
+#if VERBOSE_FIT2X
     std::clog << "Adding Background" << std::endl;
     std::clog << "-- add constant background: " << constant_background << std::endl;
 #endif
     for(int i=0; i<n_model_function;i++)
-        model_function[i] += constant_background;
-#if VERBOSE
+        model_function[i] += constant_offset;
+#if VERBOSE_FIT2X
     std::clog << "model final [:64]: ";
     for(int i=0; i<64; i++) std::clog << model_function[i] << " ";
     std::clog << std::endl;

@@ -1,5 +1,5 @@
-#ifndef TTTRLIB_DECAY_H
-#define TTTRLIB_DECAY_H
+#ifndef FIT2X_DECAY_H
+#define FIT2X_DECAY_H
 
 #include <cmath>
 #include <iostream>
@@ -199,10 +199,10 @@ public:
      * @param data[in] The data for which the model function is computed. The data
      * will be used to scaled the computed decay.
      * @param n_data[in] The number of data points
-     * @param squared_weights[in] The squared weights of the data points. The data
+     * @param squared_data_weights[in] The squared weights of the data points. The data
      * weights are used to scale the model function to the data (usually the data
      * weights is Poissonian)
-     * @param n_weights[in] The number of weights
+     * @param n_data_weights[in] The number of weights
      * @param time_axis[in] The time axiss for which the fluorescence decay is computed
      * for
      * @param n_time_axis[in] The number of points in the time axis
@@ -239,7 +239,7 @@ public:
      * considered.
      * @param amplitude_threshold The threshold that is used to discriminate
      * fluorescence lifetimes that are smaller.
-     * @param add_pile_up if set to true (default is false) pile up will be added
+     * @param use_pile_up_correction if set to true (default is false) pile up will be added
      * to the model function.
      * @param instrument_dead_time the dead time of the instrument (used for
      * pile up (in units of the lifetime, usually nano seconds)
@@ -254,12 +254,12 @@ public:
      * then zero) or to the total number of experimental counts.
      */
     static int compute_decay(
-            double *model_function, int n_model_function,
-            double *data, int n_data,
-            double *squared_weights, int n_weights,
-            double *time_axis, int n_time_axis,
+            double* model_function, int n_model_function,
+            double* data, int n_data,
+            double* squared_data_weights, int n_squared_data_weights,
+            double* time_axis, int n_time_axis,
             double* irf_histogram, int n_irf_histogram,
-            double *lifetime_spectrum, int n_lifetime_spectrum,
+            double* lifetime_spectrum, int n_lifetime_spectrum,
             double* scatter = nullptr, int n_scatter = -1,
             int convolution_start = 0, int convolution_stop = -1,
             double scatter_fraction = 0.0,
@@ -268,7 +268,7 @@ public:
             double number_of_photons=1,
             bool use_amplitude_threshold = false,
             double amplitude_threshold = 1e10,
-            bool add_pile_up = false,
+            bool use_pile_up_correction = false,
             double instrument_dead_time=120.0,
             double acquisition_time=1e9,
             bool add_corrected_irf_as_scatter = false,
@@ -281,7 +281,7 @@ public:
 
 
     void set_weights_by_data(std::vector<double> data){
-#if VERBOSE
+#if VERBOSE_FIT2X
         std::clog << "-- Using Poisson noise" << std::endl;
 #endif
         set_is_valid(false);
@@ -333,10 +333,10 @@ public:
     double get_number_of_photons(){
         if(_scale_model_to_data){
             double re = 0.0;
-            double* model; int n_model;
-            get_model(&model, &n_model);
+            double* data; int n_data;
+            get_data(&data, &n_data);
             for(int i=get_convolution_start(); i<get_convolution_stop();i++){
-                re += model[i];
+                re += data[i];
             }
             return re;
         }
@@ -387,7 +387,7 @@ public:
     }
 
     int get_convolution_start() const {
-        return _convolution_start;
+        return std::max(0, _convolution_start);
     }
 
     void set_convolution_stop(int v) {
@@ -410,17 +410,17 @@ public:
         return std::vector<int>({_convolution_start, _convolution_stop});
     }
 
-    void set_add_pile_up(bool v) {
+    void set_use_pile_up_correction(bool v) {
         set_is_valid(false);
         _use_pile_up_correction = v;
     }
 
-    bool get_add_pile_up() const {
+    bool get_use_pile_up_correction() const {
         return _use_pile_up_correction;
     }
 
     void set_irf(double *input, int n_input) {
-#if VERBOSE
+#if VERBOSE_FIT2X
         std::clog << "-- set_irf" << std::endl;
 #endif
         set_is_valid(false);
@@ -431,7 +431,7 @@ public:
         }
         else {
             if (!_data.empty()) {
-#if VERBOSE
+#if VERBOSE_FIT2X
                 std::clog << "-- Setting empty IRF..." << std::endl;
                 std::clog << "-- IRF length: " << _data.size() << std::endl;
 #endif
@@ -448,7 +448,7 @@ public:
     }
 
     void set_linearization(double *input, int n_input) {
-#if VERBOSE
+#if VERBOSE_FIT2X
         std::clog << "-- set_linearization" << std::endl;
 #endif
         set_is_valid(false);
@@ -515,9 +515,9 @@ public:
         *n_output = _lifetime_spectrum.size();
     }
 
-    void set_weights(double *input, int n_input) {
+    void set_data_weights(double *input, int n_input) {
         set_is_valid(false);
-#if VERBOSE
+#if VERBOSE_FIT2X
         std::clog << "-- Setting weights..." << std::endl;
 #endif
         if (n_input > 0) {
@@ -526,14 +526,14 @@ public:
             _sq_weights.clear();
             for(auto &v: _weights) _sq_weights.emplace_back(v * v);
         } else {
-#if VERBOSE
+#if VERBOSE_FIT2X
             std::clog << "-- WARNING: No weights provided" << std::endl;
 #endif
             set_weights_by_data(_data);
         }
     }
 
-    void get_weights(double **output_view, int *n_output) {
+    void get_data_weights(double **output_view, int *n_output) {
         *output_view = _weights.data();
         *n_output = _weights.size();
     }
@@ -622,7 +622,7 @@ public:
     }
 
     void set_tttr_irf(std::shared_ptr<TTTR> tttr_irf, int tttr_micro_time_coarsening){
-#if VERBOSE
+#if VERBOSE_FIT2X
         std::clog << "-- Setting IRF from TTTR..." << std::endl;
 #endif
         set_is_valid(false);
@@ -646,7 +646,7 @@ public:
      * are divided to coarsen the time axis (default is 1)
      * @param data the data to which the decay is fitted
      * @param time_axis the time axis that belongs to the data
-     * @param weights the weights of the data points. If the weights are not provided
+     * @param data_weights the weights of the data points. If the weights are not provided
      * (nullptr / None) the weights are computed assuming Poisson noise.
      * @param irf_histogram The instrument response function (IRF)
      * that is used for convolution. If no IRF is provided
@@ -658,7 +658,7 @@ public:
      * the values that are smaller then a specified threshold are omitted
      * @param amplitude_threshold The amplitude threshold that is used if the
      * parameter use_amplitude_threshold is set to true (the default value is 1e10)
-     * @param pile_up_add If this is set to true (the default value is false)
+     * @param use_pile_up_correction If this is set to true (the default value is false)
      * the convolved model function is 'piled up' to match pile up artifacts in the
      * data.
      * @param excitation_period the repetition period, .i.e, the time between subsequent
@@ -687,12 +687,12 @@ public:
             double acquisition_time = 1e6,
             double instrument_dead_time = 1e-9,
             int convolution_method = 0,
-            std::vector<double> weights = std::vector<double>(),
+            std::vector<double> data_weights = std::vector<double>(),
             std::shared_ptr<TTTR> tttr_data = nullptr,
             std::shared_ptr<TTTR> tttr_irf = nullptr,
             int tttr_micro_time_coarsening = 1
     ) {
-#if VERBOSE
+#if VERBOSE_FIT2X
         std::clog << "NEW DECAY" << std::endl;
 #endif
         set(
@@ -718,10 +718,12 @@ public:
                 acquisition_time,
                 instrument_dead_time,
                 convolution_method,
-                weights,
+                data_weights,
                 tttr_data,
                 tttr_irf,
-                tttr_micro_time_coarsening
+                tttr_micro_time_coarsening,
+                true, // to make sure that the length of the irf matches the data
+                true // to make sure that the time axis is filled
         );
     }
 
@@ -791,7 +793,7 @@ public:
             bool use_amplitude_threshold = false, double amplitude_threshold = 1e10,
             double acquisition_time = 1e9, double instrument_dead_time = 1e-9,
             int convolution_method = 0,
-            double *weights = nullptr, int n_weights = -1,
+            double *data_weights = nullptr, int n_data_weights = -1,
             std::string score_type = "poisson",
             bool take_abs_of_lifetime_spectrum = true
     ) {
@@ -799,8 +801,8 @@ public:
         std::vector<double> model_function(n_model, 0.0);
         std::vector<double> irf(n_irf_histogram, 0.0);
 
-        std::vector<double> sq_weights(n_weights, 1.0); // by default one to avoid div by zero
-        for(int i=0; i < n_weights; i++) sq_weights[i] = weights[i] * weights[i];
+        std::vector<double> sq_weights(n_data_weights, 1.0); // by default one to avoid div by zero
+        for(int i=0; i < n_data_weights; i++) sq_weights[i] = data_weights[i] * data_weights[i];
 
         for(int i=0; i < n_irf_histogram; i++) irf[i] = std::max(0.0, irf_histogram[i] - irf_background_counts);
         irf = shift_array(irf.data(), irf.size(), irf_shift_channels);
@@ -846,8 +848,8 @@ public:
     void get_weighted_residuals(double **output_view, int *n_output) {
         double *m; int nm; get_model(&m, &nm);
         double *d; int nd; get_data(&d, &nd);
-        double *w; int nw; get_weights(&w, &nw);
-#if VERBOSE
+        double *w; int nw; get_data_weights(&w, &nw);
+#if VERBOSE_FIT2X
         std::clog << "Compute weighted residuals..." << std::endl;
         std::clog << "-- points in model function: " << nm << std::endl;
         std::clog << "-- points in weights: " << nw << std::endl;
@@ -861,7 +863,7 @@ public:
     }
 
     void evaluate() {
-#if VERBOSE
+#if VERBOSE_FIT2X
         std::clog << "evaluate..." << std::endl;
 #endif
         if (!get_is_valid()) {
@@ -879,19 +881,19 @@ public:
                     irf, n_irf,
                     _lifetime_spectrum.data(), _lifetime_spectrum.size(),
                     scatter, n_scatter,
-                    _convolution_start, _convolution_stop,
-                    _scatter_fraction,
-                    _excitation_period,
+                    get_convolution_start(), get_convolution_stop(),
+                    get_scatter_fraction(),
+                    get_excitation_period(),
                     _constant_offset,
-                    _number_of_photons,
-                    _use_amplitude_threshold,
-                    _amplitude_threshold,
-                    _use_pile_up_correction,
-                    _instrument_dead_time,
+                    _number_of_photons, // the getter calls this methods
+                    get_use_amplitude_threshold(),
+                    get_amplitude_threshold(),
+                    get_use_pile_up_correction(),
+                    get_instrument_dead_time(),
                     _acquisition_time,
-                    _use_corrected_irf_as_scatter,
-                    _scale_model_to_data,
-                    this->_convolution_method,
+                    get_use_corrected_irf_as_scatter(),
+                    get_scale_model_to_data(),
+                    get_convolution_method(),
                     get_abs_lifetime_spectrum(),
                     get_use_linearization(),
                     _linearization_table.data(), _linearization_table.size()
@@ -966,7 +968,7 @@ public:
             int x_max = -1,
             std::string score_type= "poisson"
     ){
-#if VERBOSE
+#if VERBOSE_FIT2X
         std::clog << "CHI2" << std::endl;
         std::clog << "-- data range: " << x_min << ", " << x_max << std::endl;
 #endif
@@ -985,10 +987,9 @@ public:
             auto sr = get_score_range();
             for(int i=sr[0];i<sr[1];i++) v += wres[i] * wres[i];
         }
-#if VERBOSE
+#if VERBOSE_FIT2X
         std::clog << "-- x_min: " << x_min << std::endl;
         std::clog << "-- x_max: " << x_max << std::endl;
-        std::clog << "-- type: " << type << std::endl;
         std::clog << "-- chi2: " << v << std::endl;
 #endif
         if(get_is_valid()) return v;
@@ -1021,10 +1022,12 @@ public:
             double acquisition_time = 1e9,
             double instrument_dead_time = 1e-9,
             int convolution_method = 0,
-            std::vector<double> weights = std::vector<double>(),
+            std::vector<double> data_weights = std::vector<double>(),
             std::shared_ptr<TTTR> tttr_data = nullptr,
             std::shared_ptr<TTTR> tttr_irf = nullptr,
-            int tttr_micro_time_coarsening = 1
+            int tttr_micro_time_coarsening = 1,
+            bool force_fill_irf = false,
+            bool force_time_axis = false
     ) {
         // set data
         if (tttr_data != nullptr) {
@@ -1035,6 +1038,11 @@ public:
         } else{
             if(!data.empty()) set_data(data.data(), data.size());
             if(!time_axis.empty()) set_time_axis(time_axis.data(), time_axis.size());
+            else if(force_time_axis){
+                auto t = std::vector<double>(data.size());
+                for(uint32_t i=0; i < t.size(); i++) t[i] = i;
+                set_time_axis(t.data(), t.size());
+            }
         }
 
         // set irf
@@ -1042,6 +1050,11 @@ public:
             set_tttr_irf(tttr_irf, tttr_micro_time_coarsening);
         else if(!irf_histogram.empty())
             set_irf(irf_histogram.data(), irf_histogram.size());
+        if(force_fill_irf){
+            // This sets the irf to the length of the data. The first element
+            // in the irf is a one.
+            set_irf(nullptr, 0);
+        }
 
         // set linearization
         if(!linearization.empty()){
@@ -1053,7 +1066,7 @@ public:
         }
 
         // set weights
-        if(!weights.empty()) set_weights(weights.data(), weights.size());
+        if(!data_weights.empty()) set_data_weights(data_weights.data(), data_weights.size());
 
         if (score_range.empty() < 1) {
             score_range.emplace_back(0);
@@ -1064,7 +1077,7 @@ public:
         // convolution method
         set_convolution_method(convolution_method);
 
-#if VERBOSE
+#if VERBOSE_FIT2X
         std::clog << "SET" << std::endl;
         std::clog << "irf_background_counts: " << irf_background_counts << std::endl;
         std::clog << "irf_shift_channels: " << irf_shift_channels << std::endl;
@@ -1080,7 +1093,6 @@ public:
         std::clog << "use_corrected_irf_as_scatter: " << use_corrected_irf_as_scatter << std::endl;
         std::clog << "amplitude_threshold: " << amplitude_threshold << std::endl;
         std::clog << "use_amplitude_threshold: " << use_amplitude_threshold << std::endl;
-        std::clog << "add_pile_up: " << add_pile_up << std::endl;
         std::clog << "use_linearization: " << use_linearization << std::endl;
         std::clog << "---" << std::endl;
 #endif
@@ -1100,7 +1112,7 @@ public:
         set_use_corrected_irf_as_scatter(use_corrected_irf_as_scatter);
         set_amplitude_threshold(amplitude_threshold);
         set_use_amplitude_threshold(use_amplitude_threshold);
-        set_add_pile_up(use_pile_up_correction);
+        set_use_pile_up_correction(use_pile_up_correction);
         // sanity check
         if (
                 (_data.size() != _time_axis.size()) ||
@@ -1115,5 +1127,5 @@ public:
 };
 
 
-#endif //TTTRLIB_DECAY_H
+#endif //FIT2X_DECAY_H
 

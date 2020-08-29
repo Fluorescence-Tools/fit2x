@@ -15,7 +15,7 @@ void rescale(double *fit, double *decay, double *scale, int start, int stop) {
         }
         if (sumfit != 0.) *scale = sumcurve / sumfit;
     }
-#if VERBOSE
+#if VERBOSE_FIT2X
     std::cout << "RESCALE" << std::endl;
     std::cout << "start / stop: " << start << " / " << stop << std::endl;
     std::cout << "sumfit: " << sumfit << std::endl;
@@ -46,7 +46,7 @@ void rescale_w(double *fit, double *decay, double *w_sq, double *scale, int star
 
 /* rescaling -- new version + background. scale = sum(fit*decay/w^2)/sum(fit^2/w^2) */
 void rescale_w_bg(double *fit, double *decay, double *w_sq, double bg, double *scale, int start, int stop) {
-#if VERBOSE
+#if VERBOSE_FIT2X
     std::clog << "RESCALE_W_BG" << std::endl;
     std::clog << "-- initial scale: " << *scale << std::endl;
     std::clog << "w_sq [:64]: ";
@@ -70,7 +70,7 @@ void rescale_w_bg(double *fit, double *decay, double *w_sq, double bg, double *s
         }
         if (sumdenom != 0.) *scale = sumnom / sumdenom;
     }
-#if VERBOSE
+#if VERBOSE_FIT2X
     std::clog << "-- final scale: " << *scale << std::endl;
 #endif
     for (int i = start; i < stop; i++)
@@ -137,6 +137,7 @@ void fconv_avx(double *fit, double *x, double *lamp, int numexp, int start, int 
     }
     _mm_free(ex); _mm_free(p);
 }
+
 
 
 /* fast convolution, high repetition rate */
@@ -343,7 +344,7 @@ void add_pile_up_to_model(
         double measurement_time,
         std::string pile_up_model
 ){
-#if VERBOSE
+#if VERBOSE_FIT2X
     std::clog << "ADD PILE-UP" << std::endl;
     std::clog << "-- Repetition_rate [MHz]: " << repetition_rate << std::endl;
     std::clog << "-- Dead_time [ns]: " << dead_time << std::endl;
@@ -352,7 +353,7 @@ void add_pile_up_to_model(
     std::clog << "-- n_model: " << n_model << std::endl;
 #endif
     if(pile_up_model == "coates"){
-#if VERBOSE
+#if VERBOSE_FIT2X
         std::clog << "-- pile_up_model: " << pile_up_model << std::endl;
 #endif
         repetition_rate *= 1e6;
@@ -363,7 +364,7 @@ void add_pile_up_to_model(
         double total_dead_time = n_pulse_detected * dead_time;
         double live_time = measurement_time - total_dead_time;
         double n_excitation_pulses = std::max(live_time * repetition_rate, (double) n_pulse_detected);
-#if VERBOSE
+#if VERBOSE_FIT2X
         std::clog << "-- live_time [s]: " << live_time << std::endl;
         std::clog << "-- total_dead_time [s]: " << total_dead_time << std::endl;
         std::clog << "-- n_pulse_detected [#]: " << n_pulse_detected << std::endl;
@@ -399,7 +400,7 @@ void discriminate_small_amplitudes(
         double amplitude_threshold
         ){
     int number_of_exponentials = n_lifetime_spectrum / 2;
-#if VERBOSE
+#if VERBOSE_FIT2X
     std::clog << "APPLY_AMPLITUDE_THRESHOLD" << std::endl;
     std::clog << "-- amplitude_threshold spectrum: " << amplitude_threshold << std::endl;
     std::clog << "-- lifetime spectrum before: ";
@@ -414,7 +415,7 @@ void discriminate_small_amplitudes(
             lifetime_spectrum[2 * ne] = 0.0;
         }
     }
-#if VERBOSE
+#if VERBOSE_FIT2X
     std::clog << "-- lifetime spectrum after: ";
     for (int i=0; i < number_of_exponentials * 2; i++){
         std::clog << lifetime_spectrum[i] << ' ';
@@ -434,37 +435,32 @@ void fconv_per_cs_time_axis(
         int convolution_stop,
         double period
 ){
+    convolution_start = std::max(1, convolution_start);
     int number_of_exponentials = n_lifetime_spectrum / 2;
     double dt = time_axis[1] - time_axis[0];
+    double dt_2 = dt / 2;
     int period_n = std::ceil(period / dt - 0.5);
     int stop1 = std::min(convolution_stop, period_n);
-    convolution_start = std::max(convolution_start, 1);
-    if (convolution_stop < 0) convolution_stop = n_instrument_response_function;
-    std::vector<double> l2(convolution_stop);
-    for(int i = 0; i<convolution_stop; i++) l2[i] = dt * 0.5 * instrument_response_function[i];
-
     for(int i=0; i < n_model; i++) model[i] = 0;
     for(int ne=0; ne < number_of_exponentials; ne++){
         double x = lifetime_spectrum[2 * ne];
         if(x == 0.0) continue;
-        double lt = lifetime_spectrum[2 * ne + 1];
+        double lt_curr = lifetime_spectrum[2 * ne + 1];
+        double tail_a = 1./(1.-exp(-period/lt_curr));
         double fit_curr = 0.;
-        double exp_curr = std::exp(-dt / lt);
-
-        model[0] += l2[0] * (exp_curr + 1.) * x;
+        double exp_curr = std::exp(-dt/lt_curr);
+        model[0] += dt_2 * instrument_response_function[0] * (exp_curr + 1.) * x;
         for(int i=convolution_start; i<convolution_stop; i++){
-            fit_curr = (fit_curr + l2[i - 1]) * exp_curr + l2[i];
+            fit_curr = (fit_curr + dt_2 * instrument_response_function[i - 1]) *
+                       exp_curr + dt_2 * instrument_response_function[i];
             model[i] += fit_curr * x;
         }
-
         for(int i=convolution_stop; i<stop1; i++){
             fit_curr *= exp_curr;
             model[i] += fit_curr * x;
         }
-        fit_curr *= exp(-(period_n - stop1) * dt / lt);
-
-        double tail_a = 1./(1.-exp(-period / lt));
-        for(int i=0; i < convolution_stop; i++) {
+        fit_curr *= exp(-(period_n - stop1) * dt / lt_curr);
+        for(int i=convolution_start; i < convolution_stop; i++) {
             fit_curr *= exp_curr;
             model[i] += fit_curr * x * tail_a;
         }
@@ -481,7 +477,7 @@ void fconv_cs_time_axis(
         int convolution_stop
 ){
     int number_of_exponentials = n_lifetime_spectrum / 2;
-#if VERBOSE
+#if VERBOSE_FIT2X
     std::clog << "convolve_lifetime_spectrum... " << std::endl;
     std::clog << "-- number_of_exponentials: " << number_of_exponentials << std::endl;
     std::clog << "-- convolution_start: " << convolution_start << std::endl;

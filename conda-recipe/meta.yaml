@@ -21,12 +21,16 @@ requirements:
     - python {{ python }}
     - {{ pin_compatible('numpy') }}
     - cmake
-    - swig 4.0.*
-    - tttrlib
+    - swig 3.0.12.*
+    - boost 1.67.0.*
+    - libboost 1.67.0.* [not win]
+    - tttrlib >=0.0.18
   run:
     - python {{ python }}
     - {{ pin_compatible('numpy') }}
-    - tttrlib
+    - boost 1.67.0.* [win]
+    - libboost 1.67.0.* [not win]
+    - fftw
 
 test:
   imports:

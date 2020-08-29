@@ -24,7 +24,7 @@
 %include <typemaps.i>
 
 // Use shared_prt for TTTR to pass TTTR around
-%pointer_class(TTTR ,ptrTTTR)
+%shared_ptr(TTTR)
 
 %init %{
 import_array();
@@ -87,3 +87,4 @@ import_array();
 %include "fit25.i"
 %include "fit26.i"
 %include "decay.i"
+%include "phasor.i"

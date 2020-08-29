@@ -15,7 +15,7 @@ static double penalty = 0.;
 
 
 void compute_signal_and_background(MParam *p) {
-#if VERBOSE
+#if VERBOSE_FIT2X
     std::cout << "COMPUTE_SIGNAL_AND_BACKGROUND" << std::endl;
 #endif
     // total signal and background
@@ -41,7 +41,7 @@ void compute_signal_and_background(MParam *p) {
     double B = std::max(1.0, Bp + Bs);
     Bp *= (Sp + Ss) / B;
     Bs *= (Sp + Ss) / B;
-#if VERBOSE
+#if VERBOSE_FIT2X
     std::cout << "-- Bp, Bs: " << Bp << ", " << Bs << std::endl;
     std::cout << "-- Sp, Ss: " << Sp << ", " << Ss << std::endl;
 #endif
@@ -51,7 +51,7 @@ void compute_signal_and_background(MParam *p) {
 void normM(double *M, int Nchannels) {
     int i;
     double s = 0., Sexp = Sp + Ss;
-#if VERBOSE
+#if VERBOSE_FIT2X
     std::cout << "NORMALIZE: normM" << std::endl;
     std::cout << "-- Nchannels: " << Nchannels << std::endl;
     std::cout << "-- Sp: " << Sp << std::endl;
@@ -68,7 +68,7 @@ void normM(double *M, int Nchannels) {
 void normM(double *M, double s, int Nchannels) {
     int i;
     double Sexp = Sp + Ss;
-#if VERBOSE
+#if VERBOSE_FIT2X
     std::cout << "NORMALIZE: normM - already normalized to s" << std::endl;
     std::cout << "-- Nchannels: " << Nchannels << std::endl;
     std::cout << "-- s: " << s << std::endl;
@@ -97,7 +97,7 @@ void normM_p2s(double *M, int Nchannels) {
 
 void correct_input23(double *x, double *xm, LVDoubleArray *corrections, int return_r) {
     double r, g, Fp, Fs, l1, l2;
-#if VERBOSE
+#if VERBOSE_FIT2X
     std::cout << "CORRECT_INPUT23" << std::endl;
 #endif
     xm[0] = x[0];
@@ -115,7 +115,7 @@ void correct_input23(double *x, double *xm, LVDoubleArray *corrections, int retu
     g = corrections->data[1];
     l1 = corrections->data[2];
     l2 = corrections->data[3];
-#if VERBOSE
+#if VERBOSE_FIT2X
     std::cout << "-- Correction factors:" << std::endl;
     std::cout << "-- g-factor: " << g << std::endl;
     std::cout << "-- l1, l2: " << l1 << ", " << l2 << std::endl;
@@ -123,7 +123,7 @@ void correct_input23(double *x, double *xm, LVDoubleArray *corrections, int retu
     Fp = (Sp - xm[1] * Bp) / (1. - xm[1]);
     Fs = (Ss - xm[1] * Bs) / (1. - xm[1]);
     r = (Fp - g * Fs) / (Fp * (1. - 3. * l2) + (2. - 3. * l1) * g * Fs);
-#if VERBOSE
+#if VERBOSE_FIT2X
     std::cout << "-- Signals: " << std::endl;
     std::cout << "-- Bp, Bs: " << Bp << ", " << Bs << std::endl;
     std::cout << "-- Sp, Ss: " << Sp << ", " << Ss << std::endl;
@@ -140,7 +140,7 @@ void correct_input23(double *x, double *xm, LVDoubleArray *corrections, int retu
         x[7] = (Sp - g * Ss) / (Sp * (1. - 3. * l2) + (2. - 3. * l1) * g * Ss);
         x[6] = r;
     }
-#if VERBOSE
+#if VERBOSE_FIT2X
     std::cout << "-- Corrected parameters:" << std::endl;
     std::cout << "-- tau / tau_c: " << x[0] << "/" << xm[0] << std::endl;
     std::cout << "-- gamma / gamma_c: " << x[1] << "/" << xm[1] << std::endl;
@@ -160,7 +160,7 @@ double targetf23(double *x, void *pv) {
         *bg = *(p->bg),
         *corrections = *(p->corrections),
         *M = *(p->M);
-#if VERBOSE
+#if VERBOSE_FIT2X
     std::cout << "COMPUTING TARGET23" << std::endl;
     std::cout << "-- Nchannels: " << Nchannels << std::endl;
 #endif
@@ -174,7 +174,7 @@ double targetf23(double *x, void *pv) {
         w -= Bgamma * log(Bexpected) - loggammaf(Bgamma + 1.);
     }
     double v = w / Nchannels + penalty;
-#if VERBOSE
+#if VERBOSE_FIT2X
     std::cout << "xm:" ;
     for(int i=0; i<8;i++) std::cout << xm[i] << " ";
     std::cout << std::endl;
@@ -207,7 +207,7 @@ double targetf23(double *x, void *pv) {
 
 
 double fit23(double *x, short *fixed, MParam *p) {
-#if VERBOSE
+#if VERBOSE_FIT2X
     std::cout << "FIT23" << std::endl;
     std::cout << "-- Initial parameters / fixed: " << std::endl;
     std::cout << "-- tau: " << x[0] << " / " << fixed[0] << std::endl;
@@ -245,7 +245,7 @@ double fit23(double *x, short *fixed, MParam *p) {
     // pre-fit with fixed gamma
     //  bfgs_o.maxiter = 20;
     if(!fixed[0]){
-#if VERBOSE
+#if VERBOSE_FIT2X
         std::cout << "-- pre-fitting..." << std::endl;
 #endif
         bfgs_o.minimize(x, p);
@@ -279,7 +279,7 @@ int modelf23(double *param,            // here: [tau gamma r0 rho]
              double *corrections,      // [period g l1 l2]
              double *mfunction)        // out: model function in Jordi-girl format
 {
-#if VERBOSE
+#if VERBOSE_FIT2X
     std::cout << "COMPUTE MODEL23" << std::endl;
 #endif
     double x[4];
@@ -301,7 +301,7 @@ int modelf23(double *param,            // here: [tau gamma r0 rho]
     l2 = corrections[3];
     conv_stop = (int) corrections[4];
 
-#if VERBOSE
+#if VERBOSE_FIT2X
     std::cout << "-- tau: " << tau << std::endl;
     std::cout << "-- gamma: " << gamma << std::endl;
     std::cout << "-- r0: " << r0 << std::endl;
@@ -539,7 +539,7 @@ void correct_input25(double* x, double* xm, LVDoubleArray* corrections, int retu
     Fs = (Ss-xm[1]*Bs)/(1.-xm[1]);
     r = (Fp - g*Fs)/(Fp*(1.-3.*l2) + (2.-3.*l1)*g*Fs);
 
-#if VERBOSE
+#if VERBOSE_FIT2X
     std::cout << "correct_input25" << std::endl;
     std::cout<< "xm[1]:" << xm[1] << std::endl;
     std::cout<< "Bp:" << Bp << std::endl;
@@ -665,7 +665,7 @@ double fit25 (double* x, short* fixed, MParam* p)
         if (p2s_twoIstar) tIstar = twoIstar_p2s(expdata->data, M->data, Nchannels);
         else tIstar = twoIstar(expdata->data, M->data, Nchannels);
 //outf << x[i] << '\t' << tIstar << '\t';
-#if VERBOSE
+#if VERBOSE_FIT2X
         std::cout<< x[i] << "\t" << tIstar << "\t"  << std::endl;
 #endif
         if (tIstar < tIstarbest) {
@@ -696,7 +696,7 @@ double fit25 (double* x, short* fixed, MParam* p)
 
 void correct_input26(double* x, double* xm)
 {
-#if VERBOSE
+#if VERBOSE_FIT2X
     std::cout<<"correct_input26"<<std::endl;
 #endif
     // correct input parameters (take care of unreasonable values)
@@ -710,7 +710,7 @@ void correct_input26(double* x, double* xm)
         penalty = x[0]-1.0;
     }
     else penalty = 0.;
-#if VERBOSE
+#if VERBOSE_FIT2X
     std::cout<<"x[0]: " << x[0] <<std::endl;
     std::cout<<"xm[0]: " << xm[0] <<std::endl;
 #endif

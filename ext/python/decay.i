@@ -5,10 +5,11 @@
 // Input arrays
 %apply(double* IN_ARRAY1, int DIM1) {
     (double* time_axis, int n_time_axis),
-    (double* squared_weights, int n_weights),
+    (double* squared_data_weights, int n_squared_data_weights),
+    (double* scatter, int n_scatter),
     (double* weights, int n_weights),
+    (double* data_weights, int n_data_weights),
     (double* irf_histogram, int n_irf_histogram),
-    (double* lifetime_spectrum, int n_lifetime_spectrum),
     (double* linearization, int n_linearization),
     (double* data, int n_data),
     (double* curve1, int n_curve1),
@@ -31,7 +32,7 @@
 %attribute(Decay, double, irf_background_counts, get_irf_background_counts, set_irf_background_counts);
 %attribute(Decay, int, convolution_stop, get_convolution_stop, set_convolution_stop);
 %attribute(Decay, int, convolution_start, get_convolution_start, set_convolution_start);
-%attribute(Decay, bool, add_pile_up, get_add_pile_up, set_add_pile_up);
+%attribute(Decay, bool, use_pile_up_correction, get_use_pile_up_correction, set_use_pile_up_correction);
 %attribute(Decay, bool, abs_lifetime_spectrum, get_abs_lifetime_spectrum, set_abs_lifetime_spectrum);
 %attribute(Decay, bool, use_amplitude_threshold, get_use_amplitude_threshold, set_use_amplitude_threshold);
 %attribute(Decay, double, amplitude_threshold, get_amplitude_threshold, set_amplitude_threshold);

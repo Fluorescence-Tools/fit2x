@@ -13,7 +13,7 @@ static double logfact[150];
 double twoIstar_1ch(int* C, double* M, int Ndata)
 {
     double W = 0., W0 = 0.;
-    int nempty = 0;
+    //int nempty = 0;
     for (int i=0; i<Ndata; i++)
         if (C[i]>0) {
             W += wcm(C[i], M[i]);
@@ -71,7 +71,7 @@ double statistics::chi2_counting(
             chi2 += (mu - m) * (mu - m) / (3. / (1./m + 2./mu));
         }
     }
-#if VERBOSE
+#if VERBOSE_FIT2X
     std::cout << "CHI2_COUNTING" << std::endl;
     std::cout << "-- type: " << type << std::endl;
     std::cout << "-- x_min: " << x_min << std::endl;

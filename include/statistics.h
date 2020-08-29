@@ -1,5 +1,5 @@
-#ifndef TTTRLIB_STATISTICS_H
-#define TTTRLIB_STATISTICS_H
+#ifndef FIT2X_STATISTICS_H
+#define FIT2X_STATISTICS_H
 
 
 #include <cmath>
@@ -135,4 +135,4 @@ namespace statistics{
     );
 }
 
-#endif //TTTRLIB_STATISTICS_H
+#endif //FIT2X_STATISTICS_H

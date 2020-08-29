@@ -30,6 +30,16 @@ def corrected_irf(self):
 
 
 @property
+def data_weights(self):
+    return self.get_data_weights()
+
+
+@data_weights.setter
+def data_weights(self, v):
+    return self.set_data_weights(v)
+
+
+@property
 def weighted_residuals(self):
     return self.get_weighted_residuals()
 

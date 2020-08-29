@@ -75,14 +75,13 @@ FILE(GLOB SRC_files "${CMAKE_SOURCE_DIR}/src/*.cpp")
 ###########################
 IF (CMAKE_BUILD_TYPE STREQUAL "Release")
     MESSAGE("Release build")
-    ADD_DEFINITIONS("-DVERBOSE=0")
+    ADD_DEFINITIONS("-DVERBOSE_FIT2X=0")
     string(APPEND CMAKE_CXX_FLAGS " -Wall -Wextra")
     set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 ELSE (CMAKE_BUILD_TYPE STREQUAL "Debug")
     MESSAGE("Debug build")
-    ADD_DEFINITIONS("-DVERBOSE=1")
+    ADD_DEFINITIONS("-DVERBOSE_FIT2X=1")
 ENDIF (CMAKE_BUILD_TYPE STREQUAL "Release")
-
 
 
 ## TTTRLIB
@@ -97,6 +96,20 @@ LINK_LIBRARIES(tttrlib)
 #else ()
 #    message(WARNING "MKL libs not found")
 #endif ()
+
+## Boost
+###########################
+if (WIN32)
+    # use static Boost in Windows
+    set(Boost_USE_STATIC_LIBS ON)
+    set(Boost_USE_STATIC ON)
+    set(Boost_USE_MULTITHREAD)
+endif (WIN32)
+FIND_PACKAGE(Boost 1.36 REQUIRED COMPONENTS date_time filesystem iostreams)
+INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
+LINK_LIBRARIES(${Boost_LIBRARIES})
+MESSAGE(${Boost_INCLUDE_DIRS})
+
 
 ## OpenMP
 ###########################

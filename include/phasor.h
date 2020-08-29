@@ -3,10 +3,16 @@
 
 #include <vector>
 #include <cmath>
+#include <algorithm> /* std::max */
 
+#include "tttrlib/tttr.h" /* TTTR */
+#include "tttrlib/image.h" /* CLSMImage */
 
-namespace Phasor {
+// namespaces do not work well with SWIG.
+// thus, I use a class with static methods.
+class phasor{
 
+public:
     /*!
      * Compute the phasor (g,s) for a selection of micro times
      *
@@ -23,7 +29,7 @@ namespace Phasor {
      * @param s_irf s-value of instrument response phasor
      * @return vector of length 2: first element g-value, second element s-value
      */
-    std::vector<double> compute_phasor(
+    static std::vector<double> compute_phasor(
             unsigned short *micro_times,
             std::vector<int> &idxs,
             double frequency,
@@ -40,7 +46,7 @@ namespace Phasor {
      * @param frequency the frequency of the phasor
      * @return vector of length 2: first element g-value, second element s-value
      */
-    std::vector<double> compute_phasor_all(
+    static std::vector<double> compute_phasor_all(
             unsigned short* microtimes, int n_microtimes,
             double frequency
     );
@@ -55,7 +61,7 @@ namespace Phasor {
      * @param s_exp
      * @return
      */
-    double g(
+    static double g(
             double g_irf, double s_irf,
             double g_exp, double s_exp
     );
@@ -69,12 +75,21 @@ namespace Phasor {
      * @param s_exp
      * @return
      */
-    double s(
+    static double s(
             double g_irf, double s_irf,
             double g_exp, double s_exp
     );
 
-}
+    static void get_phasor_image(
+            float **output, int *dim1, int *dim2, int *dim3, int *dim4,
+            std::shared_ptr<CLSMImage> image,
+            TTTR* tttr_irf = nullptr,
+            double frequency = -1,
+            int minimum_number_of_photons = 30,
+            bool stack_frames = false
+    );
+
+};
 
 
 #endif //FIT2X_PHASOR_H

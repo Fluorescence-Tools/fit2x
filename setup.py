@@ -48,7 +48,6 @@ class CMakeBuild(build_ext):
             '-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + extdir,
             '-DCMAKE_SWIG_OUTDIR=' + extdir
         ]
-
         cfg = 'Debug' if self.debug else 'Release'
         build_args = ['--config', cfg, '-j 8']
         cmake_args += ['-DCMAKE_BUILD_TYPE=' + cfg]
@@ -70,7 +69,7 @@ class CMakeBuild(build_ext):
                     '-DCMAKE_PREFIX_PATH=' + CONDA_PREFIX,
                     '-DBOOST_ROOT=' + CONDA_PREFIX,
                     '-DBoost_NO_SYSTEM_PATHS=ON',
-                    '-DBoost_DEBUG=ON',
+                    '-DBoost_DEBUG=OFF',
                     '-DBoost_DETAILED_FAILURE_MESSAGE=ON'
                 ]
         env = os.environ.copy()
