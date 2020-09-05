@@ -61,8 +61,9 @@ if (APPLE)
     LINK_DIRECTORIES(/usr/local/lib)
     INCLUDE_DIRECTORIES(/usr/local/include)
     # Requires AVX
-    STRING(APPEND CMAKE_CXX_FLAGS " -march=native -Ofast -mavx -ffast-math -funroll-loops")
-    STRING(APPEND CMAKE_C_FLAGS " -march=native -Ofast -mavx -ffast-math -funroll-loops")
+    # FMA and clang: -ffp-contract=fast
+    STRING(APPEND CMAKE_CXX_FLAGS " -march=native -Ofast -mavx -ffast-math -funroll-loops -ffp-contract=fast")
+    STRING(APPEND CMAKE_C_FLAGS " -march=native -Ofast -mavx -ffast-math -funroll-loops -ffp-contract=fast")
 endif (APPLE)
 
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include)
