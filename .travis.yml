@@ -30,7 +30,7 @@ addons:
 
 env:
   # Build and test package on all supported python versions
-  - BUILD_TARGET=3.8 MINICONDA_VERSION=latest
+  - BUILD_TARGET=3.7 MINICONDA_VERSION=latest
 
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then MINICONDA_OS=Linux; else MINICONDA_OS=MacOSX; fi
