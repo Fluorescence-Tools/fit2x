@@ -8,7 +8,15 @@
 #include <string>
 #include <vector>
 #include "omp.h"
+
+#if defined(_MSC_VER)
+/* Microsoft C/C++-compatible compiler */
+#include <intrin.h>
 #include <immintrin.h>
+#endif
+#if defined(__GNUC__) || defined(__clang__)
+#include <immintrin.h>
+#endif
 
 
 
@@ -187,7 +195,7 @@ void fconv_per_avx(
  * @param dt[in] time difference between two micro time channels
  */
 void fconv_per_cs(double *fit, double *x, double *lamp, int numexp, int stop,
-                  int n_points, double period, int conv_stop, double dt=0.05);
+                  int n_points, double period, int conv_stop, double dt);
 
 
 /*!

@@ -18,6 +18,7 @@
     (double* lampsh, int len2) // used by shift_lamp
 }
 
+
 void fconv_per_cs_time_axis(
         double *model, int n_model,
         double *time_axis, int n_time_axis,
@@ -27,6 +28,7 @@ void fconv_per_cs_time_axis(
         int convolution_stop = -1,
         double period = 100.0
 );
+
 
 void add_pile_up_to_model(
         double* model, int n_model,
@@ -228,9 +230,9 @@ void my_fconv_avx(
         double* fit, int len1,
         double* irf, int len2,
         double* x, int len3,
-        int start,
-        int stop,
-        double dt
+        int start = 0,
+        int stop = -1,
+        double dt = 1.0
 ){
     if (len1 != len2) {
         PyErr_Format(PyExc_ValueError,
@@ -367,7 +369,7 @@ void my_fconv_per_cs(
                      len1, len2);
     }
     if(stop < 0){
-        stop = len1;
+        stop = len1 - 1;
     }
     if(conv_stop < 0){
         conv_stop = len1;
@@ -377,7 +379,7 @@ void my_fconv_per_cs(
                      "Stop index (%d) too large for array of lengths (%d).",
                      stop, len1);
     }
-    fconv_per_cs(fit, x, irf, len3 / 2, stop, len1, period, conv_stop);
+    fconv_per_cs(fit, x, irf, len3 / 2, stop, len1, period, conv_stop, dt);
 }
 %}
 
