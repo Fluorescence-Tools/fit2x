@@ -435,8 +435,8 @@ public:
                 std::clog << "-- Setting empty IRF..." << std::endl;
                 std::clog << "-- IRF length: " << _data.size() << std::endl;
 #endif
-                _irf.reserve(_data.size());
-                for (size_t i = 0; i < _data.size(); i++) _irf.emplace_back(0.0);
+                _irf.resize(_data.size());
+                std::fill(_irf.begin(), _irf.end(), 0.0);
                 _irf[0] = 1.0;
             }
         }
@@ -1050,7 +1050,7 @@ public:
             set_tttr_irf(tttr_irf, tttr_micro_time_coarsening);
         else if(!irf_histogram.empty())
             set_irf(irf_histogram.data(), irf_histogram.size());
-        if(force_fill_irf){
+        else if(force_fill_irf){
             // This sets the irf to the length of the data. The first element
             // in the irf is a one.
             set_irf(nullptr, 0);
