@@ -40,7 +40,9 @@ double statistics::chi2_counting(
             chi2 += (mu - m) * (mu - m) / m;
         }
     } else if(type == "poisson"){
-#pragma omp simd
+        #ifndef _WIN32
+        #pragma omp simd
+        #endif
         for(int i = x_min; i < x_max; i++){
             double mu = model[i];
             double m = data[i];
@@ -138,7 +140,7 @@ double wcm_p2s(int C, double mp, double ms)
     w += s;
   }
 
-  if (isfinite(w)) return log(w) + log1;
+  if (std::isfinite(w)) return log(w) + log1;
 
   // if infinity, try another way around
 
@@ -155,7 +157,7 @@ double wcm_p2s(int C, double mp, double ms)
     w += s;
   }
 
-  if (isfinite(w)) return log(w) + log1;
+  if (std::isfinite(w)) return log(w) + log1;
   else return -0.5*(logtwopi + log(variance) + (C-meanC)*(C-meanC)/variance) + mp + ms; //chi2w
 }
 

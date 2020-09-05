@@ -58,9 +58,13 @@ void Decay::add_curve(
     double sum_curve_2 = std::accumulate( curve2 + start, curve2 + stop, 0.0);
     double f1 = (1. - areal_fraction_curve2);
     double f2 = areal_fraction_curve2 * sum_curve_1 / sum_curve_2;
+#ifndef _WIN32
 #pragma omp simd
+#endif
     for(int i=start; i<stop;i++) curve1[i] *= f1;
+#ifndef _WIN32
 #pragma omp simd
+#endif
     for(int i=start; i<stop;i++) curve1[i] += f2 * curve2[i];
     *output = curve1;
     *n_output = n_curve1;
@@ -137,11 +141,11 @@ int Decay::compute_decay(
     std::clog << "-- scale_model_to_data: " << scale_model_to_data << std::endl;
     std::clog << "-- irf_areal_fraction: " << scatter_fraction << std::endl;
     std::clog << "-- period: " << excitation_period << std::endl;
-    std::clog << "-- constant_background: " << constant_background << std::endl;
+    std::clog << "-- constant_offset: " << constant_offset << std::endl;
     std::clog << "-- number_of_photons: " << number_of_photons << std::endl;
     std::clog << "-- use_amplitude_threshold: " << use_amplitude_threshold << std::endl;
     std::clog << "-- amplitude_threshold: " << amplitude_threshold << std::endl;
-    std::clog << "-- add_pile_up: " << add_pile_up << std::endl;
+    std::clog << "-- use_pile_up_correction: " << use_pile_up_correction << std::endl;
     std::clog << "-- use_corrected_irf_as_scatter: " << use_corrected_irf_as_scatter << std::endl;
 #endif
     if(use_amplitude_threshold){
@@ -271,7 +275,7 @@ int Decay::compute_decay(
 #endif
 #if VERBOSE_FIT2X
     std::clog << "Adding Background" << std::endl;
-    std::clog << "-- add constant background: " << constant_background << std::endl;
+    std::clog << "-- add constant offset: " << constant_offset << std::endl;
 #endif
     for(int i=0; i<n_model_function;i++)
         model_function[i] += constant_offset;
