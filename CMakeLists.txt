@@ -33,14 +33,18 @@ if (MSVC)
     ADD_DEFINITIONS(-DMS_WIN64)
     ADD_DEFINITIONS(-D_USE_MATH_DEFINES)
     # Requires AVX
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX")
+    # https://devblogs.microsoft.com/cppblog/simd-extension-to-c-openmp-in-visual-studio/
+    # /Oi is for intrinsics
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX2 -openmp:experimental /Oi /O2")
 endif (MSVC)
 
-# if(NOT LINUX) should work, too, if you need that
+if(UNIX AND NOT APPLE)
+    set(LINUX TRUE)
+endif()
 if(LINUX)
     # Requires AVX
-    STRING(APPEND CMAKE_CXX_FLAGS " -march=native -Ofast -mavx -ffast-math -funroll-loops")
-    STRING(APPEND CMAKE_C_FLAGS " -march=native -Ofast -mavx -ffast-math -funroll-loops")
+    STRING(APPEND CMAKE_CXX_FLAGS " -march=native -Ofast -mavx2 -ffast-math -funroll-loops")
+    STRING(APPEND CMAKE_C_FLAGS " -march=native -Ofast -mavx2 -ffast-math -funroll-loops")
 endif()
 
 # MACOSX
@@ -76,16 +80,23 @@ FILE(GLOB SRC_files "${CMAKE_SOURCE_DIR}/src/*.cpp")
 IF (CMAKE_BUILD_TYPE STREQUAL "Release")
     MESSAGE("Release build")
     ADD_DEFINITIONS("-DVERBOSE_FIT2X=0")
-    string(APPEND CMAKE_CXX_FLAGS " -Wall -Wextra")
-    set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 ELSE (CMAKE_BUILD_TYPE STREQUAL "Debug")
     MESSAGE("Debug build")
-    ADD_DEFINITIONS("-DVERBOSE_FIT2X=1")
+    ADD_DEFINITIONS("-DVERBOSE_FIT2X=0")
 ENDIF (CMAKE_BUILD_TYPE STREQUAL "Release")
 
 
 ## TTTRLIB
 LINK_LIBRARIES(tttrlib)
+
+## HDF5 -
+# Necessary to fulfil implicit of tttrlib
+###########################
+FIND_PACKAGE(HDF5 1.10 REQUIRED COMPONENTS C)
+INCLUDE_DIRECTORIES(${HDF5_INCLUDE_DIRS})
+LINK_LIBRARIES(${HDF5_LIBRARIES})
+# needed for build on Windows
+ADD_DEFINITIONS(-DH5_BUILT_AS_DYNAMIC_LIB)
 
 ### Intel MKL
 ###############
