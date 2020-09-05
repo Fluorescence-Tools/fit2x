@@ -23,6 +23,7 @@ install:
   - git submodule update --init --recursive
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
+  - conda config --add channels tpeulen
   - conda create -n build python=3.7 git conda-build anaconda-client numpy conda-verify ripgrep
   - activate build
   - conda build conda-recipe
