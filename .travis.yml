@@ -46,9 +46,9 @@ before_install:
   # scipy is used in some tests
   - conda install python=$BUILD_TARGET conda-build anaconda-client jinja2 git nose coverage anaconda-client scipy
   - source activate base
-  - conda config --add channels tpeulen
   - conda build conda-recipe --output-folder bld-dir
   - conda config --add channels "file://`pwd`/bld-dir"
+  - conda config --add channels tpeulen
 
 install:
   - conda install fit2x -c "file://`pwd`/bld-dir"
