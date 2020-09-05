@@ -22,7 +22,7 @@ def objective_function_chi2(
     decay_object.lifetime_spectrum = lifetime_spectrum
     decay_object.scatter_fraction = scatter
     decay_object.irf_shift_channels = time_shift
-    wres = decay_object.get_weighted_residuals()
+    wres = decay_object.weighted_residuals
     return np.sum(wres[x_min:x_max]**2)
 
 

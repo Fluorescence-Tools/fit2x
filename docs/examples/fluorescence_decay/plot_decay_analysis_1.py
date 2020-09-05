@@ -73,19 +73,19 @@ import fit2x
 def objective_function_chi2(
         x: np.ndarray,
         decay_object: fit2x.Decay,
-        x_min:int = 20,
-        x_max:int = 150
+        x_min: int = 20,
+        x_max: int = 150
 ):
     scatter, background, time_shift, irf_background = x[0:4]
     lifetime_spectrum = x[4:]
     decay_object.set_lifetime_spectrum(lifetime_spectrum)
-    decay_object.set_irf_background_counts(irf_background)
-    decay_object.set_areal_scatter_fraction(scatter)
-    decay_object.set_constant_background(background)
-    decay_object.set_irf_shift_channels(time_shift)
+    decay_object.irf_background_counts = irf_background
+    decay_object.scatter_fraction = scatter
+    decay_object.constant_offset = background
+    decay_object.irf_shift = time_shift
     # wres = decay_object.get_weighted_residuals()
     # return np.sum(wres[x_min:x_max]**2)
-    return decay_object.get_chi2(x_min, x_max)
+    return decay_object.get_score(x_min, x_max)
 
 
 def objective_function_mle(
@@ -103,11 +103,11 @@ def objective_function_mle(
     scatter, background, time_shift, irf_background = x[0:4]
     lifetime_spectrum = np.abs(x[4:])
     decay_object.set_lifetime_spectrum(lifetime_spectrum)
-    decay_object.set_irf_background_counts(irf_background)
-    decay_object.set_areal_scatter_fraction(scatter)
-    decay_object.set_constant_background(background)
-    decay_object.set_irf_shift_channels(time_shift)
-    chi2_mle = decay_object.get_chi2(x_min, x_max, type="poisson")
+    decay_object.irf_background_counts = irf_background
+    decay_object.scatter_fraction = scatter
+    decay_object.constant_offset = background
+    decay_object.irf_shift = time_shift
+    chi2_mle = decay_object.get_score(x_min, x_max, type="poisson")
     # d = decay_object.get_data()[x_min:x_max]
     # m = decay_object.get_model()[x_min:x_max]
     # return np.sum((m - d) - d * np.log(m/d))
