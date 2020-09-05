@@ -11,17 +11,18 @@
 #include "tttrlib/tttr.h"
 %}
 
-
-%include "documentation.i"
-%include "exception.i"
-%include "std_vector.i";
-%include "std_string.i";
-%include "std_wstring.i";
-%include "cpointer.i"
-%include "numpy.i"
-%include "attribute.i"
-%include "std_shared_ptr.i";
+//%include <boost_shared_ptr.i>
+%include <std_shared_ptr.i>
+%include <std_vector.i>
+%include <attribute.i>
 %include <typemaps.i>
+%include <cpointer.i>
+%include <shared_ptr.i>
+%include <std_string.i>
+%include <std_wstring.i>
+%include "exception.i"
+%include "numpy.i"
+%include "documentation.i"
 
 // Use shared_prt for TTTR to pass TTTR around
 %shared_ptr(TTTR)
