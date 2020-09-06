@@ -45,7 +45,7 @@ before_install:
   - conda info -a
   - source activate base
   - conda install python=$BUILD_TARGET conda-build anaconda-client jinja2 git nose coverage anaconda-client scipy
-  - if [[ "LABEL=TRAVIS_PULL_REQUEST_BRANCH" == "master" ]] then CONDA_LABEL=main else CONDA_LABEL=nightly fi
+  - if [[ "LABEL=TRAVIS_PULL_REQUEST_BRANCH" == "master" ]]; then CONDA_LABEL=main; else CONDA_LABEL=nightly; fi
   - conda config --add channels tpeulen/label/$CONDA_LABEL
   - conda build conda-recipe --output-folder bld-dir
   - conda config --add channels "file://`pwd`/bld-dir"
