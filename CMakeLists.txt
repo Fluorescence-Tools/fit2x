@@ -97,6 +97,7 @@ FILE(GLOB SRC_files "${CMAKE_SOURCE_DIR}/src/*.cpp")
 ###########################
 IF (CMAKE_BUILD_TYPE STREQUAL "Release")
     MESSAGE("Release build")
+    ADD_DEFINITIONS("-DVERBOSE_FIT2X=0")
 ELSE (CMAKE_BUILD_TYPE STREQUAL "Debug")
     MESSAGE("Debug build")
     ADD_DEFINITIONS("-DVERBOSE_FIT2X=1")

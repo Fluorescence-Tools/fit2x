@@ -15,13 +15,6 @@ void rescale(double *fit, double *decay, double *scale, int start, int stop) {
         }
         if (sumfit != 0.) *scale = sumcurve / sumfit;
     }
-#if VERBOSE_FIT2X
-    std::clog << "RESCALE" << std::endl;
-    std::clog << "start / stop: " << start << " / " << stop << std::endl;
-    std::clog << "sumfit: " << sumfit << std::endl;
-    std::clog << "sumcurve: " << sumcurve << std::endl;
-    std::clog << "scale: " << *scale << std::endl;
-#endif
     for (int i = start; i < stop; i++)
         fit[i] *= *scale;
 }
