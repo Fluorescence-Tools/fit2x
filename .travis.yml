@@ -31,7 +31,6 @@ addons:
 env:
   # Build and test package on all supported python versions
   - BUILD_TARGET=3.7 MINICONDA_VERSION=latest
-  - if [[ "LABEL=TRAVIS_PULL_REQUEST_BRANCH" == "master" ]] then CONDA_LABEL=main else CONDA_LABEL=nightly fi
 
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then MINICONDA_OS=Linux; else MINICONDA_OS=MacOSX; fi
@@ -46,6 +45,7 @@ before_install:
   - conda info -a
   - source activate base
   - conda install python=$BUILD_TARGET conda-build anaconda-client jinja2 git nose coverage anaconda-client scipy
+  - if [[ "LABEL=TRAVIS_PULL_REQUEST_BRANCH" == "master" ]] then CONDA_LABEL=main else CONDA_LABEL=nightly fi
   - conda config --add channels tpeulen/label/$CONDA_LABEL
   - conda build conda-recipe --output-folder bld-dir
   - conda config --add channels "file://`pwd`/bld-dir"
@@ -73,7 +73,7 @@ after_success:
       # The documentation is only build using the linux conda dist
       # Hence only upload linux nightly
       conda activate base
-      anaconda -t $ANACONDA_API_TOKEN upload -u $CONDA_USER -l nightly bld-dir/$OS/*.tar.bz2 --force
+      anaconda -t $ANACONDA_API_TOKEN upload -u $CONDA_USER -l $CONDA_LABEL bld-dir/$OS/*.tar.bz2 --force
       cd docs
       conda env create -f environment.yml
       conda activate docs_env
