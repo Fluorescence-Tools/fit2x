@@ -38,6 +38,19 @@ if (MSVC)
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX2 -openmp:experimental /Oi /O2")
 endif (MSVC)
 
+# Conda
+#######
+if(UNIX)
+    if(DEFINED ENV{CONDA_PREFIX})
+        LINK_DIRECTORIES("$ENV{CONDA_PREFIX}/lib")
+        INCLUDE_DIRECTORIES("$ENV{CONDA_PREFIX}/include")
+    else()
+        LINK_DIRECTORIES(/usr/local/lib)
+        INCLUDE_DIRECTORIES(/usr/local/include)
+    endif()
+endif()
+
+
 if(UNIX AND NOT APPLE)
     set(LINUX TRUE)
 endif()
@@ -56,13 +69,16 @@ if (APPLE)
     ADD_DEFINITIONS(-stdlib=libc++)
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
     SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pthread")
-    # Don't set MACOSX_RPATH by default
-    SET(CMAKE_MACOSX_RPATH 0)
-    LINK_DIRECTORIES(/usr/local/lib)
-    INCLUDE_DIRECTORIES(/usr/local/include)
     # Requires AVX and FMA
     STRING(APPEND CMAKE_CXX_FLAGS " -march=native -Ofast -mavx2 -ffast-math -funroll-loops -mfma")
     STRING(APPEND CMAKE_C_FLAGS " -march=native -Ofast -mavx2 -ffast-math -funroll-loops -mfma")
+    # Don't set MACOSX_RPATH by default
+    # https://github.com/conda/conda/issues/3624
+    if(DEFINED ENV{CONDA_PREFIX})
+        set(MACOSX_RPATH OFF)
+        set(CMAKE_SKIP_RPATH TRUE)
+        set(CMAKE_SKIP_INSTALL_RPATH TRUE)
+    endif()
 endif (APPLE)
 
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include)
@@ -125,13 +141,21 @@ MESSAGE(${Boost_INCLUDE_DIRS})
 ## OpenMP
 ###########################
 if (APPLE)
+    # When using conda use CONDA_PREFIX
+    if(DEFINED ENV{CONDA_PREFIX})
+        SET(OMP_INCLUDE_DIR "$ENV{CONDA_PREFIX}/include")
+        SET(OMP_LIB_DIR "$ENV{CONDA_PREFIX}/lib")
+    else()
+        SET(OMP_INCLUDE_DIR "/usr/local/opt/libomp/include")
+        SET(OMP_LIB_DIR "/usr/local/opt/libomp/lib")
+    endif()
     # dirty hack to make OpenMP work see:
     # https://gitlab.kitware.com/cmake/cmake/issues/18098
-    set(OpenMP_CXX_FLAGS "-Xpreprocessor -fopenmp -I/usr/local/opt/libomp/include" CACHE INTERNAL "OpenMP flags for Xcode toolchain.")
+    set(OpenMP_CXX_FLAGS "-Xpreprocessor -fopenmp -I${OMP_INCLUDE_DIR}" CACHE INTERNAL "OpenMP flags for Xcode toolchain.")
     set(OpenMP_CXX_LIB_NAMES "omp" CACHE INTERNAL "OpenMP lib name for Xcode toolchain.")
-    set(OpenMP_C_FLAGS "-Xpreprocessor -fopenmp -I/usr/local/opt/libomp/include" CACHE INTERNAL "OpenMP flags for Xcode toolchain.")
+    set(OpenMP_C_FLAGS "-Xpreprocessor -fopenmp -I${OMP_INCLUDE_DIR}" CACHE INTERNAL "OpenMP flags for Xcode toolchain.")
     set(OpenMP_C_LIB_NAMES "libomp" "libgomp" "libiomp5")
-    set(OpenMP_omp_LIBRARY "/usr/local/opt/libomp/lib/libomp.dylib" CACHE INTERNAL "OpenMP lib name for Xcode toolchain.")
+    set(OpenMP_omp_LIBRARY "${OMP_LIB_DIR}/libomp.dylib" CACHE INTERNAL "OpenMP lib name for Xcode toolchain.")
     set(OpenMP_libomp_LIBRARY ${OpenMP_C_LIB_NAMES})
     set(OpenMP_libgomp_LIBRARY ${OpenMP_C_LIB_NAMES})
     set(OpenMP_libiomp5_LIBRARY ${OpenMP_C_LIB_NAMES})
