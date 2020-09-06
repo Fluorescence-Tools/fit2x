@@ -4,6 +4,7 @@ import unittest
 import numpy as np
 import scipy
 import scipy.stats
+from sys import platform
 
 import fit2x
 from compute_irf import model_irf
@@ -130,17 +131,18 @@ class Tests(unittest.TestCase):
             np.allclose(model_ref, model_fconv), True
         )
 
-        # Compare to AVX code
-        model_fconv_avx = np.zeros_like(irf)
-        fit2x.fconv_avx(
-            fit=model_fconv_avx,
-            irf=irf,
-            x=lifetime_spectrum,
-            dt=dt
-        )
-        self.assertEqual(
-            np.allclose(model_fconv_avx, model_fconv), True
-        )
+        # Compare to AVX code - on macOS SIMD-AVX code wont be supported in the future
+        if platform != "darwin":
+            model_fconv_avx = np.zeros_like(irf)
+            fit2x.fconv_avx(
+                fit=model_fconv_avx,
+                irf=irf,
+                x=lifetime_spectrum,
+                dt=dt
+            )
+            self.assertEqual(
+                np.allclose(model_fconv_avx, model_fconv), True
+            )
 
     def test_fconv_per(self):
         period = 13.0
@@ -188,20 +190,21 @@ class Tests(unittest.TestCase):
             np.allclose(model_fconv_per, ref), True
         )
 
-        # Compare to AVX code
-        model_fconv_avx = np.zeros_like(irf)
-        fit2x.fconv_per_avx(
-            fit=model_fconv_avx,
-            irf=irf,
-            x=lifetime_spectrum,
-            period=period,
-            start=0,
-            stop=-1,
-            dt=dt
-        )
-        self.assertEqual(
-            np.allclose(model_fconv_avx, model_fconv_per), True
-        )
+        # Compare to AVX code - on macOS SIMD-AVX code wont be supported in the future
+        if platform != "darwin":
+            model_fconv_avx = np.zeros_like(irf)
+            fit2x.fconv_per_avx(
+                fit=model_fconv_avx,
+                irf=irf,
+                x=lifetime_spectrum,
+                period=period,
+                start=0,
+                stop=-1,
+                dt=dt
+            )
+            self.assertEqual(
+                np.allclose(model_fconv_avx, model_fconv_per), True
+            )
 
     def test_fconv_per_cs(self):
         period = 13.0

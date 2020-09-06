@@ -2,11 +2,8 @@ from __future__ import division
 import unittest
 
 import scipy.stats
-# import tttrlib
 import fit2x
 import numpy as np
-
-print("Test: ", __file__)
 
 
 class Tests(unittest.TestCase):

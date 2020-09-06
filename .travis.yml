@@ -40,12 +40,12 @@ before_install:
   - bash miniconda.sh -b -p $HOME/miniconda
   - export PATH="$HOME/miniconda/bin:$PATH"
   - hash -r
+  - source activate base
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
   - conda info -a
-  - source activate base
   - conda install python=$BUILD_TARGET conda-build anaconda-client jinja2 git nose coverage anaconda-client scipy
-  - if [[ "LABEL=TRAVIS_PULL_REQUEST_BRANCH" == "master" ]]; then CONDA_LABEL=main; else CONDA_LABEL=nightly; fi
+  - export CONDA_LABEL=$(if [ "TRAVIS_PULL_REQUEST_BRANCH" == "master" ]; then echo main; else echo nightly; fi)
   - conda config --add channels tpeulen/label/$CONDA_LABEL
   - conda build conda-recipe --output-folder bld-dir
   - conda config --add channels "file://`pwd`/bld-dir"
@@ -58,7 +58,13 @@ script:
   - ln -sf $(which nosetests) $(pwd)/test/
   - cd $(pwd)/test/
   - echo $PWD
-  - nosetests --nocapture --with-coverage test_*.py
+  - |
+    if [[ "$TRAVIS_OS_NAME" == "linux" ]]
+    then
+      nosetests --nocapture --with-coverage test_*.py
+    else
+      nosetests --nocapture test_*.py
+    fi
   - cd ..
 
 after_success:

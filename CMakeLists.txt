@@ -6,6 +6,11 @@ ENABLE_LANGUAGE(CXX)
 SET(CMAKE_CXX_STANDARD 11)
 add_definitions(-D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES)
 
+
+if(UNIX AND NOT APPLE)
+    set(LINUX TRUE)
+endif()
+
 ## Check for Conda
 ###########################
 IF(DEFINED ENV{CONDA_PREFIX})
@@ -26,18 +31,6 @@ ELSE()
 ENDIF()
 SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
 
-# Windows
-##############
-if (MSVC)
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++latest")
-    ADD_DEFINITIONS(-DMS_WIN64)
-    ADD_DEFINITIONS(-D_USE_MATH_DEFINES)
-    # Requires AVX
-    # https://devblogs.microsoft.com/cppblog/simd-extension-to-c-openmp-in-visual-studio/
-    # /Oi is for intrinsics
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX2 -openmp:experimental /Oi /O2")
-endif (MSVC)
-
 # Conda
 #######
 if(UNIX)
@@ -51,19 +44,14 @@ if(UNIX)
 endif()
 
 
-if(UNIX AND NOT APPLE)
-    set(LINUX TRUE)
-endif()
+# Compiler flags
+#################
 if(LINUX)
-    # Requires AVX
     STRING(APPEND CMAKE_CXX_FLAGS " -march=native -Ofast -mavx2 -ffast-math -funroll-loops")
     STRING(APPEND CMAKE_C_FLAGS " -march=native -Ofast -mavx2 -ffast-math -funroll-loops")
 endif()
-
-# MACOSX
-##############
-FIND_PACKAGE(Threads)
-if (APPLE)
+if(APPLE)
+    FIND_PACKAGE(Threads)
     # explicit link to libc++ for recent osx versions
     MESSAGE(STATUS "Explicitly link to libc++ on modern osx versions")
     ADD_DEFINITIONS(-stdlib=libc++)
@@ -72,6 +60,20 @@ if (APPLE)
     # Requires AVX and FMA
     STRING(APPEND CMAKE_CXX_FLAGS " -march=native -Ofast -mavx2 -ffast-math -funroll-loops -mfma")
     STRING(APPEND CMAKE_C_FLAGS " -march=native -Ofast -mavx2 -ffast-math -funroll-loops -mfma")
+endif()
+if (MSVC)
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++latest")
+    ADD_DEFINITIONS(-DMS_WIN64)
+    ADD_DEFINITIONS(-D_USE_MATH_DEFINES)
+    # https://devblogs.microsoft.com/cppblog/simd-extension-to-c-openmp-in-visual-studio/
+    # /Oi is for intrinsics
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX2 -openmp:experimental /Oi /O2")
+endif (MSVC)
+
+
+# MACOSX
+##############
+if (APPLE)
     # Don't set MACOSX_RPATH by default
     # https://github.com/conda/conda/issues/3624
     if(DEFINED ENV{CONDA_PREFIX})
@@ -80,6 +82,7 @@ if (APPLE)
         set(CMAKE_SKIP_INSTALL_RPATH TRUE)
     endif()
 endif (APPLE)
+
 
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include)
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR})
@@ -90,15 +93,13 @@ OPTION(BUILD_PYTHON_INTERFACE "Build Python interface" ON)
 ################################################################################
 FILE(GLOB SRC_files "${CMAKE_SOURCE_DIR}/src/*.cpp")
 
-
 # Debug build detection
 ###########################
 IF (CMAKE_BUILD_TYPE STREQUAL "Release")
     MESSAGE("Release build")
-    ADD_DEFINITIONS("-DVERBOSE_FIT2X=0")
 ELSE (CMAKE_BUILD_TYPE STREQUAL "Debug")
     MESSAGE("Debug build")
-    ADD_DEFINITIONS("-DVERBOSE_FIT2X=0")
+    ADD_DEFINITIONS("-DVERBOSE_FIT2X=1")
 ENDIF (CMAKE_BUILD_TYPE STREQUAL "Release")
 
 

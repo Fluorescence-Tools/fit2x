@@ -195,7 +195,6 @@ void fconv_per(double *fit, double *x, double *lamp, int numexp, int start, int 
 }
 
 
-
 // fast convolution, high repetition rate, AVX
 void fconv_per_avx(double *fit, double *x, double *lamp, int numexp, int start, int stop,
                    int n_points, double period, double dt) {
@@ -488,10 +487,17 @@ void fconv_per_cs_time_axis(
         double period
 ){
     double dt = time_axis[1] - time_axis[0];
+#ifdef __AVX2__
     fconv_per_avx(
             model, lifetime_spectrum, instrument_response_function, (int) n_lifetime_spectrum / 2,
             convolution_start, convolution_stop, n_model, period, dt
             );
+#elif
+    fconv_per(
+            model, lifetime_spectrum, instrument_response_function, (int) n_lifetime_spectrum / 2,
+            convolution_start, convolution_stop, n_model, period, dt
+            );
+#endif
 }
 
 
