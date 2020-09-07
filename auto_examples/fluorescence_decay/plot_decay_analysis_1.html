@@ -246,12 +246,6 @@ Create an instance the <code class="docutils literal notranslate"><span class="p
     <span class="k">return</span> <span class="n">chi2_mle</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-pytb notranslate"><div class="highlight"><pre><span></span><span class="gt">Traceback (most recent call last):</span>
-  File <span class="nb">&quot;/home/travis/build/Fluorescence-Tools/fit2x/examples/fluorescence_decay/plot_decay_analysis_1.py&quot;</span>, line <span class="m">70</span>, in <span class="n">&lt;module&gt;</span>
-    <span class="kn">import</span> <span class="nn">fit2x</span>
-<span class="gr">ModuleNotFoundError</span>: <span class="n">No module named &#39;fit2x&#39;</span>
-</pre></div>
-</div>
 <div class="section" id="prepare-data">
 <h3>Prepare data<a class="headerlink" href="#prepare-data" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># load file</span>
@@ -337,6 +331,11 @@ Create an instance the <code class="docutils literal notranslate"><span class="p
 <span class="n">fit_map</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">x</span>
 </pre></div>
 </div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>/home/travis/miniconda/envs/docs_env/lib/python3.7/site-packages/scipy/optimize/optimize.py:697: RuntimeWarning: invalid value encountered in double_scalars
+  df = (f(*((xk + d,) + args)) - f0) / d[k]
+</pre></div>
+</div>
 </div>
 <div class="section" id="plot">
 <h3>Plot                        #<a class="headerlink" href="#plot" title="Permalink to this headline">¶</a></h3>
@@ -357,7 +356,8 @@ Create an instance the <code class="docutils literal notranslate"><span class="p
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.002 seconds)</p>
+<img alt="plot decay analysis 1" class="sphx-glr-single-img" src="../../_images/sphx_glr_plot_decay_analysis_1_001.png" />
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.374 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-fluorescence-decay-plot-decay-analysis-1-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/104e984a8307b980c4c13863becfd8d8/plot_decay_analysis_1.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_decay_analysis_1.py</span></code></a></p>

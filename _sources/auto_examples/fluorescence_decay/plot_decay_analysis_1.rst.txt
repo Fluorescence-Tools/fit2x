@@ -143,15 +143,7 @@ Single-molecule
 
 
 
-.. rst-class:: sphx-glr-script-out
 
-
-.. code-block:: pytb
-
-    Traceback (most recent call last):
-      File "/home/travis/build/Fluorescence-Tools/fit2x/examples/fluorescence_decay/plot_decay_analysis_1.py", line 70, in <module>
-        import fit2x
-    ModuleNotFoundError: No module named 'fit2x'
 
 
 
@@ -191,6 +183,12 @@ Prepare data
     time_axis = np.arange(0, n_bins) * data.header.micro_time_resolution * 4096 / n_bins
 
 
+
+
+
+
+
+
 Make decay object
 ##################################
 
@@ -223,6 +221,12 @@ Make decay object
     lifetime_spectrum = [0.5, 0.5, 0.5, 3.5]
 
 
+
+
+
+
+
+
 Optimize                    #
 ##################################
 
@@ -252,6 +256,21 @@ Optimize                    #
     fit_map = fit.x
 
 
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+    /home/travis/miniconda/envs/docs_env/lib/python3.7/site-packages/scipy/optimize/optimize.py:697: RuntimeWarning: invalid value encountered in double_scalars
+      df = (f(*((xk + d,) + args)) - f0) / d[k]
+
+
+
+
 Plot                        #
 ##################################
 
@@ -276,9 +295,19 @@ Plot                        #
 
 
 
+
+.. image:: /auto_examples/fluorescence_decay/images/sphx_glr_plot_decay_analysis_1_001.png
+    :alt: plot decay analysis 1
+    :class: sphx-glr-single-img
+
+
+
+
+
+
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  0.002 seconds)
+   **Total running time of the script:** ( 0 minutes  0.374 seconds)
 
 
 .. _sphx_glr_download_auto_examples_fluorescence_decay_plot_decay_analysis_1.py:

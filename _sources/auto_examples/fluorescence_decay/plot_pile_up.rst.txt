@@ -14,22 +14,14 @@ Pile-up
 ===============================
 
 
-.. rst-class:: sphx-glr-script-out
 
-
-.. code-block:: pytb
-
-    Traceback (most recent call last):
-      File "/home/travis/build/Fluorescence-Tools/fit2x/examples/fluorescence_decay/plot_pile_up.py", line 10, in <module>
-        import fit2x
-    ModuleNotFoundError: No module named 'fit2x'
+.. image:: /auto_examples/fluorescence_decay/images/sphx_glr_plot_pile_up_001.png
+    :alt: plot pile up
+    :class: sphx-glr-single-img
 
 
 
 
-
-
-|
 
 
 .. code-block:: default
@@ -103,7 +95,7 @@ Pile-up
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  0.002 seconds)
+   **Total running time of the script:** ( 0 minutes  0.240 seconds)
 
 
 .. _sphx_glr_download_auto_examples_fluorescence_decay_plot_pile_up.py:

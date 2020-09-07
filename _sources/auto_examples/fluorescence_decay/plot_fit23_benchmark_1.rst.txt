@@ -18,22 +18,14 @@ n_photons photons and fits lifetime. Compares recovered lifetime with
 fitted lifetime
 
 
-.. rst-class:: sphx-glr-script-out
 
-
-.. code-block:: pytb
-
-    Traceback (most recent call last):
-      File "/home/travis/build/Fluorescence-Tools/fit2x/examples/fluorescence_decay/plot_fit23_benchmark_1.py", line 10, in <module>
-        import fit2x
-    ModuleNotFoundError: No module named 'fit2x'
+.. image:: /auto_examples/fluorescence_decay/images/sphx_glr_plot_fit23_benchmark_1_001.png
+    :alt: plot fit23 benchmark 1
+    :class: sphx-glr-single-img
 
 
 
 
-
-
-|
 
 
 .. code-block:: default
@@ -142,7 +134,7 @@ fitted lifetime
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  0.003 seconds)
+   **Total running time of the script:** ( 0 minutes  26.847 seconds)
 
 
 .. _sphx_glr_download_auto_examples_fluorescence_decay_plot_fit23_benchmark_1.py:
