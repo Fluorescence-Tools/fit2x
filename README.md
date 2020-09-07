@@ -3,9 +3,11 @@
 [![Documentation Status](https://readthedocs.org/projects/fit2x/badge/?version=latest)](https://tttrlib.readthedocs.io/en/latest/?badge=latest)
 [![Anaconda-Server Badge](https://anaconda.org/tpeulen/fit2x/badges/installer/conda.svg)](https://anaconda.org/tpeulen/fit2x)
 
+## Warning
+fit2x is currently in early development.
 
 ## General description
-fits2x is a collection of fit models that use maximum likelihood
+fits2x is a collection of models that use maximum likelihood
 estimators for polarization and time-resolved fluorescence decays.
 
 fit2x implement burst integrated fluorescence lifetime fits (BIFL)
