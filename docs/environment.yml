@@ -1,5 +1,6 @@
 name: docs_env
 channels:
+    - tpeulen/label/nightly
     - tpeulen
     - defaults
     - conda-forge
