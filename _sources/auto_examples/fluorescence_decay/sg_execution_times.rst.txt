@@ -5,12 +5,12 @@
 
 Computation times
 =================
-**00:00.607** total execution time for **auto_examples_fluorescence_decay** files:
+**00:00.578** total execution time for **auto_examples_fluorescence_decay** files:
 
 +--------------------------------------------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_auto_examples_fluorescence_decay_plot_decay_fit_irf_bg.py` (``plot_decay_fit_irf_bg.py``)                             | 00:00.514 | 0.0 MB |
+| :ref:`sphx_glr_auto_examples_fluorescence_decay_plot_decay_fit_irf_bg.py` (``plot_decay_fit_irf_bg.py``)                             | 00:00.488 | 0.0 MB |
 +--------------------------------------------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_auto_examples_fluorescence_decay_plot_fit23_mini_example.py` (``plot_fit23_mini_example.py``)                         | 00:00.078 | 0.0 MB |
+| :ref:`sphx_glr_auto_examples_fluorescence_decay_plot_fit23_mini_example.py` (``plot_fit23_mini_example.py``)                         | 00:00.074 | 0.0 MB |
 +--------------------------------------------------------------------------------------------------------------------------------------+-----------+--------+
 | :ref:`sphx_glr_auto_examples_fluorescence_decay_plot_benchmark_convolution_routines.py` (``plot_benchmark_convolution_routines.py``) | 00:00.003 | 0.0 MB |
 +--------------------------------------------------------------------------------------------------------------------------------------+-----------+--------+
