@@ -1,10 +1,11 @@
 name: docs_env
 channels:
+    - tpeulen/label/nightly
     - tpeulen
     - defaults
     - conda-forge
 dependencies:
-    - tttrlib
+    - fit2x
     # the versions are all pinned to reduce the memory load by conda
     # without that, the docs would not build on read the docs
     - pillow
