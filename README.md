@@ -1,6 +1,6 @@
 # fits2x
 [![Build Status](https://travis-ci.org/fluorescence-tools/fit2x.svg?branch=master)](https://travis-ci.org/fluorescence-tools/fit2x)
-[![Documentation Status](https://readthedocs.org/projects/fit2x/badge/?version=latest)](https://tttrlib.readthedocs.io/en/latest/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/fit2x/badge/?version=latest)](https://fit2x.readthedocs.io/en/latest/?badge=latest)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/23eed581443e47e6b739613f540dc6c2)](https://www.codacy.com/gh/Fluorescence-Tools/fit2x?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Fluorescence-Tools/fit2x&amp;utm_campaign=Badge_Grade)
 [![Anaconda-Server Badge](https://anaconda.org/tpeulen/fit2x/badges/installer/conda.svg)](https://anaconda.org/tpeulen/fit2x)
 
@@ -130,5 +130,5 @@ If you have used fit2x in a scientific publication, we would appreciate citation
 [![DOI for citing fit2x](https://img.shields.io/badge/10.1021/ac000877g-blue.svg)](https://doi.org/10.1021/ac000877g)
 > Michael Maus, Mircea Cotlet, Johan Hofkens, Thomas Gensch, Frans C. De Schryver, J. Schaffer, and C. A. M. Seidel, 2001. An Experimental Comparison of the Maximum Likelihood Estimation and Nonlinear Least-Squares Fluorescence Lifetime Analysis of Single Molecules. Anal. Chem., 73, 9, pp2078–2086.
 
- [1]: https://github.com/Fluorescence-Tools/fit2x/blob/gh-pages/docs/_build/html/_images/plot_fit23_1.png "Fit23 single molecule MLE"
+ [1]: https://raw.githubusercontent.com/Fluorescence-Tools/fit2x/gh-pages/_images/plot_fit23_1.png "Fit23 single molecule MLE"
  
