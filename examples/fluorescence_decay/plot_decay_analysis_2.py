@@ -57,7 +57,7 @@ tttr_high_count_rate = data_ch0[
 decay_object = fit2x.Decay(
     tttr_data=tttr_high_count_rate,
     tttr_irf=tttr_low_count_rate,
-    micro_time_coarsening=16,
+    tttr_micro_time_coarsening=16,
 )
 time_axis = decay_object.get_time_axis()
 

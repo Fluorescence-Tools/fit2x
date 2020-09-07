@@ -1,3 +1,9 @@
+"""
+===============================
+MLE mini example
+===============================
+
+"""
 import fit2x
 import numpy as np
 import pylab as p

@@ -1,4 +1,8 @@
 """
+===============================
+Benchmark MLE
+===============================
+
 Generate n_samples random decays in range (tau_min, tau_max) with
 n_photons photons and fits lifetime. Compares recovered lifetime with
 fitted lifetime

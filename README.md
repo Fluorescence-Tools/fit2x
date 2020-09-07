@@ -1,5 +1,7 @@
 # fits2x
 [![Build Status](https://travis-ci.org/fluorescence-tools/fit2x.svg?branch=master)](https://travis-ci.org/fluorescence-tools/fit2x)
+[![Documentation Status](https://readthedocs.org/projects/fit2x/badge/?version=latest)](https://tttrlib.readthedocs.io/en/latest/?badge=latest)
+[![Anaconda-Server Badge](https://anaconda.org/tpeulen/fit2x/badges/installer/conda.svg)](https://anaconda.org/tpeulen/fit2x)
 
 
 ## General description

@@ -62,7 +62,7 @@ Create an instance the ``Decay`` class
 Single-molecule
 
 """
-import pylab as p
+import matplotlib.pylab as plt
 import scipy.optimize
 import scipy.stats
 import numpy as np
@@ -107,7 +107,7 @@ def objective_function_mle(
     decay_object.scatter_fraction = scatter
     decay_object.constant_offset = background
     decay_object.irf_shift = time_shift
-    chi2_mle = decay_object.get_score(x_min, x_max, type="poisson")
+    chi2_mle = decay_object.get_score(x_min, x_max, score_type="poisson")
     # d = decay_object.get_data()[x_min:x_max]
     # m = decay_object.get_model()[x_min:x_max]
     # return np.sum((m - d) - d * np.log(m/d))
@@ -164,12 +164,13 @@ time_axis = np.arange(0, n_bins) * data.header.micro_time_resolution * 4096 / n_
 #     Make decay object
 ###################################
 decay_object = fit2x.Decay(
-    decay_data=data_decay.astype(np.float64),
-    instrument_response_function=irf.astype(np.float64),
+    data=data_decay.astype(np.float64),
+    irf_histogram=irf.astype(np.float64),
     time_axis=time_axis,
-    excitation_period=data.header.macro_time_resolution
+    excitation_period=data.header.macro_time_resolution,
+    lifetime_spectrum=[1., 1.2, 1., 3.5]
 )
-decay_object.evaluate(lifetime_spectrum=[1., 1.2, 1., 3.5])
+decay_object.evaluate()
 
 # A minimum number of photons should be in each channel
 # as no MLE is used and Gaussian distributed errors are assumed
@@ -215,7 +216,7 @@ fit_map = fit.x
 ###################################
 #     Plot                        #
 ###################################
-fig, ax = p.subplots(nrows=2, ncols=1, sharex=True, sharey=False)
+fig, ax = plt.subplots(nrows=2, ncols=1, sharex=True, sharey=False)
 ax[1].semilogy(time_axis, irf, label="IRF")
 ax[1].semilogy(time_axis, data_decay, label="Data")
 ax[1].semilogy(
@@ -229,5 +230,5 @@ ax[0].plot(
     label='w.res.',
     color='green'
 )
-p.show()
+plt.show()
 

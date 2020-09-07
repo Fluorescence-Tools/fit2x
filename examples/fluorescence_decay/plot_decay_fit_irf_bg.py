@@ -1,4 +1,7 @@
-"""Fluorescence decay analysis - 3
+"""
+===============================
+Fluorescence decay analysis - 3
+===============================
 
 """
 import pylab as p

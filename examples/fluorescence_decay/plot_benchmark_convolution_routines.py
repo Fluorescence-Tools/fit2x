@@ -1,3 +1,9 @@
+"""
+===============================
+Convolution benchmark
+===============================
+
+"""
 from __future__ import annotations
 import fit2x
 import scipy.stats

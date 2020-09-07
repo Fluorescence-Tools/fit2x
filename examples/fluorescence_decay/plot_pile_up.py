@@ -1,14 +1,20 @@
-import fit2x
+"""
+===============================
+Pile-up
+===============================
+
+"""
+import pylab as p
 import numpy as np
 import scipy.stats
-import pylab as p
+import fit2x
 
 
 def model_irf(
         n_channels: int = 256,
         period: float = 32,
         irf_position_p: float = 2.0,
-        irf_position_s: float = 18.0,
+        irf_position_s: float = 2.0,
         irf_width: float = 0.25
 ):
     time_axis = np.linspace(0, period, n_channels * 2)
@@ -28,6 +34,7 @@ period, g, l1, l2, conv_stop = 32, 1.0, 0.1, 0.1, n_channels // 2 - 1
 tau, gamma, r0, rho = 2.0, 0.01, 0.38, 1.2
 np.random.seed(0)
 
+# compute a irf
 irf_np, time_axis = model_irf(
     n_channels=n_channels,
     period=period,
@@ -40,34 +47,25 @@ conv_stop = min(len(time_axis), conv_stop)
 param = np.array([tau, gamma, r0, rho])
 corrections = np.array([period, g, l1, l2, conv_stop])
 
-# compute a model function that is later used as "data"
+# compute a model function
 model = np.zeros_like(time_axis)
 bg = np.zeros_like(time_axis)
 fit2x.modelf23(param, irf_np, bg, dt, corrections, model)
-# add poisson noise to model and use as data
-data = np.random.poisson(model * n_photons)
+n_photons = 5e5
+model *= n_photons
 
-# create MParam structure that contains all parameters for fitting
-m_param = fit2x.CreateMParam(
-    irf=irf_np,
-    background=bg,
-    data=data.astype(np.int32),
-    corrections=corrections,
-    dt=dt
+pile_up_model = np.copy(model)
+fit2x.add_pile_up_to_model(
+    model=pile_up_model,
+    data=model, # the model is modified in-place. Thus make a copy,
+    repetition_rate=1./period * 1000,
+    dead_time=120.0,
+    measurement_time=0.1,
+    pile_up_model="coates"
 )
-
-tau, gamma, r0, rho = 4., 0.01, 0.38, 1.5
-bifl_scatter = -1
-p_2s = 0
-x = np.zeros(8, dtype=np.float64)
-x[:6] = [tau, gamma, r0, rho, bifl_scatter, p_2s]
-
-# test fitting
-fixed = np.array([0, 1, 1, 1], dtype=np.int16)
-chi2 = fit2x.fit23(x, fixed, m_param)
-
-m = np.array([m for m in m_param.get_model()])
-p.plot(m)
-p.plot(data)
-p.plot(irf_np / max(irf_np) * max(data))
+p.semilogy(model, label='no pileup')
+p.semilogy(pile_up_model, label='with pileup')
+#p.plot(irf_np)
+p.legend()
 p.show()
+
