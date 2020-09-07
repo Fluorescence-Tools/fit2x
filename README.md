@@ -127,8 +127,8 @@ and is maintained by Thomas Peulen. fit2x is released under the open source [MIT
 
 ## Citation
 If you have used fit2x in a scientific publication, we would appreciate citations to the following paper: 
-[![DOI for citing LabelLib](https://img.shields.io/badge/10.1021/ac000877g-blue.svg)](https://doi.org/10.1021/ac000877g)
+[![DOI for citing fit2x](https://img.shields.io/badge/10.1021/ac000877g-blue.svg)](https://doi.org/10.1021/ac000877g)
 > Michael Maus, Mircea Cotlet, Johan Hofkens, Thomas Gensch, Frans C. De Schryver, J. Schaffer, and C. A. M. Seidel, 2001. An Experimental Comparison of the Maximum Likelihood Estimation and Nonlinear Least-Squares Fluorescence Lifetime Analysis of Single Molecules. Anal. Chem., 73, 9, pp2078–2086.
 
- [1]: https://github.com/Fluorescence-Tools/fit2x/blob/gh-pages/docs/_build/html/_images/fit23_1.png "Fit23 single molecule MLE"
+ [1]: https://github.com/Fluorescence-Tools/fit2x/blob/gh-pages/docs/_build/html/_images/plot_fit23_1.png "Fit23 single molecule MLE"
  
