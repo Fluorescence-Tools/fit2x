@@ -5,22 +5,22 @@
 
 Computation times
 =================
-**00:00.569** total execution time for **auto_examples_fluorescence_decay** files:
+**00:00.637** total execution time for **auto_examples_fluorescence_decay** files:
 
 +--------------------------------------------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_auto_examples_fluorescence_decay_plot_decay_fit_irf_bg.py` (``plot_decay_fit_irf_bg.py``)                             | 00:00.473 | 0.0 MB |
+| :ref:`sphx_glr_auto_examples_fluorescence_decay_plot_decay_fit_irf_bg.py` (``plot_decay_fit_irf_bg.py``)                             | 00:00.528 | 0.0 MB |
 +--------------------------------------------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_auto_examples_fluorescence_decay_plot_fit23_mini_example.py` (``plot_fit23_mini_example.py``)                         | 00:00.081 | 0.0 MB |
+| :ref:`sphx_glr_auto_examples_fluorescence_decay_plot_fit23_mini_example.py` (``plot_fit23_mini_example.py``)                         | 00:00.090 | 0.0 MB |
 +--------------------------------------------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_auto_examples_fluorescence_decay_plot_benchmark_convolution_routines.py` (``plot_benchmark_convolution_routines.py``) | 00:00.003 | 0.0 MB |
+| :ref:`sphx_glr_auto_examples_fluorescence_decay_plot_benchmark_convolution_routines.py` (``plot_benchmark_convolution_routines.py``) | 00:00.004 | 0.0 MB |
 +--------------------------------------------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_auto_examples_fluorescence_decay_plot_fit23_benchmark_1.py` (``plot_fit23_benchmark_1.py``)                           | 00:00.003 | 0.0 MB |
+| :ref:`sphx_glr_auto_examples_fluorescence_decay_plot_fit23_benchmark_1.py` (``plot_fit23_benchmark_1.py``)                           | 00:00.004 | 0.0 MB |
 +--------------------------------------------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_auto_examples_fluorescence_decay_plot_fit23_1.py` (``plot_fit23_1.py``)                                               | 00:00.002 | 0.0 MB |
+| :ref:`sphx_glr_auto_examples_fluorescence_decay_plot_fit23_1.py` (``plot_fit23_1.py``)                                               | 00:00.004 | 0.0 MB |
 +--------------------------------------------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_auto_examples_fluorescence_decay_plot_decay_analysis_1.py` (``plot_decay_analysis_1.py``)                             | 00:00.002 | 0.0 MB |
+| :ref:`sphx_glr_auto_examples_fluorescence_decay_plot_decay_analysis_1.py` (``plot_decay_analysis_1.py``)                             | 00:00.003 | 0.0 MB |
 +--------------------------------------------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_auto_examples_fluorescence_decay_plot_pile_up.py` (``plot_pile_up.py``)                                               | 00:00.002 | 0.0 MB |
+| :ref:`sphx_glr_auto_examples_fluorescence_decay_plot_pile_up.py` (``plot_pile_up.py``)                                               | 00:00.003 | 0.0 MB |
 +--------------------------------------------------------------------------------------------------------------------------------------+-----------+--------+
 | :ref:`sphx_glr_auto_examples_fluorescence_decay_plot_decay_analysis_2.py` (``plot_decay_analysis_2.py``)                             | 00:00.002 | 0.0 MB |
 +--------------------------------------------------------------------------------------------------------------------------------------+-----------+--------+
