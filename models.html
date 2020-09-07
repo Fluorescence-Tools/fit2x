@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fits &#8212; fit2x  documentation</title>
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/fix_rtd.css" />
+    <link rel="stylesheet" type="text/css" href="_static/gallery.css" />
+    <link rel="stylesheet" type="text/css" href="_static/gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="_static/gallery-dataframe.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Applications" href="auto_examples/index.html" />
+    <link rel="prev" title="Installation" href="installation.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          fit2x</a>
+        <span class="navbar-text navbar-version pull-left"><b></b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Fits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#description-of-fits">Description of fits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="auto_examples/index.html">Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cpp_api.html">C++ API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="zreferences.html">References</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Fits</a><ul>
+<li><a class="reference internal" href="#general">General</a></li>
+<li><a class="reference internal" href="#python">Python</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#description-of-fits">Description of fits</a><ul>
+<li><a class="reference internal" href="#fit23">fit23</a></li>
+<li><a class="reference internal" href="#fit24">fit24</a></li>
+<li><a class="reference internal" href="#fit25">fit25</a></li>
+<li><a class="reference internal" href="#fit26">fit26</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="installation.html" title="Previous Chapter: Installation"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; Installation</span>
+    </a>
+  </li>
+  <li>
+    <a href="auto_examples/index.html" title="Next Chapter: Applications"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">Applications &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="_sources/models.rst.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <div class="section" id="fits">
+<h1>Fits<a class="headerlink" href="#fits" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="general">
+<h2>General<a class="headerlink" href="#general" title="Permalink to this headline">¶</a></h2>
+<p>The fits covered by fit2x (e.g. fit23, fit24, and fit25) all have their own
+model function, target (objective) function, fit function, and parameter
+correction function. Briefly, the purpose of these functions is as follows.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 37%" />
+<col style="width: 63%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Function</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Model function</p></td>
+<td><p>Computes the model for a set of parameters</p></td>
+</tr>
+<tr class="row-odd"><td><p>Target/objective function</p></td>
+<td><p>Computes ob and returns a score for data</p></td>
+</tr>
+<tr class="row-even"><td><p>Fit function</p></td>
+<td><p>Optimizes the parameters to the data</p></td>
+</tr>
+<tr class="row-odd"><td><p>Correction function</p></td>
+<td><p>Assures reasonable range of parameters</p></td>
+</tr>
+</tbody>
+</table>
+<p>The model function computes for a set of input parameters the corresponding
+realization of the model (the model fluorescence decay curve(s)). The target
+function (more often called objective function) computes the disagreement of the
+data and the model function for a given set of model parameters. The fitting
+function optimizes a set of selected input parameters to the data by minimizing
+the disagreement of the data and the model. Finally, the estimates of the model
+parameters are corrected by a correction function. These functions have names
+that relate to the name of the model, e.g., <cite>target23</cite> corresponds to <cite>fit23</cite>.
+For computationally efficiency, the functions are hardcoded in C.</p>
+<p>The models of the different fits differ in their parameters. The parameters of
+the fits are described in detail below. The target functions explicitly consider
+the counting noise and provide an estimate of the likelihood of the parameters.
+The initial values of the parameters are specified by the user. Next, the likelihood
+of the target is maximized by the Limited-Memory Broyden-Fletcher-Goldfarb-Shanno
+Algorithm (L-BFGS). L-BFGS is an iterative method for solving unconstrained nonlinear
+optimization problems. Gradients for the L-BFGS algorithm are approximated by linear
+interpolation to handle the differentiable components, i.e., the model parameters
+that are free. The parameters of a model ca be either specified as free or as fixed.
+Only free parameters are optimized.</p>
+</div>
+<div class="section" id="python">
+<h2>Python<a class="headerlink" href="#python" title="Permalink to this headline">¶</a></h2>
+<p>For a use in python the <code class="docutils literal notranslate"><span class="pre">fit2x</span></code> module exposes a set of C functions that can be
+used to (1) compute model and (2) target/objective function and (3) optimize
+model parameters to experimental data. Besides the exposed functions the fit models
+are accessible via a simplified object-based interface that reduces the number of
+lines of code that need to be written for analyzing fluorescence decay histograms.
+The code blocks that are used below to illustrate the fit2x functionality are
+extracts from the tests located in the test folder of the fit2x repository. The
+test can be used as a more detailed refernce on how to use fit2x.</p>
+<p>Model functions can be computed using the <code class="docutils literal notranslate"><span class="pre">modelf2x</span></code> function of the <code class="docutils literal notranslate"><span class="pre">fit2x</span></code>
+module. Here, the <code class="docutils literal notranslate"><span class="pre">x</span></code> represents a particular model function. The use of a
+<code class="docutils literal notranslate"><span class="pre">fit2x</span></code> model function is for the model function 23 (<code class="docutils literal notranslate"><span class="pre">modelf23</span></code>) below.
+model function</p>
+<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9</pre></div></td><td class="code"><div class="highlight"><pre><span></span>
+<span class="n">irf_np</span><span class="p">,</span> <span class="n">time_axis</span> <span class="o">=</span> <span class="n">model_irf</span><span class="p">(</span>
+    <span class="n">n_channels</span><span class="o">=</span><span class="n">n_channels</span><span class="p">,</span>
+    <span class="n">period</span><span class="o">=</span><span class="n">period</span><span class="p">,</span>
+    <span class="n">irf_position_p</span><span class="o">=</span><span class="n">irf_position_p</span><span class="p">,</span>
+    <span class="n">irf_position_s</span><span class="o">=</span><span class="n">irf_position_s</span><span class="p">,</span>
+    <span class="n">irf_width</span><span class="o">=</span><span class="n">irf_width</span>
+<span class="p">)</span>
+<span class="n">dt</span> <span class="o">=</span> <span class="n">time_axis</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">time_axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</td></tr></table></div>
+<p>To compute a model, first a set of model parameters and a set of corrections need
+to be specified. All input parameters for <code class="docutils literal notranslate"><span class="pre">modelf23</span></code> are numpy arrays. In addition
+to the model parameters and the corrections <code class="docutils literal notranslate"><span class="pre">modelf23</span></code> requires an instrument
+response function (irf) and a background pattern. The model functions operate on
+numpy arrays and modify the numpy array for a model in-place. This means, that the
+output of the function is written to the input numpy-array of the model. In the
+example above the output is written to the array <code class="docutils literal notranslate"><span class="pre">model</span></code>.</p>
+<p>To compute the value of a target for a realization of model parameters <code class="docutils literal notranslate"><span class="pre">fit2x</span></code>
+provides the functions <code class="docutils literal notranslate"><span class="pre">targetf2x</span></code>. The inputs of a target function (here
+<code class="docutils literal notranslate"><span class="pre">tarferf23</span></code>) are an numpy array containing the model parameter values and a
+structure that contains the corrections and all other necessary data to compute
+the value of the objective function (for fit23 i.e. data, irf, backgound, time
+resolution).</p>
+<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9</pre></div></td><td class="code"><div class="highlight"><pre><span></span>            <span class="p">[</span><span class="mf">1.55512239e-06</span><span class="p">,</span> <span class="mf">1.28478411e-06</span><span class="p">,</span> <span class="mf">1.84127094e-03</span><span class="p">,</span> <span class="mf">6.97704393e-01</span>
+                <span class="p">,</span> <span class="mf">5.26292095e+00</span><span class="p">,</span> <span class="mf">7.46022080e+00</span><span class="p">,</span> <span class="mf">5.86203555e+00</span><span class="p">,</span> <span class="mf">4.37710024e+00</span>
+                <span class="p">,</span> <span class="mf">3.27767338e+00</span><span class="p">,</span> <span class="mf">2.46136154e+00</span><span class="p">,</span> <span class="mf">1.85332949e+00</span><span class="p">,</span> <span class="mf">1.39904465e+00</span>
+                <span class="p">,</span> <span class="mf">1.05863172e+00</span><span class="p">,</span> <span class="mf">8.02832214e-01</span><span class="p">,</span> <span class="mf">6.10103966e-01</span><span class="p">,</span> <span class="mf">4.64532309e-01</span>
+                <span class="p">,</span> <span class="mf">3.54320908e-01</span><span class="p">,</span> <span class="mf">2.70697733e-01</span><span class="p">,</span> <span class="mf">2.07119266e-01</span><span class="p">,</span> <span class="mf">1.58689654e-01</span>
+                <span class="p">,</span> <span class="mf">1.21735290e-01</span><span class="p">,</span> <span class="mf">9.34921381e-02</span><span class="p">,</span> <span class="mf">7.18751573e-02</span><span class="p">,</span> <span class="mf">5.53076815e-02</span>
+                <span class="p">,</span> <span class="mf">4.25947583e-02</span><span class="p">,</span> <span class="mf">3.28288183e-02</span><span class="p">,</span> <span class="mf">2.53192074e-02</span><span class="p">,</span> <span class="mf">1.95393890e-02</span>
+                <span class="p">,</span> <span class="mf">1.50872754e-02</span><span class="p">,</span> <span class="mf">1.16553438e-02</span><span class="p">,</span> <span class="mf">9.00806647e-03</span><span class="p">,</span> <span class="mf">6.96482554e-03</span>
+                <span class="p">,</span> <span class="mf">1.32357360e-06</span><span class="p">,</span> <span class="mf">1.00072013e-05</span><span class="p">,</span> <span class="mf">2.67318412e-02</span><span class="p">,</span> <span class="mf">1.32397314e+00</span>
+</pre></div>
+</td></tr></table></div>
+<p>The data needed in addition to the model parameters are passed to the target function
+using <code class="docutils literal notranslate"><span class="pre">fit2x.MParam</span></code> objects that can be created by the <code class="docutils literal notranslate"><span class="pre">fit2x.CreateMParam</span></code>
+function from numpy arrays. The return value of a target function is the score
+of the model parameters</p>
+<p>Model parameters can be optimized to the data by fit functions for fit 23 the
+fit function <code class="docutils literal notranslate"><span class="pre">fit2x.fit23</span></code> is used.</p>
+<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="highlight"><pre><span></span>        <span class="c1"># p.plot(data)</span>
+        <span class="c1"># p.plot([x for x in m_param.get_data()])</span>
+        <span class="c1"># p.show()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">fit_res</span><span class="p">,</span> <span class="n">x</span><span class="p">),</span> <span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+<p>The fit functions takes like the target function an object of the type
+<code class="docutils literal notranslate"><span class="pre">fit2x.MParam</span></code> in addition to the initial values, and a list of fixed model
+parameters as an input. The array containing the initial values of the model
+parameters are modified in-place buy the fit function.</p>
+<p>Alternatively, a simplified python interface can be used to optimize a set of
+model as illustrated by the source code embedded in the plot below. The simplified
+interface handles the creation of auxiliary data structures such as <code class="docutils literal notranslate"><span class="pre">fit2x.MParam</span></code>.</p>
+<p>(<a class="reference external" href="./../examples/fluorescence_decay/plot_fit23_mini_example.py">Source code</a>)</p>
+<p>In the example shown above, first a fit object of the type <code class="docutils literal notranslate"><span class="pre">fit2x.Fit23</span></code> is
+created. All necessary data except for the experimental data for a fit is passed
+to the fit object when it is created. To perform a fit on experimental data for
+a set for a set of initial values, the fit object is called using the inital values
+and the data as parameters.</p>
+</div>
+</div>
+<div class="section" id="description-of-fits">
+<h1>Description of fits<a class="headerlink" href="#description-of-fits" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="fit23">
+<h2>fit23<a class="headerlink" href="#fit23" title="Permalink to this headline">¶</a></h2>
+<p>fit23 optimizes a single rotational correlation time <span class="math notranslate nohighlight">\(\rho\)</span> and a
+fluorescence lifetime <span class="math notranslate nohighlight">\(\tau\)</span> to a polarization resolved fluorescence decay
+considering the fraction of scattered light and instrument response function in
+the two detection channels for the parallel and perpendicular fluorescence. Fit23
+operates on fluorescence decays in the <a class="reference internal" href="glossary.html#term-Jordi-format"><span class="xref std std-term">Jordi-format</span></a>.</p>
+<p>(<a class="reference external" href="./../examples/fluorescence_decay/plot_fit23_1.py">Source code</a>)</p>
+<p>fit23 is intended to be used for data with very few photons, e.g. for pixel analysis
+in fluorescence lifetime image microscopy (FLIM) or for single-molecule spectroscopy.
+The fit implements a maximum likelihood estimimator as previously described <a class="bibtex reference internal" href="zreferences.html#maus-experimental-2001" id="id1">[MCH+01]</a>.
+Briefly, the MLE fit quality parameter 2I* = <span class="math notranslate nohighlight">\(-2\ln L(n,g)\)</span> (where <span class="math notranslate nohighlight">\(L\)</span>
+is the likelihood function, <span class="math notranslate nohighlight">\(n\)</span> are the experimental counts, and <span class="math notranslate nohighlight">\(g\)</span>
+is the model function) is minimized. The model function <span class="math notranslate nohighlight">\(g\)</span> under magic-angle
+is given by:</p>
+<p><span class="math notranslate nohighlight">\(g_i=N_g \left[ (1-\gamma) \frac{irf_i \ast \exp(iT/k\tau) + c}{\sum_{i=0}^{k}irf_i \ast \exp(iT/k\tau) + c} + \gamma \frac{bg_i}{\sum_i^{k} bg_i} \right]\)</span></p>
+<p><span class="math notranslate nohighlight">\(N_e\)</span> is not a fitting parameter but set to the experimental number of
+photons <span class="math notranslate nohighlight">\(N\)</span>, <span class="math notranslate nohighlight">\(\ast\)</span> is the convolution operation, <span class="math notranslate nohighlight">\(\tau\)</span> is the
+fluorescence lifetime, <span class="math notranslate nohighlight">\(irf\)</span> is the instrument response function, <span class="math notranslate nohighlight">\(i\)</span>
+is the channel number, <span class="math notranslate nohighlight">\(bg_i\)</span> is the background count in the channel <span class="math notranslate nohighlight">\(i\)</span>,</p>
+<p>The convolution by fit23 is computed recusively and accounts for high repetition
+rates:</p>
+<p>:math:<a href="#id2"><span class="problematic" id="id3">`</span></a>irf_i ast exp(iT/ktau) = sum_{j=1}^{min(i,l)}irf_jexp(-(i-j)T/ktau) + sum_{j=i+1}^{k}irf_jexp(-(i+k-j)T/ktau) `</p>
+<p>The anisotropy treated as previously described <a class="bibtex reference internal" href="zreferences.html#schaffer-identification-1999" id="id4">[SVE+99]</a>.
+The correction factors needed for a correct anisotropy used by <code class="docutils literal notranslate"><span class="pre">fit2x</span></code> are
+defined in the glossary (<a class="reference internal" href="glossary.html#term-Anisotropy"><span class="xref std std-term">Anisotropy</span></a>).</p>
+</div>
+<div class="section" id="fit24">
+<h2>fit24<a class="headerlink" href="#fit24" title="Permalink to this headline">¶</a></h2>
+<p>Fit24 optimizes is a bi-exponential model function with two fluorescence lifetimes
+<span class="math notranslate nohighlight">\(\tau_1\)</span>, <span class="math notranslate nohighlight">\(\tau_2\)</span>, and amplitude of the second lifetime <span class="math notranslate nohighlight">\(a_2\)</span>,
+the fraction scattered light <span class="math notranslate nohighlight">\(\gamma\)</span>, and a constant offset to experimental
+data. Fit24 does not describe anisotropy. The decays passed to the fit in the
+<span class="xref std std-term">Jordi</span> format. The two decays in the Jordi array are both treated by the
+same model function and convoluted with the corresponding
+<a class="reference internal" href="glossary.html#term-IRF"><span class="xref std std-term">instrument response function</span></a>. The model function is</p>
+<p>where <span class="math notranslate nohighlight">\(\Delta t\)</span> is the time per micro time channel, <span class="math notranslate nohighlight">\(i\)</span> is the micro time
+channel number, <span class="math notranslate nohighlight">\(a_2\)</span> is the fraction of the second species. The model function
+is corrected for the fraction of background and a constant offset.</p>
+<p>Where,  <span class="math notranslate nohighlight">\(c\)</span> is a constant offset, <span class="math notranslate nohighlight">\(B\)</span> the background pattern, <span class="math notranslate nohighlight">\(M\)</span>
+the model function and <span class="math notranslate nohighlight">\(\gamma\)</span> the fraction of scattered light.</p>
+</div>
+<div class="section" id="fit25">
+<h2>fit25<a class="headerlink" href="#fit25" title="Permalink to this headline">¶</a></h2>
+<p>Selects the lifetime out of a set of 4 fixed lifetimes that best describes the data.
+Works with polarization resolved Jordi stacks, computes rotational correlation time
+by the anisotropy. This function selects out of a set of 4 lifetimes tau the lifetime
+that fits best the data.</p>
+</div>
+<div class="section" id="fit26">
+<h2>fit26<a class="headerlink" href="#fit26" title="Permalink to this headline">¶</a></h2>
+<p>Pattern fit. Determines the fraction <span class="math notranslate nohighlight">\(f\)</span> of two mixed patterns.</p>
+<p>(No convolution of patterns, area of pattern is normalized by fit)</p>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2019, Thomas Peulen &amp; Seidel Lab (Heinrich-Heine University).<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.1.1.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
