@@ -1,5 +1,5 @@
-#define VERSION                     "0.0.2"
-//#define VERBOSE 0
+#define FIT2X_VERSION                "0.0.4"
+//#define VERBOSE_FIT2X 0
 
 #include <iostream>
 #include <cmath>
@@ -8,7 +8,7 @@
 #include "i_lbfgs.h"
 #include "fsconv.h"
 #include "lvarrays.h"
-#include "twoIstar.h"
+#include "statistics.h"
 
 
 /*!

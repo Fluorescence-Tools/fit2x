@@ -6,6 +6,18 @@
 #include <cmath>
 #include <numeric> /* accumulate */
 #include <string>
+#include <vector>
+#include "omp.h"
+
+#if defined(_MSC_VER)
+/* Microsoft C/C++-compatible compiler */
+#include <intrin.h>
+#include <immintrin.h>
+#endif
+#if defined(__GNUC__) || defined(__clang__)
+#include <immintrin.h>
+#endif
+
 
 
 /*!
@@ -97,6 +109,26 @@ void fconv(double *fit, double *x, double *lamp, int numexp, int start, int stop
 
 /*!
  * @brief Convolve lifetime spectrum with instrument response (fast convolution,
+ * AVX optimized for large lifetime spectra)
+ *
+ * This function is a modification of fconv for large lifetime spectra. The
+ * lifetime spectrum is processed by AVX intrinsics. Four lifetimes are convolved
+ * at once. Spectra with lifetimes that are not multiple of four are zero padded.
+ *
+ * @param fit
+ * @param x
+ * @param lamp
+ * @param numexp
+ * @param start
+ * @param stop
+ * @param n_points
+ * @param dt
+ */
+void fconv_avx(double *fit, double *x, double *lamp, int numexp, int start, int stop, double dt=0.05);
+
+
+/*!
+ * @brief Convolve lifetime spectrum with instrument response (fast convolution,
  * high repetition rate)
  *
  * This function computes the convolution of a lifetime spectrum (a set of
@@ -116,6 +148,30 @@ void fconv(double *fit, double *x, double *lamp, int numexp, int start, int stop
  * @param dt[in] time difference between two micro time channels
  */
 void fconv_per(
+        double *fit, double *x, double *lamp, int numexp, int start, int stop,
+        int n_points, double period, double dt=0.05
+);
+/*!
+ * @brief Convolve lifetime spectrum with instrument response (fast convolution,
+ * high repetition rate), AVX optimized version
+ *
+ * This function computes the convolution of a lifetime spectrum (a set of
+ * lifetimes with corresponding amplitudes) with a instrument response function
+ * (irf). This function does consider periodic excitation and is suited for experiments
+ * at high repetition rate.
+ *
+ * @param fit[out] model function. The convoluted decay is written to this array
+ * @param x[in] lifetime spectrum (amplitude1, lifetime1, amplitude2, lifetime2, ...)
+ * @param lamp[in] instrument response function
+ * @param numexp[in] number of fluorescence lifetimes
+ * @param start[in] start micro time index for convolution (not used)
+ * @param stop[in] stop micro time index for convolution.
+ * @param n_points number of points in the model function.
+ * @param period excitation period in units of the fluorescence lifetimes (typically
+ * nanoseconds)
+ * @param dt[in] time difference between two micro time channels
+ */
+void fconv_per_avx(
         double *fit, double *x, double *lamp, int numexp, int start, int stop,
         int n_points, double period, double dt=0.05
 );
@@ -139,7 +195,7 @@ void fconv_per(
  * @param dt[in] time difference between two micro time channels
  */
 void fconv_per_cs(double *fit, double *x, double *lamp, int numexp, int stop,
-                  int n_points, double period, int conv_stop, double dt=0.05);
+                  int n_points, double period, int conv_stop, double dt);
 
 
 /*!
@@ -220,13 +276,29 @@ void shift_lamp(double *lampsh, double *lamp, double ts, int n_points, double ou
  * @param pile_up_model[in] The model used to compute the pile up distortion of
  * the data (currently only Coates)
  */
-void add_pile_up(
+void add_pile_up_to_model(
         double* model, int n_model,
         double* data, int n_data,
         double repetition_rate,
         double dead_time,
         double measurement_time,
         std::string pile_up_model="coates"
+);
+
+
+/*!
+ * Threshold the amplitudes
+ *
+ * Amplitudes with absolute values smaller than the specified threshold are
+ * set to zero.
+ *
+ * @param lifetime_spectrum interleaved lifetime spectrum (amplitude, lifetime)
+ * @param n_lifetime_spectrum number of elements in lifetime spectrum
+ * @param amplitude_threshold
+ */
+void discriminate_small_amplitudes(
+        double* lifetime_spectrum, int n_lifetime_spectrum,
+        double amplitude_threshold
 );
 
 
@@ -260,11 +332,6 @@ void add_pile_up(
 * @param n_lifetime_spectrum[in] number of elements in the lifetime spectrum
 * @param convolution_start[in] Start channel of convolution (position in array of IRF)
 * @param convolution_stop[in] convolution stop channel (the index on the time-axis)
-* @param use_amplitude_threshold[in] If this value is True (default False)
-* fluorescence lifetimes in the lifetime spectrum which have an amplitude
-* with an absolute value of that is smaller than `amplitude_threshold` are
-* not omitted in the convolution.
-* @param amplitude_threshold[in] Threshold value for the amplitudes
 * @param period Period of repetition in units of the lifetime (usually,
 * nano-seconds)
 */
@@ -275,8 +342,6 @@ void fconv_per_cs_time_axis(
     double *lifetime_spectrum, int n_lifetime_spectrum,
     int convolution_start = 0,
     int convolution_stop = -1,
-    bool use_amplitude_threshold = false,
-    double amplitude_threshold = 1e10,
     double period = 100.0
 );
 
@@ -324,9 +389,7 @@ void fconv_cs_time_axis(
         double *instrument_response_function, int n_instrument_response_function,
         double *lifetime_spectrum, int n_lifetime_spectrum,
         int convolution_start = 0,
-        int convolution_stop = -1,
-        bool use_amplitude_threshold = false,
-        double amplitude_threshold = 1e10
+        int convolution_stop = -1
 );
 
 

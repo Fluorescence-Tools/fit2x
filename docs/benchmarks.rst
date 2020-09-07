@@ -4,7 +4,7 @@ Fit23
 -----
 
 
-.. plot:: plots/fit23_benchmark_1.py
+.. plot:: ../examples/fluorescence_decay/plot_fit23_benchmark_1.py
 
 Fluorescence decay,
 Deviations in dependence of fluorescence lifetime for constant number of photons

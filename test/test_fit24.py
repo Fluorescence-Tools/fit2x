@@ -2,7 +2,6 @@ from __future__ import division
 
 import unittest
 import numpy as np
-import scipy.stats
 
 import fit2x
 from compute_irf import model_irf
@@ -16,6 +15,7 @@ irf, time_axis = model_irf(
     irf_width=0.25
 )
 bg = np.zeros_like(irf) + 0.2
+np.random.seed(0)
 
 
 class Tests(unittest.TestCase):
@@ -145,6 +145,7 @@ class Tests(unittest.TestCase):
         self.assertAlmostEqual(x[4], offset_target, delta=0.1)
 
     def test_fit24_2(self):
+        np.random.seed(0)
         model = np.array(
             [0.01571078, 0.01571031, 0.01570988, 0.01570959, 0.01572048,
              0.01609258, 0.02058282, 0.04054985, 0.07322865, 0.08840347,
@@ -197,13 +198,11 @@ class Tests(unittest.TestCase):
             'verbose': True
         }
         fit24 = fit2x.Fit24(**settings)
-        tau1, gamma, tau2, a2, background = 3.0, 0.01, 1.2, 0.4, 1.
+        tau1, gamma, tau2, a2, background = 3.5, 0.01, 1.2, 0.4, 1.
         x0 = np.array([tau1, gamma, tau2, a2, background])
-        r = fit24(
-            data=data,
-            initial_values=x0,
-            fixed=np.array([0, 0, 0, 0, 0], dtype=np.int16)
-        )
+        fixed = np.array([0, 0, 0, 0, 0], dtype=np.int16)
+        r = fit24(data=data, initial_values=x0, fixed=fixed)
+        # for _ in range(1000): r = fit24(data=data, initial_values=x0, fixed=fixed)
         x = r['x']
         tau1_target = 4.0
         gamma_target = 0.01

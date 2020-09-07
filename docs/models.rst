@@ -55,7 +55,7 @@ module. Here, the ``x`` represents a particular model function. The use of a
 ``fit2x`` model function is for the model function 23 (``modelf23``) below.
 model function
 
-.. literalinclude:: ../test/test_fit23_model.py
+.. literalinclude:: ../examples/fluorescence_decay/plot_fit23_1.py
    :language: python
    :lines: 36-44
    :linenos:
@@ -76,7 +76,7 @@ structure that contains the corrections and all other necessary data to compute
 the value of the objective function (for fit23 i.e. data, irf, backgound, time
 resolution).
 
-.. literalinclude:: ../test/test_fit23_model.py
+.. literalinclude:: ../test/test_fit23.py
    :language: python
    :lines: 171-179
    :linenos:
@@ -89,7 +89,7 @@ of the model parameters
 Model parameters can be optimized to the data by fit functions for fit 23 the
 fit function ``fit2x.fit23`` is used.
 
-.. literalinclude:: ../test/test_fit23_model.py
+.. literalinclude:: ../test/test_fit23.py
    :language: python
    :lines: 250-253
    :linenos:
@@ -103,7 +103,7 @@ Alternatively, a simplified python interface can be used to optimize a set of
 model as illustrated by the source code embedded in the plot below. The simplified
 interface handles the creation of auxiliary data structures such as ``fit2x.MParam``.
 
-.. plot:: plots/fit23_mini_example.py
+.. plot:: ../examples/fluorescence_decay/plot_fit23_mini_example.py
 
     Analysis result of fit23 by the simplified python interface profided
     by ``fit2x``
@@ -124,7 +124,7 @@ considering the fraction of scattered light and instrument response function in
 the two detection channels for the parallel and perpendicular fluorescence. Fit23
 operates on fluorescence decays in the :term:`Jordi-format`.
 
-.. plot:: plots/fit23_1.py
+.. plot:: ../examples/fluorescence_decay/plot_fit23_1.py
 
     Simulation and analysis of low photon count data by ``fit2x.fit23``.
 

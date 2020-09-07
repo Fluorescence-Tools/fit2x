@@ -1,8 +1,5 @@
-// 2I* parameter: (Sp + 2Ss) and (Sp & Ss)
 
-#include<math.h>
-#include <float.h>
-#include "twoIstar.h"
+#include "statistics.h"
 
 const double twopi = 6.2831853071795865;
 const double logtwopi = log(twopi);
@@ -16,7 +13,7 @@ static double logfact[150];
 double twoIstar_1ch(int* C, double* M, int Ndata)
 {
     double W = 0., W0 = 0.;
-    int nempty = 0;
+    //int nempty = 0;
     for (int i=0; i<Ndata; i++)
         if (C[i]>0) {
             W += wcm(C[i], M[i]);
@@ -26,6 +23,65 @@ double twoIstar_1ch(int* C, double* M, int Ndata)
     return -2.*(W-W0)/(double)Ndata;
 }
 
+
+
+double statistics::chi2_counting(
+        std::vector<double> &data,
+        std::vector<double> &model,
+        int x_min,
+        int x_max,
+        std::string type
+){
+    double chi2 = 0.0;
+    if(type == "neyman"){
+        for(int i = x_min; i < x_max; i++){
+            double mu = model[i];
+            double m = std::max(1., data[i]);
+            chi2 += (mu - m) * (mu - m) / m;
+        }
+    } else if(type == "poisson"){
+        #ifndef _WIN32
+        #pragma omp simd
+        #endif
+        for(int i = x_min; i < x_max; i++){
+            double mu = model[i];
+            double m = data[i];
+            chi2 += 2 * std::abs(mu);
+            chi2 -= 2 * m * (1 + log(std::max(0.0, mu) / std::max(1.0, m)));
+        }
+    } else if(type == "pearson"){
+        for(int i = x_min; i < x_max; i++){
+            double m = model[i];
+            double d = data[i];
+            if (m > 0) {
+                chi2 += (m-d) / m;
+            }
+        }
+    } else if(type == "gauss"){
+        for(int i = x_min; i < x_max; i++){
+            double mu = model[i];
+            double m = data[i];
+            double mu_p = std::sqrt(.25 + m * m) - 0.5;
+            if(mu_p <= 1.e-12) continue;
+            chi2 += (mu - m) * (mu - m) / mu + std::log(mu/mu_p) - (mu_p - m) * (mu_p - m) / mu_p;
+        }
+    } else if(type == "cnp"){
+        for(int i = x_min; i < x_max; i++){
+            double m = data[i];
+            if(m <= 1e-12) continue;
+            double mu = model[i];
+            chi2 += (mu - m) * (mu - m) / (3. / (1./m + 2./mu));
+        }
+    }
+#if VERBOSE_FIT2X
+    std::cout << "CHI2_COUNTING" << std::endl;
+    std::cout << "-- type: " << type << std::endl;
+    std::cout << "-- x_min: " << x_min << std::endl;
+    std::cout << "-- x_max: " << x_max << std::endl;
+    std::cout << "-- chi2: " << chi2 << std::endl;
+#endif
+    return chi2;
+}
 
 void init_fact()
 {
@@ -84,7 +140,7 @@ double wcm_p2s(int C, double mp, double ms)
     w += s;
   }
 
-  if (isfinite(w)) return log(w) + log1;
+  if (std::isfinite(w)) return log(w) + log1;
 
   // if infinity, try another way around
 
@@ -101,7 +157,7 @@ double wcm_p2s(int C, double mp, double ms)
     w += s;
   }
 
-  if (isfinite(w)) return log(w) + log1;
+  if (std::isfinite(w)) return log(w) + log1;
   else return -0.5*(logtwopi + log(variance) + (C-meanC)*(C-meanC)/variance) + mp + ms; //chi2w
 }
 

@@ -79,6 +79,435 @@
 %feature("docstring") ap::const_raw_vector::GetStep "
 ";
 
+// File: class_decay.xml
+
+
+%feature("docstring") Decay "
+";
+
+%feature("docstring") Decay::get_score_range "
+";
+
+%feature("docstring") Decay::set_score_range "
+";
+
+%feature("docstring") Decay::get_is_valid "
+";
+
+%feature("docstring") Decay::set_convolution_method "
+
+The method used for convolution.  
+
+0 - fconv_per_cs_time_axis 1 - fconv_cs_time_axis 2 - fconv_per 3 - fconv 4 -
+fconv with AVX optimization 5 - fconv_per with AVX optimization  
+";
+
+%feature("docstring") Decay::get_convolution_method "
+";
+
+%feature("docstring") Decay::set_abs_lifetime_spectrum "
+";
+
+%feature("docstring") Decay::get_abs_lifetime_spectrum "
+";
+
+%feature("docstring") Decay::set_weights_by_data "
+";
+
+%feature("docstring") Decay::set_data "
+";
+
+%feature("docstring") Decay::get_data "
+";
+
+%feature("docstring") Decay::set_use_amplitude_threshold "
+";
+
+%feature("docstring") Decay::get_use_amplitude_threshold "
+";
+
+%feature("docstring") Decay::set_amplitude_threshold "
+";
+
+%feature("docstring") Decay::get_amplitude_threshold "
+";
+
+%feature("docstring") Decay::set_number_of_photons "
+";
+
+%feature("docstring") Decay::get_number_of_photons "
+";
+
+%feature("docstring") Decay::set_excitation_period "
+";
+
+%feature("docstring") Decay::get_excitation_period "
+";
+
+%feature("docstring") Decay::set_irf_shift_channels "
+";
+
+%feature("docstring") Decay::get_irf_shift_channels "
+";
+
+%feature("docstring") Decay::set_scatter_fraction "
+";
+
+%feature("docstring") Decay::get_scatter_fraction "
+";
+
+%feature("docstring") Decay::set_constant_offset "
+";
+
+%feature("docstring") Decay::get_constant_offset "
+";
+
+%feature("docstring") Decay::set_convolution_start "
+";
+
+%feature("docstring") Decay::get_convolution_start "
+";
+
+%feature("docstring") Decay::set_convolution_stop "
+";
+
+%feature("docstring") Decay::get_convolution_stop "
+";
+
+%feature("docstring") Decay::set_convolution_range "
+";
+
+%feature("docstring") Decay::get_convolution_range "
+";
+
+%feature("docstring") Decay::set_use_pile_up_correction "
+";
+
+%feature("docstring") Decay::get_use_pile_up_correction "
+";
+
+%feature("docstring") Decay::set_irf "
+";
+
+%feature("docstring") Decay::get_irf "
+";
+
+%feature("docstring") Decay::set_linearization "
+";
+
+%feature("docstring") Decay::get_linearization "
+";
+
+%feature("docstring") Decay::get_use_linearization "
+";
+
+%feature("docstring") Decay::set_use_linearization "
+";
+
+%feature("docstring") Decay::get_corrected_irf "
+";
+
+%feature("docstring") Decay::get_model "
+";
+
+%feature("docstring") Decay::set_lifetime_spectrum "
+";
+
+%feature("docstring") Decay::get_lifetime_spectrum "
+";
+
+%feature("docstring") Decay::set_data_weights "
+";
+
+%feature("docstring") Decay::get_data_weights "
+";
+
+%feature("docstring") Decay::set_time_axis "
+";
+
+%feature("docstring") Decay::get_time_axis "
+";
+
+%feature("docstring") Decay::set_irf_background_counts "
+";
+
+%feature("docstring") Decay::get_irf_background_counts "
+";
+
+%feature("docstring") Decay::set_instrument_dead_time "
+";
+
+%feature("docstring") Decay::get_instrument_dead_time "
+";
+
+%feature("docstring") Decay::set_acquisition_time "
+";
+
+%feature("docstring") Decay::get_acquisition_time "
+";
+
+%feature("docstring") Decay::set_use_corrected_irf_as_scatter "
+";
+
+%feature("docstring") Decay::get_use_corrected_irf_as_scatter "
+";
+
+%feature("docstring") Decay::set_scale_model_to_data "
+";
+
+%feature("docstring") Decay::get_scale_model_to_data "
+";
+
+%feature("docstring") Decay::set_tttr_data "
+";
+
+%feature("docstring") Decay::set_tttr_irf "
+";
+
+%feature("docstring") Decay::Decay "
+
+Parameters
+----------
+* `tttr_data` :  
+    pointer to TTTR object that is used to construct a decay histogram  
+* `tttr_micro_time_coarsening` :  
+    an (optional) integer by which the micro times are divided to coarsen the
+    time axis (default is 1)  
+* `data` :  
+    the data to which the decay is fitted  
+* `time_axis` :  
+    the time axis that belongs to the data  
+* `data_weights` :  
+    the weights of the data points. If the weights are not provided (nullptr /
+    None) the weights are computed assuming Poisson noise.  
+* `irf_histogram` :  
+    The instrument response function (IRF) that is used for convolution. If no
+    IRF is provided  
+* `convolution_start` :  
+    The start index in the IRF used for convolution. Points in the IRF before
+    the start index are not used for convolution.  
+* `convolution_stop` :  
+    The stop index in the IRF used for convolution. Points beyond the stop index
+    are not convolved.  
+* `use_amplitude_threshold` :  
+    If this is set to true (default value is true) the values that are smaller
+    then a specified threshold are omitted  
+* `amplitude_threshold` :  
+    The amplitude threshold that is used if the parameter
+    use_amplitude_threshold is set to true (the default value is 1e10)  
+* `use_pile_up_correction` :  
+    If this is set to true (the default value is false) the convolved model
+    function is 'piled up' to match pile up artifacts in the data.  
+* `excitation_period` :  
+    the repetition period, .i.e, the time between subsequent excitation pulses.  
+";
+
+%feature("docstring") Decay::get_weighted_residuals "
+";
+
+%feature("docstring") Decay::evaluate "
+";
+
+%feature("docstring") Decay::get_mean_lifetime "
+
+Returns
+-------
+mean lifetime compute by the methods of momements (first moment)  
+";
+
+%feature("docstring") Decay::get_score "
+
+Computes the chi2 for the model and the data  
+
+The \"normal\" chi2 is the sum of the squared weighted deviations between the
+data and the model.  
+
+Parameters
+----------
+* `x_min` :  
+    minimum index number of data / model used to compute the chi2  
+* `x_max` :  
+    maximum index number of data / model used to compute the chi2  
+* `score_type` :  
+    is either neyman or poisson for large count and low count data,
+    respectively, pearson, gauss, cnp  
+
+Returns
+-------
+the chi2 value  
+";
+
+%feature("docstring") Decay::set "
+
+Update parameters  
+";
+
+%feature("docstring") Decay::compute_decay "
+
+Computes a fluorescence decay for a lifetime spectrum.  
+
+The lifetime spectrum is a interleaved array of amplitudes and fluorescence
+lifetimes. The fluorescence decay for the lifetime spectrum is computed. The
+computed decay is convolved with a instrument response function (IRF). Before
+convolution the IRF is corrected for a constant offset. The convolution
+considers periodic excitation. The IRF is shifted by a specified value of micro
+time channels. After convolution a constant fraction of scattered light is added
+to the computed decay and the decay is scaled to the number of photons in an
+experimental fluorescence decay. Finally, a constant background is added.
+Optionally, pile-up is added to the computed fluorescence decay. Before the
+fluorescence decay is computed an amplitude threshold can be applied to the
+fluorescence lifetime spectrum to discriminate fluorescence lifetimes with small
+amplitudes.  
+
+Parameters
+----------
+* `model_function[out]` :  
+    The output array that will contain the computed fluorescence decay  
+* `n_model_function[out]` :  
+    The number of points in the model function  
+* `data[in]` :  
+    The data for which the model function is computed. The data will be used to
+    scaled the computed decay.  
+* `n_data[in]` :  
+    The number of data points  
+* `squared_data_weights[in]` :  
+    The squared weights of the data points. The data weights are used to scale
+    the model function to the data (usually the data weights is Poissonian)  
+* `n_data_weights[in]` :  
+    The number of weights  
+* `time_axis[in]` :  
+    The time axiss for which the fluorescence decay is computed for  
+* `n_time_axis[in]` :  
+    The number of points in the time axis  
+* `irf_histogram[in]` :  
+    The instrument response function used for convolution  
+* `n_irf_histogram[in]` :  
+    The number of points in the instrument response function  
+* `lifetime_spectrum[in]` :  
+    The lifetime spectrum. A lifetime specturm is an interleaved array of
+    amplitudes and fluorescence lifetimes, .e.g, (amplitude1, lifetime1,
+    amplitude2, lifetime2, ...)  
+* `n_lifetime_spectrum[in]` :  
+    The number of points in the fluorescence lifetime spectrum  
+* `convolution_start[in]` :  
+    The start of the convolution  
+* `convolution_stop[in]` :  
+    The stop of the convoution. The decay will be computed in the range [start,
+    stop]  
+* `irf_background_counts[in]` :  
+    The background counts of the instrument response function. This number will
+    be subtracted from the IRF before convolution.  
+* `irf_shift_channels[in]` :  
+    The number of micro time channels the IRF will be shifted before the
+    fluorescence lifetimes are convoluted with the IRF.  
+* `scatter_fraction[in]` :  
+    The fraction (integrated fraction), i.e., the area the scattered light will
+    have in the computed decay.  
+* `excitation_period[in]` :  
+    The excitation period (in units of the fluorescence lifetime, usually
+    nanoseconds) that was used to excite the sample  
+* `constant_offset` :  
+    A constant offset that is added to the fluorescence decay.  
+* `number_of_photons[in]` :  
+    the area to which the model fluorescence decay is scaled to. If this value
+    is negative (default value is -1) the model fluorescence decay is scaled to
+    the data in the range defined by the parameters start, stop  
+* `use_amplitude_threshold[in]` :  
+    if set to true (default is false) a threshold will be applied. If this
+    parameter is set to true, fluorescence lifetimes with a amplitude that is
+    smaller than a threshold will be not considered.  
+* `amplitude_threshold` :  
+    The threshold that is used to discriminate fluorescence lifetimes that are
+    smaller.  
+* `use_pile_up_correction` :  
+    if set to true (default is false) pile up will be added to the model
+    function.  
+* `instrument_dead_time` :  
+    the dead time of the instrument (used for pile up (in units of the lifetime,
+    usually nano seconds)  
+* `acquisition_time` :  
+    the total time the acquisition of the decay in seconds.  
+* `add_corrected_irf_as_scatter` :  
+    if set to true (default is false) the background corrected irf will be added
+    as scatter to the decay. If this is false the irf prior to a background and
+    shift corrected irf is added as a scatter fraction.  
+* `scale_model_to_data` :  
+    if set to true (default is true) the model is either scaled to the area s
+    provided by total_area (if total_area is larger then zero) or to the total
+    number of experimental counts.  
+";
+
+%feature("docstring") Decay::shift_array "
+
+Shift an input array by a floating number.  
+
+Parameters
+----------
+* `input[in]` :  
+    the input array  
+* `n_input[in]` :  
+    length of the input array  
+* `output` :  
+    output array  
+* `n_output` :  
+    length of the output array  
+* `shift[in]` :  
+    the shift of the output  
+";
+
+%feature("docstring") Decay::add_curve "
+
+Computes the sum of two arrays considering their respective areal fraction.  
+
+A weighted sum of two curves is computed. The weighted sum is computed by the
+area of the first curve and the areal fraction of the second curve. The area of
+the computed curve equals to the area of the first input curve while the areal
+fraction of the second input curve will be equal to the specified value in the
+range specified by the input parameters. modifies curve1 inplace  
+
+Parameters
+----------
+* `output` :  
+    the computed output curve (array)  
+* `n_output` :  
+    the number of points in the output  
+* `curve1[in`, `out]` :  
+    the first input curve / array  
+* `n_curve1[in`, `out]` :  
+    number of points in the first array  
+* `curve2[in]` :  
+    second curve / array  
+* `n_curve2[in]` :  
+    number of points in the second array  
+* `areal_fraction_curve2[in]` :  
+    areal fraction of the second curve in the output array  
+* `start[in]` :  
+    start index used for the area calculation  
+* `stop[in]` :  
+    stop index used for the area calculation  
+";
+
+%feature("docstring") Decay::compute_score "
+";
+
+%feature("docstring") Decay::compute_mean_lifetime "
+
+Compute a mean lifetime by the moments of the decay and the instrument response
+function.  
+
+The computed lifetime is the first lifetime determined by the method of moments
+(Irvin Isenberg, 1973, Biophysical journal).  
+
+Parameters
+----------
+* `irf_histogram` :  
+* `decay_histogram` :  
+* `micro_time_resolution` :  
+
+Returns
+-------  
+";
+
 // File: struct_l_v_double_array.xml
 
 
@@ -114,6 +543,93 @@ C++ includes: lvarrays.h
 ";
 
 %feature("docstring") MParam::~MParam "
+";
+
+// File: classphasor.xml
+
+
+%feature("docstring") phasor "
+";
+
+%feature("docstring") phasor::compute_phasor "
+
+Compute the phasor (g,s) for a selection of micro times  
+
+This function computes the phasor (g,s) for a set of micro times that are
+selected out of an vector. The microtimes are selected by a second vector. The
+second vector speciefies which indices of the microtime vector are used to
+compute the phasor.  
+
+Parameters
+----------
+* `micro_times` :  
+    vector of micro times  
+* `idxs` :  
+    vector of selected indices  
+* `minimum_number_of_photons` :  
+* `frequency` :  
+    the frequency of the phasor  
+* `g_irf` :  
+    g-value of instrument response phasor  
+* `s_irf` :  
+    s-value of instrument response phasor  
+
+Returns
+-------
+vector of length 2: first element g-value, second element s-value  
+";
+
+%feature("docstring") phasor::compute_phasor_all "
+
+Compute the phasor (g,s) for a all passed micro times  
+
+Parameters
+----------
+* `micro_times` :  
+    vector of micro times  
+* `n_microtimes` :  
+    number of elements in the micro time array  
+* `frequency` :  
+    the frequency of the phasor  
+
+Returns
+-------
+vector of length 2: first element g-value, second element s-value  
+";
+
+%feature("docstring") phasor::g "
+
+https://journals.plos.org/plosone/article/file?type=supplementary&id=info:doi/10.1371/journal.pone.0194578.s001  
+
+Parameters
+----------
+* `g_irf` :  
+    g-value of instrument response phasor  
+* `s_irf` :  
+    s-value of instrument response phasor  
+* `g_exp` :  
+* `s_exp` :  
+
+Returns
+-------  
+";
+
+%feature("docstring") phasor::s "
+
+https://journals.plos.org/plosone/article/file?type=supplementary&id=info:doi/10.1371/journal.pone.0194578.s001  
+
+Parameters
+----------
+* `g_irf` :  
+* `s_irf` :  
+* `g_exp` :  
+* `s_exp` :  
+
+Returns
+-------  
+";
+
+%feature("docstring") phasor::get_phasor_image "
 ";
 
 // File: classap_1_1raw__vector.xml
@@ -289,7 +805,29 @@ C++ includes: lvarrays.h
 %feature("docstring") ap::minreal "
 ";
 
+// File: namespacestatistics.xml
+
+%feature("docstring") statistics::chi2_counting "
+
+Different chi2 measures for counting data:  
+
+https://arxiv.org/pdf/1903.07185.pdf  
+
+Parameters
+----------
+* `data` :  
+* `model` :  
+* `x_min` :  
+* `x_max` :  
+* `type` :  
+
+Returns
+-------  
+";
+
 // File: ap_8h.xml
+
+// File: decay_8h.xml
 
 // File: fit23_8h.xml
 
@@ -836,10 +1374,64 @@ Parameters
     time difference between two micro time channels  
 ";
 
+%feature("docstring") fconv_avx "
+
+Convolve lifetime spectrum with instrument response (fast convolution, AVX
+optimized for large lifetime spectra)  
+
+This function is a modification of fconv for large lifetime spectra. The
+lifetime spectrum is processed by AVX intrinsics. Four lifetimes are convolved
+at once. Spectra with lifetimes that are not multiple of four are zero padded.  
+
+Parameters
+----------
+* `fit` :  
+* `x` :  
+* `lamp` :  
+* `numexp` :  
+* `start` :  
+* `stop` :  
+* `n_points` :  
+* `dt` :  
+";
+
 %feature("docstring") fconv_per "
 
 Convolve lifetime spectrum with instrument response (fast convolution, high
 repetition rate)  
+
+This function computes the convolution of a lifetime spectrum (a set of
+lifetimes with corresponding amplitudes) with a instrument response function
+(irf). This function does consider periodic excitation and is suited for
+experiments at high repetition rate.  
+
+Parameters
+----------
+* `fit[out]` :  
+    model function. The convoluted decay is written to this array  
+* `x[in]` :  
+    lifetime spectrum (amplitude1, lifetime1, amplitude2, lifetime2, ...)  
+* `lamp[in]` :  
+    instrument response function  
+* `numexp[in]` :  
+    number of fluorescence lifetimes  
+* `start[in]` :  
+    start micro time index for convolution (not used)  
+* `stop[in]` :  
+    stop micro time index for convolution.  
+* `n_points` :  
+    number of points in the model function.  
+* `period` :  
+    excitation period in units of the fluorescence lifetimes (typically
+    nanoseconds)  
+* `dt[in]` :  
+    time difference between two micro time channels  
+";
+
+%feature("docstring") fconv_per_avx "
+
+Convolve lifetime spectrum with instrument response (fast convolution, high
+repetition rate), AVX optimized version.  
 
 This function computes the convolution of a lifetime spectrum (a set of
 lifetimes with corresponding amplitudes) with a instrument response function
@@ -968,7 +1560,7 @@ Parameters
     the value of the shifted response function outside of the valid indices  
 ";
 
-%feature("docstring") add_pile_up "
+%feature("docstring") add_pile_up_to_model "
 
 Correct the model function for pile up.  
 
@@ -999,6 +1591,22 @@ Parameters
 * `pile_up_model[in]` :  
     The model used to compute the pile up distortion of the data (currently only
     Coates)  
+";
+
+%feature("docstring") discriminate_small_amplitudes "
+
+Threshold the amplitudes  
+
+Amplitudes with absolute values smaller than the specified threshold are set to
+zero.  
+
+Parameters
+----------
+* `lifetime_spectrum` :  
+    interleaved lifetime spectrum (amplitude, lifetime)  
+* `n_lifetime_spectrum` :  
+    number of elements in lifetime spectrum  
+* `amplitude_threshold` :  
 ";
 
 %feature("docstring") fconv_per_cs_time_axis "
@@ -1044,14 +1652,59 @@ Parameters
     Start channel of convolution (position in array of IRF)  
 * `convolution_stop[in]` :  
     convolution stop channel (the index on the time-axis)  
+* `period` :  
+    Period of repetition in units of the lifetime (usually, nano-seconds)  
+";
+
+%feature("docstring") fconv_cs_time_axis "
+
+Compute the fluorescence decay for a lifetime spectrum and a instrument response
+function.  
+
+Fills the pre-allocated output array `output_decay` with a fluorescence
+intensity decay defined by a set of fluorescence lifetimes defined by the
+parameter `lifetime_spectrum`. The fluorescence decay will be convolved (non-
+periodically) with an instrumental response function that is defined by
+`instrument_response_function`.  
+
+This function calculates a fluorescence intensity model_decay that is convolved
+with an instrument response function (IRF). The fluorescence intensity
+model_decay is specified by its fluorescence lifetime spectrum, i.e., an
+interleaved array containing fluorescence lifetimes with corresponding
+amplitudes.  
+
+This convolution works also with uneven spaced time axes.  
+
+Parameters
+----------
+* `inplace_output[in`, `out]` :  
+    Inplace output array that is filled with the values of the computed
+    fluorescence intensity decay model  
+* `n_output[in]` :  
+    Number of elements in the output array  
+* `time_axis[in]` :  
+    the time-axis of the model_decay  
+* `n_time_axis[in]` :  
+    length of the time axis  
+* `irf[in]` :  
+    the instrument response function array  
+* `n_irf[in]` :  
+    length of the instrument response function array  
+* `lifetime_spectrum[in]` :  
+    Interleaved array of amplitudes and fluorescence lifetimes of the form
+    (amplitude, lifetime, amplitude, lifetime, ...)  
+* `n_lifetime_spectrum[in]` :  
+    number of elements in the lifetime spectrum  
+* `convolution_start[in]` :  
+    Start channel of convolution (position in array of IRF)  
+* `convolution_stop[in]` :  
+    convolution stop channel (the index on the time-axis)  
 * `use_amplitude_threshold[in]` :  
     If this value is True (default False) fluorescence lifetimes in the lifetime
     spectrum which have an amplitude with an absolute value of that is smaller
     than `amplitude_threshold` are not omitted in the convolution.  
 * `amplitude_threshold[in]` :  
     Threshold value for the amplitudes  
-* `period` :  
-    Period of repetition in units of the lifetime (usually, nano-seconds)  
 ";
 
 // File: i__lbfgs_8h.xml
@@ -1107,14 +1760,16 @@ Returns
 %feature("docstring") CreateMParam "
 ";
 
-// File: two_istar_8h.xml
+// File: phasor_8h.xml
 
-%feature("docstring") init_fact "
+// File: statistics_8h.xml
+
+%feature("docstring") statistics::init_fact "
 
 Initialize an array containing pre-computed logratithms  
 ";
 
-%feature("docstring") loggammaf "
+%feature("docstring") statistics::loggammaf "
 
 Approximation of log(gamma function). See wikipedia  
 
@@ -1130,7 +1785,7 @@ Returns
 approximation of the logarithm of the gamma function  
 ";
 
-%feature("docstring") wcm "
+%feature("docstring") statistics::wcm "
 
 log-likelihood w(C|m) for Cp + 2Cs  
 
@@ -1146,7 +1801,7 @@ Returns
 log-likelihood w(C|m) for Cp + 2Cs  
 ";
 
-%feature("docstring") wcm_p2s "
+%feature("docstring") statistics::wcm_p2s "
 
 Compute the -log-likelihood for Cp + 2Cs of a single micro time channel.  
 
@@ -1173,7 +1828,7 @@ Returns
 -------  
 ";
 
-%feature("docstring") Wcm_p2s "
+%feature("docstring") statistics::Wcm_p2s "
 
 Compute the overall -log-likelihood for Cp + 2Cs for all micro time channels  
 
@@ -1192,7 +1847,7 @@ Returns
 -log-likelihood for Cp + 2Cs for all micro time channels  
 ";
 
-%feature("docstring") twoIstar_p2s "
+%feature("docstring") statistics::twoIstar_p2s "
 
 Compute overall 2I* for Cp + 2Cs  
 
@@ -1219,7 +1874,7 @@ Returns
 2I* for Cp + 2Cs  
 ";
 
-%feature("docstring") twoIstar "
+%feature("docstring") statistics::twoIstar "
 
 Compute overall 2I* for Cp & Cs  
 
@@ -1242,7 +1897,7 @@ Returns
 2I* for Cp & Cs  
 ";
 
-%feature("docstring") Wcm "
+%feature("docstring") statistics::Wcm "
 
 Compute overall -log-likelihood for Cp & Cs  
 

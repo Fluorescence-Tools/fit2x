@@ -1,9 +1,14 @@
 # fits2x
 [![Build Status](https://travis-ci.org/fluorescence-tools/fit2x.svg?branch=master)](https://travis-ci.org/fluorescence-tools/fit2x)
+[![Documentation Status](https://readthedocs.org/projects/fit2x/badge/?version=latest)](https://tttrlib.readthedocs.io/en/latest/?badge=latest)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/23eed581443e47e6b739613f540dc6c2)](https://www.codacy.com/gh/Fluorescence-Tools/fit2x?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Fluorescence-Tools/fit2x&amp;utm_campaign=Badge_Grade)
+[![Anaconda-Server Badge](https://anaconda.org/tpeulen/fit2x/badges/installer/conda.svg)](https://anaconda.org/tpeulen/fit2x)
 
+## Warning
+fit2x is currently in early development.
 
 ## General description
-fits2x is a collection of fit models that use maximum likelihood
+fits2x is a collection of models that use maximum likelihood
 estimators for polarization and time-resolved fluorescence decays.
 
 fit2x implement burst integrated fluorescence lifetime fits (BIFL)

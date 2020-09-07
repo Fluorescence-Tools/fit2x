@@ -41,6 +41,7 @@ Contents
 
    installation
    models
+   auto_examples/index
    cpp_api
    glossary
    zreferences

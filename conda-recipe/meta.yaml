@@ -22,9 +22,19 @@ requirements:
     - {{ pin_compatible('numpy') }}
     - cmake
     - swig 3.0.12.*
+    - boost 1.67.0.*
+    - libboost 1.67.0.* # [not win]
+    - hdf5 1.10.2.*
+    - tttrlib>=0.0.18
+    - llvm-openmp # [osx]
   run:
     - python {{ python }}
     - {{ pin_compatible('numpy') }}
+    - boost 1.67.0.* # [win]
+    - libboost 1.67.0.* # [not win]
+    - llvm-openmp # [osx]
+    - hdf5 1.10.2.*
+    - tttrlib>=0.0.18
 
 test:
   imports:

@@ -2,7 +2,6 @@ from __future__ import division
 
 import unittest
 import numpy as np
-import scipy.stats
 
 import fit2x
 from compute_irf import model_irf
