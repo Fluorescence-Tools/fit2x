@@ -1,7 +1,12 @@
-%include "typemaps.i"
+%{
+#include "../include/fsconv.h"
+%}
+
+// The functions are added manually as their signature needs to be changed to
+// use them with numpy.i
+// %include "../include/fsconv.h"
 
 // manually added instead of including header file as all other functions
-// are also manually added
 %apply (double* INPLACE_ARRAY1, int DIM1) {
     (double* fit, int len1),
     (double* model, int len3),
@@ -17,7 +22,6 @@
     (double* lamp, int len1), // used by shift_lamp
     (double* lampsh, int len2) // used by shift_lamp
 }
-
 
 void fconv_per_cs_time_axis(
         double *model, int n_model,
@@ -41,7 +45,6 @@ void add_pile_up_to_model(
 
 //// rescale
 //////////////
-
 %rename (rescale) my_rescale;
 %exception my_rescale{$action if (PyErr_Occurred()) SWIG_fail;}
 %inline %{

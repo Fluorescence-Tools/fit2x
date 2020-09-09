@@ -1,5 +1,6 @@
 #include "phasor.h"
 
+
 std::vector<double> phasor::compute_phasor(
         unsigned short *micro_times,
         std::vector<int> &idxs,

@@ -10,6 +10,10 @@ if(UNIX AND NOT APPLE)
     set(LINUX TRUE)
 endif()
 
+################################################################################
+###### CONDA
+################################################################################
+
 ## Check for Conda
 ###########################
 IF(DEFINED ENV{CONDA_PREFIX})
@@ -30,8 +34,8 @@ ELSE()
 ENDIF()
 SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
 
-# Conda
-#######
+# Conda - INCLUDE and LIB DIR
+#############################################
 if(UNIX)
     if(DEFINED ENV{CONDA_PREFIX})
         LINK_DIRECTORIES("$ENV{CONDA_PREFIX}/lib")
@@ -43,8 +47,11 @@ if(UNIX)
 endif()
 
 
-# Compiler flags
-#################
+
+################################################################################
+###### Compiler flags
+################################################################################
+
 if(LINUX)
     STRING(APPEND CMAKE_CXX_FLAGS " -march=native -Ofast -mavx2 -ffast-math -funroll-loops")
     STRING(APPEND CMAKE_C_FLAGS " -march=native -Ofast -mavx2 -ffast-math -funroll-loops")
@@ -61,14 +68,12 @@ if(APPLE)
     STRING(APPEND CMAKE_C_FLAGS " -march=native -Ofast -mavx2 -ffast-math -funroll-loops -mfma")
 endif()
 if (MSVC)
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++latest")
     ADD_DEFINITIONS(-DMS_WIN64)
     ADD_DEFINITIONS(-D_USE_MATH_DEFINES)
     # https://devblogs.microsoft.com/cppblog/simd-extension-to-c-openmp-in-visual-studio/
     # /Oi is for intrinsics
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX2 -openmp:experimental /Oi /O2")
 endif (MSVC)
-
 
 # MACOSX
 ##############
@@ -93,14 +98,9 @@ ELSE (CMAKE_BUILD_TYPE STREQUAL "Debug")
 ENDIF (CMAKE_BUILD_TYPE STREQUAL "Release")
 
 
-
 ################################################################################
 ###### INCLUDES AND LIBRARIES
 ################################################################################
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/src)
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include)
-ADD_SUBDIRECTORY(ext)
 
 ## TTTRLIB
 LINK_LIBRARIES(tttrlib)
@@ -163,12 +163,20 @@ FIND_PACKAGE(OpenMP REQUIRED)
 LINK_LIBRARIES(OpenMP::OpenMP_CXX)
 
 ################################################################################
+# BUILD OPTIONS
+################################################################################
+OPTION(BUILD_PYTHON_INTERFACE "Build Python interface" ON)
+
+################################################################################
 # Source groups
 ################################################################################
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/src)
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include)
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include)
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR})
-OPTION(BUILD_PYTHON_INTERFACE "Build Python interface" ON)
 FILE(GLOB SRC_files "${CMAKE_SOURCE_DIR}/src/*.cpp")
+ADD_SUBDIRECTORY(ext)
 
 
 ################################################################################

@@ -8,10 +8,11 @@
 #include <numeric>
 #include <algorithm>
 #include <memory> /* shared_ptr */
+
 #include "omp.h"
+#include "tttrlib/tttr.h"
 
 #include "fsconv.h"
-#include "tttrlib/tttr.h"
 #include "statistics.h"
 
 

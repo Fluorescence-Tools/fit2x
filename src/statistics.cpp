@@ -1,4 +1,3 @@
-
 #include "statistics.h"
 
 const double twopi = 6.2831853071795865;

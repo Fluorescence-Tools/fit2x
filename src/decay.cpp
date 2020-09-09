@@ -1,7 +1,5 @@
 #include "decay.h"
 
-
-
 std::vector<double> Decay::shift_array(
         double* input, int n_input,
         double shift,

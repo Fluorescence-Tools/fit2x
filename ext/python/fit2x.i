@@ -4,14 +4,14 @@
 // This fixes numpy int casting to std::vector,int>
 // (see: https://github.com/swig/swig/issues/888)
 #define SWIG_PYTHON_CAST_MODE
-
 // This is needed for numpy as you need SWIG_FILE_WITH_INIT
 #define SWIG_FILE_WITH_INIT
+#include <assert.h>
 #include "../include/fits2x.h"
-#include "tttrlib/tttr.h"
 %}
+// Python code that should be included at the begining (import, Base class, etc)
+%pythoncode "../ext/python/fit2x.py"
 
-//%include <boost_shared_ptr.i>
 %include <std_shared_ptr.i>
 %include <std_vector.i>
 %include <attribute.i>
@@ -24,12 +24,22 @@
 %include "numpy.i"
 %include "documentation.i"
 
-// Use shared_prt for TTTR to pass TTTR around
-%shared_ptr(TTTR)
-
 %init %{
 import_array();
 %}
+
+// Templates
+%template(VectorDouble) std::vector<double>;
+%template(VectorInt32) std::vector<int>;
+
+// shared_prt
+%shared_ptr(TTTR) // to pass TTTR around
+%shared_ptr(std::string)
+
+/* Convolution and LabView interface*/
+%include "lvarray.i"
+%include "fsconv.i"
+%include "phasor.i"
 
 // Generic input arrays
 // floating numbers
@@ -70,22 +80,16 @@ import_array();
 // Generic inplace arrays
 %apply(double* INPLACE_ARRAY1, int DIM1) {(double* inplace_output, int n_output)}
 
-
-// Templates
-%template(VectorDouble) std::vector<double>;
-%template(VectorInt32) std::vector<int>;
-
+// for fit23, fit24, etc.
 %apply (int DIM1, double* INPLACE_ARRAY1) {(int len1, double* x)}
 %apply (int DIM1, short* IN_ARRAY1) {(int len2, short* fixed)}
 
-%include "../include/fits2x.h"
-%pythoncode "../ext/python/fit2x.py"
 
-%include "lvarray.i"
-%include "fsconv.i"
+/* Fits and Decay*/
 %include "fit23.i"
 %include "fit24.i"
 %include "fit25.i"
 %include "fit26.i"
 %include "decay.i"
-%include "phasor.i"
+
+%include "../include/fits2x.h"

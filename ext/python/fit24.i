@@ -1,3 +1,5 @@
+%include "../include/fit24.h"
+
 %exception my_modelf24{$action if (PyErr_Occurred()) SWIG_fail;}
 %rename (modelf24) my_modelf24;
 
@@ -79,3 +81,5 @@ double my_fit24(int len1, double* x, int len2, short* fixed, MParam* p){
 %}
 
 %pythoncode "../ext/python/fit24.py"
+
+

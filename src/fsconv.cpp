@@ -1,8 +1,5 @@
-// fast and slow convolution routines, autoscaling and lamp shift
-// Version 2006.03.26
-
-#include "fsconv.h"
 #include "fits2x.h"
+#include "fsconv.h"
 
 /* rescaling -- old version. sum(fit)->sum(decay) */
 void rescale(double *fit, double *decay, double *scale, int start, int stop) {

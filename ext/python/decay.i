@@ -1,7 +1,7 @@
 %{
 #include "../include/decay.h"
-#include "tttrlib/tttr.h"
 %}
+
 // Input arrays
 %apply(double* IN_ARRAY1, int DIM1) {
     (double* time_axis, int n_time_axis),

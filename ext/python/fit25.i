@@ -1,5 +1,8 @@
+%include "../include/fit25.h"
+
 %rename (targetf25) my_targetf25;
 %exception my_targetf25{$action if (PyErr_Occurred()) SWIG_fail;}
+
 %inline %{
 double my_targetf25(int len1, double* x, MParam* p){
     if (len1 != 8) {
@@ -35,3 +38,4 @@ double my_fit25(int len1, double* x, int len2, short* fixed, MParam* p){
 %}
 
 %pythoncode "../ext/python/fit25.py"
+

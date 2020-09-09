@@ -1,7 +1,7 @@
+#include <iomanip>      // std::setprecision
 #include "fits2x.h"
 #include "fsconv.h"
 #include "statistics.h"
-#include <iomanip>      // std::setprecision
 
 // normalization
 static double Sp, Ss, Bp, Bs;
