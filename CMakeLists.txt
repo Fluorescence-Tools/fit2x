@@ -6,7 +6,6 @@ ENABLE_LANGUAGE(CXX)
 SET(CMAKE_CXX_STANDARD 11)
 add_definitions(-D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES)
 
-
 if(UNIX AND NOT APPLE)
     set(LINUX TRUE)
 endif()
@@ -83,16 +82,6 @@ if (APPLE)
     endif()
 endif (APPLE)
 
-
-INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include)
-INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR})
-OPTION(BUILD_PYTHON_INTERFACE "Build Python interface" ON)
-
-################################################################################
-# Source groups
-################################################################################
-FILE(GLOB SRC_files "${CMAKE_SOURCE_DIR}/src/*.cpp")
-
 # Debug build detection
 ###########################
 IF (CMAKE_BUILD_TYPE STREQUAL "Release")
@@ -103,6 +92,15 @@ ELSE (CMAKE_BUILD_TYPE STREQUAL "Debug")
     ADD_DEFINITIONS("-DVERBOSE_FIT2X=1")
 ENDIF (CMAKE_BUILD_TYPE STREQUAL "Release")
 
+
+
+################################################################################
+###### INCLUDES AND LIBRARIES
+################################################################################
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/src)
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include)
+ADD_SUBDIRECTORY(ext)
 
 ## TTTRLIB
 LINK_LIBRARIES(tttrlib)
@@ -139,7 +137,6 @@ INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 LINK_LIBRARIES(${Boost_LIBRARIES})
 MESSAGE(${Boost_INCLUDE_DIRS})
 
-
 ## OpenMP
 ###########################
 if (APPLE)
@@ -165,11 +162,18 @@ endif ()
 FIND_PACKAGE(OpenMP REQUIRED)
 LINK_LIBRARIES(OpenMP::OpenMP_CXX)
 
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/src)
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include)
-ADD_SUBDIRECTORY(ext)
+################################################################################
+# Source groups
+################################################################################
+INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include)
+INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR})
+OPTION(BUILD_PYTHON_INTERFACE "Build Python interface" ON)
+FILE(GLOB SRC_files "${CMAKE_SOURCE_DIR}/src/*.cpp")
 
+
+################################################################################
+###### Targets
+################################################################################
 
 ## Shared / static library target
 ###########################
