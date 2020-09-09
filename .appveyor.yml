@@ -43,8 +43,9 @@ test_script:
 
 # scripts to run after tests
 deploy_script:
-  - if "%APPVEYOR_REPO_BRANCH%" == "master" exit 0
-  - anaconda -t %ANACONDA_API_TOKEN% upload -u %CONDA_USER% -l nightly C:\Miniconda3-x64\envs\build\conda-bld\win-64\fit2x-*.tar.bz2 --force
+  - if not "%APPVEYOR_REPO_BRANCH%" == "master" (SET ANACONDA_LABEL="nightly") else (SET ANACONDA_LABEL="main")
+  - SET BLD_DIR=C:/Miniconda3-x64/envs/build/conda-bld
+  - anaconda -t %ANACONDA_API_TOKEN% upload -u %CONDA_USER% -l %ANACONDA_LABEL% %BLD_DIR%\win-64\*.tar.bz2 --force
 
 build: off
 
