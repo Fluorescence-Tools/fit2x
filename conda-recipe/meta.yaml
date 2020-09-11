@@ -24,7 +24,8 @@ requirements:
     - swig 3.0.12.*
     - boost 1.67.0.* # [py < 38]
     - boost 1.71.0.* # [py >= 38]
-    - hdf5 1.10.2.*
+    - hdf5 1.10.2.* # [py < 38 and not linux64]
+    - hdf5 1.10.4.* # [py >= 38 or linux64]
     - tttrlib>=0.0.18
     - llvm-openmp # [osx]
   run:
@@ -34,7 +35,8 @@ requirements:
     - libboost 1.67.0.* # [not win and py < 38]
     - libboost 1.71.0.* # [not win and py >= 38]
     - llvm-openmp # [osx]
-    - hdf5 1.10.2.*
+    - hdf5 1.10.2.* # [py < 38 and not linux64]
+    - hdf5 1.10.4.* # [py >= 38 or linux64]
     - tttrlib>=0.0.18
 
 test:
