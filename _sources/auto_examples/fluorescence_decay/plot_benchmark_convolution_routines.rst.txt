@@ -14,14 +14,28 @@ Convolution benchmark
 ===============================
 
 
-
-.. image:: /auto_examples/fluorescence_decay/images/sphx_glr_plot_benchmark_convolution_routines_001.png
-    :alt: Convolution routines, Time per call
-    :class: sphx-glr-single-img
+.. rst-class:: sphx-glr-script-out
 
 
+.. code-block:: pytb
+
+    Traceback (most recent call last):
+      File "/home/travis/build/Fluorescence-Tools/fit2x/examples/fluorescence_decay/plot_benchmark_convolution_routines.py", line 8, in <module>
+        import fit2x
+      File "/home/travis/miniconda/envs/docs_env/lib/python3.7/site-packages/fit2x.py", line 17, in <module>
+        _fit2x = swig_import_helper()
+      File "/home/travis/miniconda/envs/docs_env/lib/python3.7/site-packages/fit2x.py", line 16, in swig_import_helper
+        return importlib.import_module('_fit2x')
+      File "/home/travis/miniconda/envs/docs_env/lib/python3.7/importlib/__init__.py", line 127, in import_module
+        return _bootstrap._gcd_import(name[level:], package, level)
+    ImportError: libtttrlib.so: cannot open shared object file: No such file or directory
 
 
+
+
+
+
+|
 
 
 .. code-block:: default
@@ -138,7 +152,7 @@ Convolution benchmark
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  0.267 seconds)
+   **Total running time of the script:** ( 0 minutes  0.005 seconds)
 
 
 .. _sphx_glr_download_auto_examples_fluorescence_decay_plot_benchmark_convolution_routines.py:

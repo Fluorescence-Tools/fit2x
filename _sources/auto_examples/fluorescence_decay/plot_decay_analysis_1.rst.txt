@@ -143,7 +143,17 @@ Single-molecule
 
 
 
+.. rst-class:: sphx-glr-script-out
 
+
+.. code-block:: pytb
+
+    Traceback (most recent call last):
+      File "/home/travis/build/Fluorescence-Tools/fit2x/examples/fluorescence_decay/plot_decay_analysis_1.py", line 69, in <module>
+        import tttrlib
+      File "/home/travis/miniconda/envs/docs_env/lib/python3.7/site-packages/tttrlib.py", line 9, in <module>
+        import _tttrlib
+    ImportError: libtttrlib.so: cannot open shared object file: No such file or directory
 
 
 
@@ -183,12 +193,6 @@ Prepare data
     time_axis = np.arange(0, n_bins) * data.header.micro_time_resolution * 4096 / n_bins
 
 
-
-
-
-
-
-
 Make decay object
 ##################################
 
@@ -221,12 +225,6 @@ Make decay object
     lifetime_spectrum = [0.5, 0.5, 0.5, 3.5]
 
 
-
-
-
-
-
-
 Optimize                    #
 ##################################
 
@@ -256,30 +254,6 @@ Optimize                    #
     fit_map = fit.x
 
 
-
-.. rst-class:: sphx-glr-script-out
-
-
-.. code-block:: pytb
-
-    Traceback (most recent call last):
-      File "/home/travis/build/Fluorescence-Tools/fit2x/examples/fluorescence_decay/plot_decay_analysis_1.py", line 205, in <module>
-        args=(x0, decay_object, x_min, x_max, False, False)
-      File "/home/travis/miniconda/envs/docs_env/lib/python3.7/site-packages/scipy/optimize/_minimize.py", line 604, in minimize
-        return _minimize_bfgs(fun, x0, args, jac, callback, **options)
-      File "/home/travis/miniconda/envs/docs_env/lib/python3.7/site-packages/scipy/optimize/optimize.py", line 1003, in _minimize_bfgs
-        old_fval = f(x0)
-      File "/home/travis/miniconda/envs/docs_env/lib/python3.7/site-packages/scipy/optimize/optimize.py", line 327, in function_wrapper
-        return function(*(wrapper_args + args))
-      File "/home/travis/build/Fluorescence-Tools/fit2x/examples/fluorescence_decay/plot_decay_analysis_1.py", line 110, in objective_function_mle
-        chi2_mle = decay_object.get_score(x_min, x_max, score_type="poisson")
-      File "/home/travis/miniconda/envs/docs_env/lib/python3.7/site-packages/fit2x.py", line 2007, in get_score
-        return _fit2x.Decay_get_score(self, *args, **kwargs)
-    TypeError: in method 'Decay_get_score', argument 4 of type 'std::string'
-
-
-
-
 Plot                        #
 ##################################
 
@@ -306,7 +280,7 @@ Plot                        #
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  0.014 seconds)
+   **Total running time of the script:** ( 0 minutes  0.005 seconds)
 
 
 .. _sphx_glr_download_auto_examples_fluorescence_decay_plot_decay_analysis_1.py:

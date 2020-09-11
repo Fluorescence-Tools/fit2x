@@ -246,6 +246,14 @@ Create an instance the <code class="docutils literal notranslate"><span class="p
     <span class="k">return</span> <span class="n">chi2_mle</span>
 </pre></div>
 </div>
+<div class="sphx-glr-script-out highlight-pytb notranslate"><div class="highlight"><pre><span></span><span class="gt">Traceback (most recent call last):</span>
+  File <span class="nb">&quot;/home/travis/build/Fluorescence-Tools/fit2x/examples/fluorescence_decay/plot_decay_analysis_1.py&quot;</span>, line <span class="m">69</span>, in <span class="n">&lt;module&gt;</span>
+    <span class="kn">import</span> <span class="nn">tttrlib</span>
+  File <span class="nb">&quot;/home/travis/miniconda/envs/docs_env/lib/python3.7/site-packages/tttrlib.py&quot;</span>, line <span class="m">9</span>, in <span class="n">&lt;module&gt;</span>
+    <span class="kn">import</span> <span class="nn">_tttrlib</span>
+<span class="gr">ImportError</span>: <span class="n">libtttrlib.so: cannot open shared object file: No such file or directory</span>
+</pre></div>
+</div>
 <div class="section" id="prepare-data">
 <h3>Prepare data<a class="headerlink" href="#prepare-data" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># load file</span>
@@ -331,22 +339,6 @@ Create an instance the <code class="docutils literal notranslate"><span class="p
 <span class="n">fit_map</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">x</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-pytb notranslate"><div class="highlight"><pre><span></span><span class="gt">Traceback (most recent call last):</span>
-  File <span class="nb">&quot;/home/travis/build/Fluorescence-Tools/fit2x/examples/fluorescence_decay/plot_decay_analysis_1.py&quot;</span>, line <span class="m">205</span>, in <span class="n">&lt;module&gt;</span>
-    <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="n">decay_object</span><span class="p">,</span> <span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-  File <span class="nb">&quot;/home/travis/miniconda/envs/docs_env/lib/python3.7/site-packages/scipy/optimize/_minimize.py&quot;</span>, line <span class="m">604</span>, in <span class="n">minimize</span>
-    <span class="k">return</span> <span class="n">_minimize_bfgs</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">jac</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span>
-  File <span class="nb">&quot;/home/travis/miniconda/envs/docs_env/lib/python3.7/site-packages/scipy/optimize/optimize.py&quot;</span>, line <span class="m">1003</span>, in <span class="n">_minimize_bfgs</span>
-    <span class="n">old_fval</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">x0</span><span class="p">)</span>
-  File <span class="nb">&quot;/home/travis/miniconda/envs/docs_env/lib/python3.7/site-packages/scipy/optimize/optimize.py&quot;</span>, line <span class="m">327</span>, in <span class="n">function_wrapper</span>
-    <span class="k">return</span> <span class="n">function</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">wrapper_args</span> <span class="o">+</span> <span class="n">args</span><span class="p">))</span>
-  File <span class="nb">&quot;/home/travis/build/Fluorescence-Tools/fit2x/examples/fluorescence_decay/plot_decay_analysis_1.py&quot;</span>, line <span class="m">110</span>, in <span class="n">objective_function_mle</span>
-    <span class="n">chi2_mle</span> <span class="o">=</span> <span class="n">decay_object</span><span class="o">.</span><span class="n">get_score</span><span class="p">(</span><span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="n">score_type</span><span class="o">=</span><span class="s2">&quot;poisson&quot;</span><span class="p">)</span>
-  File <span class="nb">&quot;/home/travis/miniconda/envs/docs_env/lib/python3.7/site-packages/fit2x.py&quot;</span>, line <span class="m">2007</span>, in <span class="n">get_score</span>
-    <span class="k">return</span> <span class="n">_fit2x</span><span class="o">.</span><span class="n">Decay_get_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-<span class="gr">TypeError</span>: <span class="n">in method &#39;Decay_get_score&#39;, argument 4 of type &#39;std::string&#39;</span>
-</pre></div>
-</div>
 </div>
 <div class="section" id="plot">
 <h3>Plot                        #<a class="headerlink" href="#plot" title="Permalink to this headline">¶</a></h3>
@@ -367,7 +359,7 @@ Create an instance the <code class="docutils literal notranslate"><span class="p
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.014 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.005 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-fluorescence-decay-plot-decay-analysis-1-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/104e984a8307b980c4c13863becfd8d8/plot_decay_analysis_1.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_decay_analysis_1.py</span></code></a></p>

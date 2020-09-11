@@ -136,11 +136,15 @@
 <div class="sphx-glr-example-title section" id="pile-up">
 <span id="sphx-glr-auto-examples-fluorescence-decay-plot-pile-up-py"></span><h1>Pile-up<a class="headerlink" href="#pile-up" title="Permalink to this headline">¶</a></h1>
 <div class="sphx-glr-script-out highlight-pytb notranslate"><div class="highlight"><pre><span></span><span class="gt">Traceback (most recent call last):</span>
-  File <span class="nb">&quot;/home/travis/build/Fluorescence-Tools/fit2x/examples/fluorescence_decay/plot_pile_up.py&quot;</span>, line <span class="m">64</span>, in <span class="n">&lt;module&gt;</span>
-    <span class="n">pile_up_model</span><span class="o">=</span><span class="s2">&quot;coates&quot;</span>
-  File <span class="nb">&quot;/home/travis/miniconda/envs/docs_env/lib/python3.7/site-packages/fit2x.py&quot;</span>, line <span class="m">799</span>, in <span class="n">add_pile_up_to_model</span>
-    <span class="k">return</span> <span class="n">_fit2x</span><span class="o">.</span><span class="n">add_pile_up_to_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">repetition_rate</span><span class="p">,</span> <span class="n">dead_time</span><span class="p">,</span> <span class="n">measurement_time</span><span class="p">,</span> <span class="n">pile_up_model</span><span class="p">)</span>
-<span class="gr">TypeError</span>: <span class="n">in method &#39;add_pile_up_to_model&#39;, argument 8 of type &#39;std::string&#39;</span>
+  File <span class="nb">&quot;/home/travis/build/Fluorescence-Tools/fit2x/examples/fluorescence_decay/plot_pile_up.py&quot;</span>, line <span class="m">10</span>, in <span class="n">&lt;module&gt;</span>
+    <span class="kn">import</span> <span class="nn">fit2x</span>
+  File <span class="nb">&quot;/home/travis/miniconda/envs/docs_env/lib/python3.7/site-packages/fit2x.py&quot;</span>, line <span class="m">17</span>, in <span class="n">&lt;module&gt;</span>
+    <span class="n">_fit2x</span> <span class="o">=</span> <span class="n">swig_import_helper</span><span class="p">()</span>
+  File <span class="nb">&quot;/home/travis/miniconda/envs/docs_env/lib/python3.7/site-packages/fit2x.py&quot;</span>, line <span class="m">16</span>, in <span class="n">swig_import_helper</span>
+    <span class="k">return</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s1">&#39;_fit2x&#39;</span><span class="p">)</span>
+  File <span class="nb">&quot;/home/travis/miniconda/envs/docs_env/lib/python3.7/importlib/__init__.py&quot;</span>, line <span class="m">127</span>, in <span class="n">import_module</span>
+    <span class="k">return</span> <span class="n">_bootstrap</span><span class="o">.</span><span class="n">_gcd_import</span><span class="p">(</span><span class="n">name</span><span class="p">[</span><span class="n">level</span><span class="p">:],</span> <span class="n">package</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span>
+<span class="gr">ImportError</span>: <span class="n">libtttrlib.so: cannot open shared object file: No such file or directory</span>
 </pre></div>
 </div>
 <div class="line-block">

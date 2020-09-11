@@ -66,7 +66,17 @@ Fluorescence decay analysis - 2
 
 
 
+.. rst-class:: sphx-glr-script-out
 
+
+.. code-block:: pytb
+
+    Traceback (most recent call last):
+      File "/home/travis/build/Fluorescence-Tools/fit2x/examples/fluorescence_decay/plot_decay_analysis_2.py", line 9, in <module>
+        import tttrlib
+      File "/home/travis/miniconda/envs/docs_env/lib/python3.7/site-packages/tttrlib.py", line 9, in <module>
+        import _tttrlib
+    ImportError: libtttrlib.so: cannot open shared object file: No such file or directory
 
 
 
@@ -101,12 +111,6 @@ Make decay object           #
     lifetime_spectrum = [0.5, 0.8, 0.5, 3.0]
 
 
-
-
-
-
-
-
 Optimize                    #
 ##################################
 
@@ -124,12 +128,6 @@ Optimize                    #
         objective_function_chi2, x0,
         args=(decay_object, x_min, x_max),
     )
-
-
-
-
-
-
 
 
 Plot                        #
@@ -153,19 +151,9 @@ Plot                        #
 
 
 
-
-.. image:: /auto_examples/fluorescence_decay/images/sphx_glr_plot_decay_analysis_2_001.png
-    :alt: plot decay analysis 2
-    :class: sphx-glr-single-img
-
-
-
-
-
-
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  0.264 seconds)
+   **Total running time of the script:** ( 0 minutes  0.005 seconds)
 
 
 .. _sphx_glr_download_auto_examples_fluorescence_decay_plot_decay_analysis_2.py:
