@@ -11,6 +11,14 @@ if(UNIX AND NOT APPLE)
 endif()
 
 ################################################################################
+###### OPTIONS
+################################################################################
+option(INSTALL "Install the library and the include files" ON)
+option(BUILD_PYTHON_INTERFACE "Build the python interface" ON)
+OPTION(BUILD_DOC "Build documentation" OFF)
+OPTION(BUILD_R_INTERFACE "Build R interface" OFF)
+
+################################################################################
 ###### CONDA
 ################################################################################
 

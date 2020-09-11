@@ -19,9 +19,9 @@ def read_version(
     return version.replace('"', '')
 
 
-__name__ = "fit2x"
-__version__ = read_version()
-__license__ = 'Mozilla Public License 2.0 (MPL 2.0)'
+NAME = "fit2x"
+VERSION = read_version()
+LICENSE = 'Mozilla Public License 2.0 (MPL 2.0)'
 
 
 class CMakeExtension(Extension):
@@ -103,9 +103,9 @@ class CMakeBuild(build_ext):
 
 
 setup(
-    name=__name__,
-    version=__version__,
-    license=__license__,
+    name=NAME,
+    version=VERSION,
+    license=LICENSE,
     author='Thomas-Otavio Peulen',
     author_email='thomas.otavio.peulen@gmail.com',
     ext_modules=[
