@@ -63,6 +63,9 @@ script:
     if [[ "$TRAVIS_OS_NAME" == "linux" ]]
     then
       nosetests --nocapture --with-coverage test_*.py
+      # Code coverage
+      pip install codacy-coverage
+      coverage xml && python-codacy-coverage -r coverage.xml
     fi
   - cd ..
 
@@ -74,10 +77,6 @@ after_success:
   - |
     if [[ "$TRAVIS_OS_NAME" == "linux" ]]
     then
-      # Code coverage
-      pip install codacy-coverage
-      coverage xml
-      python-codacy-coverage -r coverage.xml
       # Build Sphinx docs
       cd docs
       conda env create -f environment.yml
