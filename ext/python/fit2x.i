@@ -57,6 +57,7 @@ import_array();
 // Generic output arrays views
 // floating points
 %apply(double** ARGOUTVIEW_ARRAY1, int* DIM1) {(double** output_view, int* n_output)}
+%apply(float** ARGOUTVIEW_ARRAY1, int* DIM1, int* DIM2, int* DIM3, int* DIM4) {(float **output, int *dim1, int *dim2, int *dim3, int *dim4)}
 
 // Generic output memory managed arrays
 // floating points
