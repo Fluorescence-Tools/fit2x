@@ -82,7 +82,6 @@ after_success:
       cd docs
       conda env create -f environment.yml
       conda activate docs_env
-      conda install $CONDA_PACKAGE --use-local
       make clean; make html
       touch _build/html/.nojekyll
       cd ..
