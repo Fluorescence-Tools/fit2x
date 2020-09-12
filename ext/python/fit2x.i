@@ -1,5 +1,6 @@
 %module(directors="1", package="fit2x") fit2x
 %feature("kwargs", 1);
+%include "documentation.i"
 %{
 // This fixes numpy int casting to std::vector,int>
 // (see: https://github.com/swig/swig/issues/888)

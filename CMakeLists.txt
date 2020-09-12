@@ -6,6 +6,14 @@ ENABLE_LANGUAGE(CXX)
 SET(CMAKE_CXX_STANDARD 11)
 add_definitions(-D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES)
 
+################################################################################
+###### CMAKE
+################################################################################
+SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
+
+################################################################################
+###### DEFINITIONS
+################################################################################
 if(UNIX AND NOT APPLE)
     set(LINUX TRUE)
 endif()
@@ -40,7 +48,6 @@ IF(DEFINED ENV{CONDA_PREFIX})
 ELSE()
     MESSAGE(STATUS "No conda environment defined")
 ENDIF()
-SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
 
 # Conda - INCLUDE and LIB DIR
 #############################################
@@ -55,10 +62,17 @@ if(UNIX)
 endif()
 
 
-
 ################################################################################
 ###### Compiler flags
 ################################################################################
+
+## Compiler warnings
+########################
+if(MSVC)
+    ADD_COMPILE_OPTIONS(/Wall)
+else()
+    ADD_COMPILE_OPTIONS(-Wall -Wextra -pedantic)
+endif()
 
 if(LINUX)
     STRING(APPEND CMAKE_CXX_FLAGS " -march=native -Ofast -mavx2 -ffast-math -funroll-loops")

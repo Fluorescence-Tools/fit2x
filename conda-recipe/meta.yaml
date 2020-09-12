@@ -9,7 +9,7 @@ source:
 
 build:
     number: 0
-    string: np{{ CONDA_NPY }}py{{ CONDA_PY }}_{{ data.get('GIT_BUILD_STR', "0")|lower }}
+    string: py{{ CONDA_PY }}np{{ CONDA_NPY }}boost{{ boost }}hdf5{{ hdf5 }}
 
 requirements:
   host:
@@ -22,21 +22,17 @@ requirements:
     - {{ pin_compatible('numpy') }}
     - cmake
     - swig 3.0.12.*
-    - boost 1.67.0.* # [py < 38]
-    - boost 1.71.0.* # [py >= 38]
-    - hdf5 1.10.2.* # [py < 38 and not linux64]
-    - hdf5 1.10.4.* # [py >= 38 or linux64]
-    - tttrlib>=0.0.18
     - llvm-openmp # [osx]
+    - boost {{ boost }}
+    - hdf5 {{ hdf5 }}
+    - tttrlib>=0.0.18
   run:
     - python {{ python }}
     - {{ pin_compatible('numpy') }}
-    - boost 1.67.0.* # [win]
-    - libboost 1.67.0.* # [not win and py < 38]
-    - libboost 1.71.0.* # [not win and py >= 38]
     - llvm-openmp # [osx]
-    - hdf5 1.10.2.* # [py < 38 and not linux64]
-    - hdf5 1.10.4.* # [py >= 38 or linux64]
+    - boost {{ boost }} # [win]
+    - libboost {{ boost }} # [not win]
+    - hdf5 {{ hdf5 }}
     - tttrlib>=0.0.18
 
 test:
