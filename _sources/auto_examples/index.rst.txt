@@ -200,6 +200,44 @@ Fluorescence decay applications.
 
 
 
+.. _sphx_glr_auto_examples_imaging:
+
+.. _fluorescence_decay_examples:
+
+Imaging
+-------
+
+Examples
+^^^^^^^^
+FLIM imaging
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="For phasor image analysis the library fit2x provides functions">
+
+.. only:: html
+
+ .. figure:: /auto_examples/imaging/images/thumb/sphx_glr_plot_imaging_phasor_thumb.png
+     :alt: Phasor analysis of images
+
+     :ref:`sphx_glr_auto_examples_imaging_plot_imaging_phasor.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/imaging/plot_imaging_phasor
+.. raw:: html
+
+    <div class="sphx-glr-clear"></div>
+
+
+
 .. only :: html
 
  .. container:: sphx-glr-footer
