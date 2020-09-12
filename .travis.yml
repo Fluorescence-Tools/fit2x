@@ -31,6 +31,7 @@ addons:
 env:
   # Build and test package on all supported python versions
   - BUILD_TARGET=3.7 MINICONDA_VERSION=latest
+  - CONDA_PACKAGE=fit2x
 
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then MINICONDA_OS=Linux; else MINICONDA_OS=MacOSX; fi
@@ -51,7 +52,7 @@ before_install:
   - conda config --add channels "file://`pwd`/bld-dir"
 
 install:
-  - conda install fit2x -c "file://`pwd`/bld-dir"
+  - conda install $CONDA_PACKAGE -c "file://`pwd`/bld-dir"
 
 script:
   # create a link from nosetests in test to make sure that the correct nosetests is used
@@ -81,6 +82,7 @@ after_success:
       cd docs
       conda env create -f environment.yml
       conda activate docs_env
+      conda install $CONDA_PACKAGE --use-local
       make clean; make html
       touch _build/html/.nojekyll
       cd ..
