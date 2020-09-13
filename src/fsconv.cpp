@@ -381,9 +381,9 @@ void add_pile_up_to_model(
         double* model, int n_model,
         double* data, int n_data,
         double repetition_rate,
-        double dead_time,
+        double instrument_dead_time,
         double measurement_time,
-        std::string pile_up_model
+        const char* pile_up_model
 ){
 #if VERBOSE_FIT2X
     std::clog << "ADD PILE-UP" << std::endl;
@@ -393,16 +393,16 @@ void add_pile_up_to_model(
     std::clog << "-- n_data: " << n_data << std::endl;
     std::clog << "-- n_model: " << n_model << std::endl;
 #endif
-    if(pile_up_model == "coates"){
+    if(strcmp(pile_up_model, "coates") == 0){
 #if VERBOSE_FIT2X
         std::clog << "-- pile_up_model: " << pile_up_model << std::endl;
 #endif
         repetition_rate *= 1e6;
-        dead_time *= 1e-9;
+        instrument_dead_time *= 1e-9;
         std::vector<double> cum_sum(n_data);
         std::partial_sum(data, data + n_data, cum_sum.begin(), std::plus<double>());
         long n_pulse_detected = cum_sum[cum_sum.size() - 1];
-        double total_dead_time = n_pulse_detected * dead_time;
+        double total_dead_time = n_pulse_detected * instrument_dead_time;
         double live_time = measurement_time - total_dead_time;
         double n_excitation_pulses = std::max(live_time * repetition_rate, (double) n_pulse_detected);
 #if VERBOSE_FIT2X

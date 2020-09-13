@@ -1,10 +1,4 @@
-%{
-#include "../include/fsconv.h"
-%}
-
-// The functions are added manually as their signature needs to be changed to
-// use them with numpy.i
-// %include "../include/fsconv.h"
+%include "typemaps.i"
 
 // manually added instead of including header file as all other functions
 %apply (double* INPLACE_ARRAY1, int DIM1) {
@@ -38,9 +32,9 @@ void add_pile_up_to_model(
         double* model, int n_model,
         double* data, int n_data,
         double repetition_rate,
-        double dead_time,
+        double instrument_dead_time,
         double measurement_time,
-        std::string pile_up_model
+        const char* pile_up_model = "coates"
 );
 
 //// rescale
