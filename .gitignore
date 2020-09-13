@@ -14,8 +14,8 @@ docs/_build
 test/stage
 
 # Documentation and tools
-doc/_*
-doc/paper*
+docs/_*
+docs/auto_examples
 
 # JetBrains
 # User-specific stuff

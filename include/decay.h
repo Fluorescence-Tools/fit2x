@@ -795,7 +795,7 @@ public:
             double acquisition_time = 1e9, double instrument_dead_time = 1e-9,
             int convolution_method = 0,
             double *data_weights = nullptr, int n_data_weights = -1,
-            std::string score_type = "poisson",
+            const char* score_type = "poisson",
             bool take_abs_of_lifetime_spectrum = true
     ) {
         int n_model = std::min({n_irf_histogram, n_time_axis, n_data});
@@ -967,7 +967,7 @@ public:
     double get_score(
             int x_min = -1,
             int x_max = -1,
-            std::string score_type= "poisson"
+            const char* score_type= "poisson"
     ){
 #if VERBOSE_FIT2X
         std::clog << "CHI2" << std::endl;
@@ -976,17 +976,17 @@ public:
         x_min = (x_min < 0) ? std::max(this->_score_range_min, 0) : x_min;
         x_max = (x_max < 0) ? (int)_data.size(): std::min(x_max, (int)_data.size());
         double v = 0.0;
-        if(score_type != "normal") {
+        if(strcmp(score_type, "normal") == 0) {
+            double* wres; int nwres;
+            get_weighted_residuals(&wres, &nwres);
+            auto sr = get_score_range();
+            for(int i=sr[0];i<sr[1];i++) v += wres[i] * wres[i];
+        } else{
             double* m; int nm; get_model(&m, &nm);
             double* d; int nd; get_data(&d, &nd);
             auto data = std::vector<double>(d, d+nd);
             auto model = std::vector<double>(m, m+nm);
             v = statistics::chi2_counting(data, model, x_min, x_max, score_type);
-        } else{
-            double* wres; int nwres;
-            get_weighted_residuals(&wres, &nwres);
-            auto sr = get_score_range();
-            for(int i=sr[0];i<sr[1];i++) v += wres[i] * wres[i];
         }
 #if VERBOSE_FIT2X
         std::clog << "-- x_min: " << x_min << std::endl;

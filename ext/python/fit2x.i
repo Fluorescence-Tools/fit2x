@@ -1,6 +1,5 @@
 %module(directors="1", package="fit2x") fit2x
 %feature("kwargs", 1);
-%include "documentation.i"
 %{
 // This fixes numpy int casting to std::vector,int>
 // (see: https://github.com/swig/swig/issues/888)
@@ -10,24 +9,23 @@
 #include <assert.h>
 #include "../include/fits2x.h"
 %}
-// Python code that should be included at the begining (import, Base class, etc)
-%pythoncode "../ext/python/fit2x.py"
 
+%include <typemaps.i>
 %include <std_shared_ptr.i>
+%include <cpointer.i>
 %include <std_vector.i>
 %include <attribute.i>
-%include <typemaps.i>
-%include <cpointer.i>
-%include <shared_ptr.i>
-%include <std_string.i>
-%include <std_wstring.i>
 %include "exception.i"
 %include "numpy.i"
 %include "documentation.i"
 
+
 %init %{
 import_array();
 %}
+
+// Python code that should be included at the begining (import, Base class, etc)
+%pythoncode "../ext/python/fit2x.py"
 
 // Templates
 %template(VectorDouble) std::vector<double>;
@@ -37,10 +35,6 @@ import_array();
 %shared_ptr(TTTR) // to pass TTTR around
 %shared_ptr(std::string)
 
-/* Convolution and LabView interface*/
-%include "lvarray.i"
-%include "fsconv.i"
-%include "phasor.i"
 
 // Generic input arrays
 // floating numbers
@@ -60,12 +54,13 @@ import_array();
 %apply(float** ARGOUTVIEW_ARRAY1, int* DIM1, int* DIM2, int* DIM3, int* DIM4) {(float **output, int *dim1, int *dim2, int *dim3, int *dim4)}
 
 // Generic output memory managed arrays
-// floating points
+// float and double
 %apply(double** ARGOUTVIEWM_ARRAY1, int* DIM1) {(double** output, int* n_output)}
 %apply(double** ARGOUTVIEWM_ARRAY2, int* DIM1, int* DIM2) {(double** output, int* n_output1, int* n_output2)}
 %apply(double** ARGOUTVIEWM_ARRAY1, int* DIM1) {(double** output, int* n_output)}
 %apply (double** ARGOUTVIEWM_ARRAY3, int* DIM1, int* DIM2, int* DIM3) {(double** output, int* dim1, int* dim2, int* dim3)}
-%apply (float** ARGOUTVIEWM_ARRAY4, int* DIM1, int* DIM2, int* DIM3, int* DIM4) {(float** output, int* dim1, int* dim2, int* dim3, int* dim4)}
+%apply (float** ARGOUTVIEWM_ARRAY4, int* DIM1, int* DIM2, int* DIM3, int* DIM4) {(float **output, int *dim1, int *dim2, int *dim3, int *dim4)}
+
 // integers
 %apply(long long** ARGOUTVIEWM_ARRAY1, int* DIM1) {(long long **output, int *n_output)}
 %apply(unsigned long long** ARGOUTVIEWM_ARRAY1, int* DIM1) {(unsigned long long** output, int* n_output)}
@@ -86,6 +81,11 @@ import_array();
 %apply (int DIM1, double* INPLACE_ARRAY1) {(int len1, double* x)}
 %apply (int DIM1, short* IN_ARRAY1) {(int len2, short* fixed)}
 
+
+/* Convolution and LabView interface*/
+%include "lvarray.i"
+%include "fsconv.i"
+%include "phasor.i"
 
 /* Fits and Decay*/
 %include "fit23.i"

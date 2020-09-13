@@ -1,4 +1,7 @@
-%include "../include/fit25.h"
+%{
+#include "../include/fit25.h"
+%}
+
 
 %rename (targetf25) my_targetf25;
 %exception my_targetf25{$action if (PyErr_Occurred()) SWIG_fail;}

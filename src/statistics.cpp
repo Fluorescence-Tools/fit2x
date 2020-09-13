@@ -29,16 +29,16 @@ double statistics::chi2_counting(
         std::vector<double> &model,
         int x_min,
         int x_max,
-        std::string type
+        const char* type
 ){
     double chi2 = 0.0;
-    if(type == "neyman"){
+    if(strcmp(type, "neyman") == 0){
         for(int i = x_min; i < x_max; i++){
             double mu = model[i];
             double m = std::max(1., data[i]);
             chi2 += (mu - m) * (mu - m) / m;
         }
-    } else if(type == "poisson"){
+    } else if(strcmp(type, "poisson") == 0){
         #ifndef _WIN32
         #pragma omp simd
         #endif
@@ -48,7 +48,7 @@ double statistics::chi2_counting(
             chi2 += 2 * std::abs(mu);
             chi2 -= 2 * m * (1 + log(std::max(0.0, mu) / std::max(1.0, m)));
         }
-    } else if(type == "pearson"){
+    } else if(strcmp(type, "pearson") == 0){
         for(int i = x_min; i < x_max; i++){
             double m = model[i];
             double d = data[i];
@@ -56,7 +56,7 @@ double statistics::chi2_counting(
                 chi2 += (m-d) / m;
             }
         }
-    } else if(type == "gauss"){
+    } else if(strcmp(type, "gauss") == 0){
         for(int i = x_min; i < x_max; i++){
             double mu = model[i];
             double m = data[i];
@@ -64,7 +64,7 @@ double statistics::chi2_counting(
             if(mu_p <= 1.e-12) continue;
             chi2 += (mu - m) * (mu - m) / mu + std::log(mu/mu_p) - (mu_p - m) * (mu_p - m) / mu_p;
         }
-    } else if(type == "cnp"){
+    } else if(strcmp(type, "cnp") == 0){
         for(int i = x_min; i < x_max; i++){
             double m = data[i];
             if(m <= 1e-12) continue;

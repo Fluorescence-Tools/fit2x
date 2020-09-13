@@ -1562,14 +1562,13 @@ Parameters
 
 %feature("docstring") add_pile_up_to_model "
 
-Correct the model function for pile up.  
+Add a pile-up distortion to the model function.  
 
-Add pile up to a model function. The pile-up model follows the description by
-Coates, 1968, eq. 2  
+This function adds a pile up distortion to a model fluorescence decay. The model
+used to compute the pile-up distortion follows the description of Coates (1968,
+eq. 2 and eq. 4)  
 
-p = data / (n_excitation_pulses - np.cumsum(data)) Coates, 1968, eq. 4  
-
-Reference: Coates, P.: The correction for photonpile-up’ in the measurement of
+Reference: Coates, P.: The correction for photonpile-up in the measurement of
 radiative lifetimes. J. Phys. E: Sci. Instrum. 1(8), 878–879 (1968)  
 
 Parameters
@@ -1583,14 +1582,13 @@ Parameters
 * `n_data[in]` :  
     number of elements in experimental decay  
 * `repetition_rate[in]` :  
-    The repetition-rate in MHz  
-* `dead_time[in]` :  
-    The dead-time of the detection system in nanoseconds  
+    The repetition-rate (excitation rate) in MHz  
+* `instrument_dead_time[in]` :  
+    The overall dead-time of the detection system in nanoseconds  
 * `measurement_time[in]` :  
     The measurement time in seconds  
 * `pile_up_model[in]` :  
-    The model used to compute the pile up distortion of the data (currently only
-    Coates)  
+    The model used to compute the pile up distortion. (default \"coates\")  
 ";
 
 %feature("docstring") discriminate_small_amplitudes "

@@ -5,7 +5,6 @@
 #include <cmath>
 #include <vector>
 #include <numeric>
-#include <string>
 #include <algorithm>
 #include <iostream>
 #include "omp.h"
@@ -130,7 +129,7 @@ namespace statistics{
             std::vector<double> &model,
             int x_min = -1,
             int x_max = -1,
-            std::string type="neyman"
+            const char* type="neyman"
     );
 }
 

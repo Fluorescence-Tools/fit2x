@@ -1,4 +1,6 @@
-%include "typemaps.i"
+%{
+#include "../include/fsconv.h"
+%}
 
 // manually added instead of including header file as all other functions
 %apply (double* INPLACE_ARRAY1, int DIM1) {
@@ -36,6 +38,7 @@ void add_pile_up_to_model(
         double measurement_time,
         const char* pile_up_model = "coates"
 );
+
 
 //// rescale
 //////////////
@@ -487,4 +490,3 @@ void my_shift_lamp(
     shift_lamp(lampsh, lamp, ts, len1);
 }
 %}
-

@@ -1,4 +1,6 @@
-%include "../include/fit23.h"
+%{
+#include "../include/fit23.h"
+%}
 
 %rename (modelf23) my_modelf23;
 %exception my_modelf23{$action if (PyErr_Occurred()) SWIG_fail;}

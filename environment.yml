@@ -1,7 +1,8 @@
-name: tttrlib
+name: fit2x
 
 channels:
   - tpeulen
+  - tpeulen/label/nightly
   - defaults
 
 dependencies:
@@ -13,5 +14,5 @@ dependencies:
   - nose
   - anaconda-client
   - conda-build
-  - tttrlib
   - mkl
+  - tttrlib >=0.0.19

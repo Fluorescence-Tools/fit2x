@@ -5,7 +5,6 @@
 
 #include <cmath>
 #include <numeric> /* accumulate */
-#include <string>
 #include <vector>
 #include "omp.h"
 
