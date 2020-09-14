@@ -130,7 +130,7 @@ def parameter(self) -> dict:
         'use_corrected_irf_as_scatter': self.use_corrected_irf_as_scatter,
         'amplitude_threshold': self.amplitude_threshold,
         'use_amplitude_threshold': self.use_amplitude_threshold,
-        'use_pile_up_correction': self.add_pile_up,
+        'use_pile_up_correction': self.use_pile_up_correction,
         'convolution_method': self.convolution_method,
         'use_linearization': self.use_linearization
     }

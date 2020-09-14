@@ -851,12 +851,11 @@ and perpendicular detection channel.
 Parameters
 ----------
 * `param` :  
-    array containing the parameters of the model [0] tau, [1] gamma, [2] r0, [3]
-    rho  
+    array containing the model parameters [0] tau, [1] gamma, [2] r0, [3] rho  
 * `irf` :  
-    instrument response function in Jordi format  
+    instrument response function in Jordi format (parallel, perpendicular)  
 * `bg[in]` :  
-    background pattern in Jordi format  
+    background pattern in Jordi format (parallel, perpendicular)  
 * `Nchannels[in]` :  
     number of channels (half the length of the Jordi arrays)  
 * `dt[in]` :  
@@ -904,7 +903,7 @@ a normalized chi2
 
 %feature("docstring") fit23 "
 
-Function optimizing parameters of model23 to the data.  
+Function that optimizes parameters of model23 to data.  
 
 Parameters
 ----------

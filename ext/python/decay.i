@@ -27,6 +27,8 @@
     (double* x, int n_x)
 }
 
+%include "../include/decay.h"
+
 %attribute(Decay, double, constant_offset, get_constant_offset, set_constant_offset);
 %attribute(Decay, double, irf_shift_channels, get_irf_shift_channels, set_irf_shift_channels);
 %attribute(Decay, double, irf_background_counts, get_irf_background_counts, set_irf_background_counts);
@@ -48,9 +50,7 @@
 %attribute(Decay, double, number_of_photons, get_number_of_photons, set_number_of_photons);
 %attribute(Decay, double, excitation_period, get_excitation_period, set_excitation_period);
 
-%include "../include/decay.h"
-
 %extend Decay{
-    %pythoncode "../ext/python/decay/decay_extension.py"
+    %pythoncode "../ext/python/decay_extension.py"
 }
 
