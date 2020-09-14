@@ -4,10 +4,10 @@
 #include <cmath>
 #include <iostream>
 #include <vector>
-#include <stdlib.h>
+#include <cstdlib>
 #include <numeric>
 #include <algorithm>
-#include <string.h> /* strcmp */
+#include <cstring> /* strcmp */
 #include <memory> /* shared_ptr */
 
 #include "omp.h"

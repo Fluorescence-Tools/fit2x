@@ -23,17 +23,17 @@ requirements:
     - cmake
     - swig 3.0.12.*
     - llvm-openmp # [osx]
-    - boost {{ boost }}
-    - hdf5 {{ hdf5 }}
+    - boost {{ boost }}.*
+    - hdf5 {{ hdf5 }}.*
     - tttrlib>=0.0.18
   run:
     - python {{ python }}
     - {{ pin_compatible('numpy') }}
     - llvm-openmp # [osx]
-    - boost {{ boost }} # [win]
-    - libboost {{ boost }} # [not win]
-    - hdf5 {{ hdf5 }}
-    - tttrlib>=0.0.18
+    - boost {{ boost }}.* # [win]
+    - libboost {{ boost }}.* # [not win]
+    - hdf5 {{ hdf5 }}.*
+    - tttrlib>=0.0.19
 
 test:
   imports:

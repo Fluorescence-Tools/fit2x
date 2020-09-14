@@ -7,7 +7,7 @@
 #include <numeric>
 #include <algorithm>
 #include <iostream>
-#include <string.h> /* strcmp */
+#include <cstring> /* strcmp */
 #include "omp.h"
 
 

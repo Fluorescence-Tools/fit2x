@@ -388,7 +388,7 @@ void add_pile_up_to_model(
 #if VERBOSE_FIT2X
     std::clog << "ADD PILE-UP" << std::endl;
     std::clog << "-- Repetition_rate [MHz]: " << repetition_rate << std::endl;
-    std::clog << "-- Dead_time [ns]: " << dead_time << std::endl;
+    std::clog << "-- Dead_time [ns]: " << instrument_dead_time << std::endl;
     std::clog << "-- Measurement_time [s]: " << measurement_time << std::endl;
     std::clog << "-- n_data: " << n_data << std::endl;
     std::clog << "-- n_model: " << n_model << std::endl;
