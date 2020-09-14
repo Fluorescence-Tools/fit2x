@@ -780,8 +780,8 @@ template&lt;class <code class="sig-name descname">T</code>&gt;<br /><span class=
 </dd></dl>
 
 <dl class="cpp function">
-<dt id="_CPPv4N5Decay9get_scoreEiiNSt6stringE">
-<span class="target" id="class_decay_1a0d5e2986fe52dbb13722dd9073b6287e"></span>double <code class="sig-name descname">get_score</code><span class="sig-paren">(</span>int <em>x_min</em> = -1, int <em>x_max</em> = -1, std::string <em>score_type</em> = &quot;poisson&quot;<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5Decay9get_scoreEiiNSt6stringE" title="Permalink to this definition">¶</a><br /></dt>
+<dt id="_CPPv4N5Decay9get_scoreEiiPKc">
+<span class="target" id="class_decay_1ac507397172359d814b5ca9a4ab052632"></span>double <code class="sig-name descname">get_score</code><span class="sig-paren">(</span>int <em>x_min</em> = -1, int <em>x_max</em> = -1, <em class="property">const</em> char *<em>score_type</em> = &quot;poisson&quot;<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5Decay9get_scoreEiiPKc" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Computes the chi2 for the model and the data</p>
 <p>The “normal” chi2 is the sum of the squared weighted deviations between the data and the model.</p>
 <p><dl class="simple">
@@ -886,8 +886,8 @@ template&lt;class <code class="sig-name descname">T</code>&gt;<br /><span class=
 </dd></dl>
 
 <dl class="cpp function">
-<dt id="_CPPv4N5Decay13compute_scoreEPdiPdiPdiddddPdiNSt6vectorIiEENSt6vectorIiEEdbdPdibbbbdddiPdiNSt6stringEb">
-<span class="target" id="class_decay_1abccbcb2e096d34048b641abd810d4111"></span>double <code class="sig-name descname">compute_score</code><span class="sig-paren">(</span>double *<em>data</em>, int <em>n_data</em>, double *<em>time_axis</em> = nullptr, int <em>n_time_axis</em> = -1, double *<em>irf_histogram</em> = nullptr, int <em>n_irf_histogram</em> = -1, double <em>constant_offset</em> = 0.0, double <em>irf_background_counts</em> = 0.0, double <em>scatter_fraction</em> = 0.0, double <em>irf_shift_channels</em> = 0.0, double *<em>lifetime_spectrum</em> = nullptr, int <em>n_lifetime_spectrum</em> = -1, std::vector&lt;int&gt; <em>convolution_range</em> = std::vector&lt;int&gt;({0, -1}), std::vector&lt;int&gt; <em>score_range</em> = std::vector&lt;int&gt;({0, -1}), double <em>excitation_period</em> = 100.0, bool <em>scale_model_to_data</em> = true, double <em>number_of_photons</em> = 1, double *<em>linearization</em> = nullptr, int <em>n_linearization</em> = -1, bool <em>use_linearization</em> = false, bool <em>use_pile_up_correction</em> = false, bool <em>use_corrected_irf_as_scatter</em> = false, bool <em>use_amplitude_threshold</em> = false, double <em>amplitude_threshold</em> = 1e10, double <em>acquisition_time</em> = 1e9, double <em>instrument_dead_time</em> = 1e-9, int <em>convolution_method</em> = 0, double *<em>data_weights</em> = nullptr, int <em>n_data_weights</em> = -1, std::string <em>score_type</em> = &quot;poisson&quot;, bool <em>take_abs_of_lifetime_spectrum</em> = true<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5Decay13compute_scoreEPdiPdiPdiddddPdiNSt6vectorIiEENSt6vectorIiEEdbdPdibbbbdddiPdiNSt6stringEb" title="Permalink to this definition">¶</a><br /></dt>
+<dt id="_CPPv4N5Decay13compute_scoreEPdiPdiPdiddddPdiNSt6vectorIiEENSt6vectorIiEEdbdPdibbbbdddiPdiPKcb">
+<span class="target" id="class_decay_1a56f8d8ad043f70e367bd90b9b2ce226e"></span>double <code class="sig-name descname">compute_score</code><span class="sig-paren">(</span>double *<em>data</em>, int <em>n_data</em>, double *<em>time_axis</em> = nullptr, int <em>n_time_axis</em> = -1, double *<em>irf_histogram</em> = nullptr, int <em>n_irf_histogram</em> = -1, double <em>constant_offset</em> = 0.0, double <em>irf_background_counts</em> = 0.0, double <em>scatter_fraction</em> = 0.0, double <em>irf_shift_channels</em> = 0.0, double *<em>lifetime_spectrum</em> = nullptr, int <em>n_lifetime_spectrum</em> = -1, std::vector&lt;int&gt; <em>convolution_range</em> = std::vector&lt;int&gt;({0, -1}), std::vector&lt;int&gt; <em>score_range</em> = std::vector&lt;int&gt;({0, -1}), double <em>excitation_period</em> = 100.0, bool <em>scale_model_to_data</em> = true, double <em>number_of_photons</em> = 1, double *<em>linearization</em> = nullptr, int <em>n_linearization</em> = -1, bool <em>use_linearization</em> = false, bool <em>use_pile_up_correction</em> = false, bool <em>use_corrected_irf_as_scatter</em> = false, bool <em>use_amplitude_threshold</em> = false, double <em>amplitude_threshold</em> = 1e10, double <em>acquisition_time</em> = 1e9, double <em>instrument_dead_time</em> = 1e-9, int <em>convolution_method</em> = 0, double *<em>data_weights</em> = nullptr, int <em>n_data_weights</em> = -1, <em class="property">const</em> char *<em>score_type</em> = &quot;poisson&quot;, bool <em>take_abs_of_lifetime_spectrum</em> = true<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5Decay13compute_scoreEPdiPdiPdiddddPdiNSt6vectorIiEENSt6vectorIiEEdbdPdibbbbdddiPdiPKcb" title="Permalink to this definition">¶</a><br /></dt>
 <dd></dd></dl>
 
 <dl class="cpp function">
@@ -1859,8 +1859,8 @@ template&lt;class <code class="sig-name descname">T</code>, class <code class="s
 <dd><div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric">Functions</p>
 <dl class="cpp function">
-<dt id="_CPPv4N10statistics13chi2_countingERNSt6vectorIdEERNSt6vectorIdEEiiNSt6stringE">
-<span class="target" id="statistics_8h_1ad8c50fb2436083d18888fe7cefbe865a"></span>double <code class="sig-name descname">chi2_counting</code><span class="sig-paren">(</span>std::vector&lt;double&gt; &amp;<em>data</em>, std::vector&lt;double&gt; &amp;<em>model</em>, int <em>x_min</em> = -1, int <em>x_max</em> = -1, std::string <em>type</em> = &quot;neyman&quot;<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10statistics13chi2_countingERNSt6vectorIdEERNSt6vectorIdEEiiNSt6stringE" title="Permalink to this definition">¶</a><br /></dt>
+<dt id="_CPPv4N10statistics13chi2_countingERNSt6vectorIdEERNSt6vectorIdEEiiPKc">
+<span class="target" id="statistics_8h_1a11f21a75b38e30f9058ea4b53e6e0faa"></span>double <code class="sig-name descname">chi2_counting</code><span class="sig-paren">(</span>std::vector&lt;double&gt; &amp;<em>data</em>, std::vector&lt;double&gt; &amp;<em>model</em>, int <em>x_min</em> = -1, int <em>x_max</em> = -1, <em class="property">const</em> char *<em>type</em> = &quot;neyman&quot;<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10statistics13chi2_countingERNSt6vectorIdEERNSt6vectorIdEEiiPKc" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Different chi2 measures for counting data:</p>
 <p><a class="reference external" href="https://arxiv.org/pdf/1903.07185.pdf">https://arxiv.org/pdf/1903.07185.pdf</a></p>
 <p><dl class="simple">
@@ -1897,7 +1897,7 @@ template&lt;class <code class="sig-name descname">T</code>, class <code class="s
 <dl class="file">
 <dt>
 <span class="target" id="decay_8h"></span><em>file</em> <code class="sig-name descname">decay.h</code></dt>
-<dd><em>#include &lt;cmath&gt;</em><em>#include &lt;iostream&gt;</em><em>#include &lt;vector&gt;</em><em>#include &lt;stdlib.h&gt;</em><em>#include &lt;numeric&gt;</em><em>#include &lt;algorithm&gt;</em><em>#include &lt;memory&gt;</em><em>#include “omp.h”</em><em>#include “tttrlib/tttr.h”</em><em>#include “fsconv.h”</em><em>#include “statistics.h”</em></dd></dl>
+<dd><em>#include &lt;cmath&gt;</em><em>#include &lt;iostream&gt;</em><em>#include &lt;vector&gt;</em><em>#include &lt;cstdlib&gt;</em><em>#include &lt;numeric&gt;</em><em>#include &lt;algorithm&gt;</em><em>#include &lt;cstring&gt;</em><em>#include &lt;memory&gt;</em><em>#include “omp.h”</em><em>#include “tttrlib/tttr.h”</em><em>#include “fsconv.h”</em><em>#include “statistics.h”</em></dd></dl>
 
 <dl class="file">
 <dt>
@@ -2256,7 +2256,7 @@ template&lt;class <code class="sig-name descname">T</code>, class <code class="s
 <dl class="file">
 <dt>
 <span class="target" id="fsconv_8h"></span><em>file</em> <code class="sig-name descname">fsconv.h</code></dt>
-<dd><em>#include &lt;cmath&gt;</em><em>#include &lt;numeric&gt;</em><em>#include &lt;string&gt;</em><em>#include &lt;vector&gt;</em><em>#include “omp.h”</em><div class="breathe-sectiondef docutils container">
+<dd><em>#include &lt;cmath&gt;</em><em>#include &lt;numeric&gt;</em><em>#include &lt;vector&gt;</em><em>#include “omp.h”</em><div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric">Functions</p>
 <dl class="cpp function">
 <dt id="_CPPv47rescalePdPdPdii">
@@ -2486,22 +2486,21 @@ template&lt;class <code class="sig-name descname">T</code>, class <code class="s
 </dd></dl>
 
 <dl class="cpp function">
-<dt id="_CPPv420add_pile_up_to_modelPdiPdidddNSt6stringE">
-<span class="target" id="fsconv_8h_1a4f2ed0ac8cabb6c183760ed6e1eedbe9"></span>void <code class="sig-name descname">add_pile_up_to_model</code><span class="sig-paren">(</span>double *<em>model</em>, int <em>n_model</em>, double *<em>data</em>, int <em>n_data</em>, double <em>repetition_rate</em>, double <em>dead_time</em>, double <em>measurement_time</em>, std::string <em>pile_up_model</em> = &quot;coates&quot;<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420add_pile_up_to_modelPdiPdidddNSt6stringE" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>Correct the model function for pile up. </p>
-<p>Add pile up to a model function. The pile-up model follows the description by Coates, 1968, eq. 2</p>
-<p>p = data / (n_excitation_pulses - np.cumsum(data)) Coates, 1968, eq. 4</p>
-<p>Reference: Coates, P.: The correction for photonpile-up’ in the measurement of radiative lifetimes. J. Phys. E: Sci. Instrum. 1(8), 878–879 (1968)</p>
+<dt id="_CPPv420add_pile_up_to_modelPdiPdidddPKc">
+<span class="target" id="fsconv_8h_1aacdfb99e1760b160b31bc2707d616ce1"></span>void <code class="sig-name descname">add_pile_up_to_model</code><span class="sig-paren">(</span>double *<em>model</em>, int <em>n_model</em>, double *<em>data</em>, int <em>n_data</em>, double <em>repetition_rate</em>, double <em>instrument_dead_time</em>, double <em>measurement_time</em>, <em class="property">const</em> char *<em>pile_up_model</em> = &quot;coates&quot;<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420add_pile_up_to_modelPdiPdidddPKc" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Add a pile-up distortion to the model function. </p>
+<p>This function adds a pile up distortion to a model fluorescence decay. The model used to compute the pile-up distortion follows the description of Coates (1968, eq. 2 and eq. 4)</p>
+<p>Reference: Coates, P.: The correction for photonpile-up in the measurement of radiative lifetimes. J. Phys. E: Sci. Instrum. 1(8), 878–879 (1968)</p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">model[in</span><span class="pre">out]</span></code>: The array containing the model function </p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">n_model[in]</span></code>: Number of elements in the model array </p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">data[in]</span></code>: The array containing the experimental decay </p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">n_data[in]</span></code>: number of elements in experimental decay </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">repetition_rate[in]</span></code>: The repetition-rate in MHz </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">dead_time[in]</span></code>: The dead-time of the detection system in nanoseconds </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">repetition_rate[in]</span></code>: The repetition-rate (excitation rate) in MHz </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">instrument_dead_time[in]</span></code>: The overall dead-time of the detection system in nanoseconds </p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">measurement_time[in]</span></code>: The measurement time in seconds </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">pile_up_model[in]</span></code>: The model used to compute the pile up distortion of the data (currently only Coates) </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pile_up_model[in]</span></code>: The model used to compute the pile up distortion. (default “coates”) </p></li>
 </ul>
 </dd>
 </dl>
@@ -2713,7 +2712,7 @@ template&lt;class <code class="sig-name descname">T</code>, class <code class="s
 <dl class="file">
 <dt>
 <span class="target" id="statistics_8h"></span><em>file</em> <code class="sig-name descname">statistics.h</code></dt>
-<dd><em>#include &lt;cmath&gt;</em><em>#include &lt;vector&gt;</em><em>#include &lt;numeric&gt;</em><em>#include &lt;string&gt;</em><em>#include &lt;algorithm&gt;</em><em>#include &lt;iostream&gt;</em><em>#include “omp.h”</em><div class="breathe-sectiondef docutils container">
+<dd><em>#include &lt;cmath&gt;</em><em>#include &lt;vector&gt;</em><em>#include &lt;numeric&gt;</em><em>#include &lt;algorithm&gt;</em><em>#include &lt;iostream&gt;</em><em>#include &lt;cstring&gt;</em><em>#include “omp.h”</em><div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric">Functions</p>
 <dl class="cpp function">
 <dt id="_CPPv49init_factv">

@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Benchmark MLE &#8212; fit2x  documentation</title>
+    <title>Benchmark MLE - fit23 &#8212; fit2x  documentation</title>
     <link rel="stylesheet" href="../../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/fix_rtd.css" />
@@ -21,8 +21,8 @@
     <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Convolution benchmark" href="plot_benchmark_convolution_routines.html" />
-    <link rel="prev" title="Fluorescence decay analysis - 2" href="plot_decay_analysis_2.html" />
+    <link rel="next" title="Fluorescence decay analysis - 1" href="plot_decay_analysis_1.html" />
+    <link rel="prev" title="Convolution routines" href="plot_convolution_routines.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
@@ -81,7 +81,7 @@
   <ul class="dropdown-menu localtoc"
       role="menu"
       aria-labelledby="dLabelLocalToc"><ul>
-<li><a class="reference internal" href="#">Benchmark MLE</a></li>
+<li><a class="reference internal" href="#">Benchmark MLE - fit23</a></li>
 </ul>
 </ul>
 </li>
@@ -91,11 +91,11 @@
               
                 
   <li>
-    <a href="plot_decay_analysis_2.html" title="Previous Chapter: Fluorescence decay analysis - 2"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; Fluorescence ...</span>
+    <a href="plot_convolution_routines.html" title="Previous Chapter: Convolution routines"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; Convolution routines</span>
     </a>
   </li>
   <li>
-    <a href="plot_benchmark_convolution_routines.html" title="Next Chapter: Convolution benchmark"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">Convolution benchmark &raquo;</span>
+    <a href="plot_decay_analysis_1.html" title="Next Chapter: Fluorescence decay analysis - 1"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">Fluorescence ... &raquo;</span>
     </a>
   </li>
               
@@ -133,8 +133,8 @@
 <p class="admonition-title">Note</p>
 <p>Click <a class="reference internal" href="#sphx-glr-download-auto-examples-fluorescence-decay-plot-fit23-benchmark-1-py"><span class="std std-ref">here</span></a>     to download the full example code</p>
 </div>
-<div class="sphx-glr-example-title section" id="benchmark-mle">
-<span id="sphx-glr-auto-examples-fluorescence-decay-plot-fit23-benchmark-1-py"></span><h1>Benchmark MLE<a class="headerlink" href="#benchmark-mle" title="Permalink to this headline">¶</a></h1>
+<div class="sphx-glr-example-title section" id="benchmark-mle-fit23">
+<span id="sphx-glr-auto-examples-fluorescence-decay-plot-fit23-benchmark-1-py"></span><h1>Benchmark MLE - fit23<a class="headerlink" href="#benchmark-mle-fit23" title="Permalink to this headline">¶</a></h1>
 <p>Generate n_samples random decays in range (tau_min, tau_max) with
 n_photons photons and fits lifetime. Compares recovered lifetime with
 fitted lifetime</p>
@@ -152,7 +152,7 @@ fitted lifetime</p>
 <span class="n">n_photons_max</span> <span class="o">=</span> <span class="mi">120</span>
 <span class="n">n_photon_step</span> <span class="o">=</span> <span class="mi">2</span>
 
-<span class="n">n_samples</span> <span class="o">=</span> <span class="mi">2000</span>
+<span class="n">n_samples</span> <span class="o">=</span> <span class="mi">200</span>
 
 <span class="n">n_channels</span> <span class="o">=</span> <span class="mi">32</span>
 <span class="n">irf_position_p</span> <span class="o">=</span> <span class="mf">2.0</span>
@@ -241,7 +241,7 @@ fitted lifetime</p>
 <span class="n">p</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  24.506 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  1.644 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-fluorescence-decay-plot-fit23-benchmark-1-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/e4d30a4011133c1ee5f0d98ab5e08f61/plot_fit23_benchmark_1.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_fit23_benchmark_1.py</span></code></a></p>

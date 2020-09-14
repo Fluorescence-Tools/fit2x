@@ -29,12 +29,12 @@ Fluorescence decay applications.
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="MLE mini example">
+    <div class="sphx-glr-thumbcontainer" tooltip="MLE mini example - fit23">
 
 .. only:: html
 
  .. figure:: /auto_examples/fluorescence_decay/images/thumb/sphx_glr_plot_fit23_mini_example_thumb.png
-     :alt: MLE mini example
+     :alt: MLE mini example - fit23
 
      :ref:`sphx_glr_auto_examples_fluorescence_decay_plot_fit23_mini_example.py`
 
@@ -68,27 +68,6 @@ Fluorescence decay applications.
    :hidden:
 
    /auto_examples/fluorescence_decay/plot_decay_fit_irf_bg
-
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="Pile-up">
-
-.. only:: html
-
- .. figure:: /auto_examples/fluorescence_decay/images/thumb/sphx_glr_plot_pile_up_thumb.png
-     :alt: Pile-up
-
-     :ref:`sphx_glr_auto_examples_fluorescence_decay_plot_pile_up.py`
-
-.. raw:: html
-
-    </div>
-
-
-.. toctree::
-   :hidden:
-
-   /auto_examples/fluorescence_decay/plot_pile_up
 
 .. raw:: html
 
@@ -134,12 +113,54 @@ Fluorescence decay applications.
 
 .. raw:: html
 
+    <div class="sphx-glr-thumbcontainer" tooltip="Pile-up">
+
+.. only:: html
+
+ .. figure:: /auto_examples/fluorescence_decay/images/thumb/sphx_glr_plot_pile_up_thumb.png
+     :alt: Pile-up
+
+     :ref:`sphx_glr_auto_examples_fluorescence_decay_plot_pile_up.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/fluorescence_decay/plot_pile_up
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="---------------- Fast convolution ----------------">
+
+.. only:: html
+
+ .. figure:: /auto_examples/fluorescence_decay/images/thumb/sphx_glr_plot_convolution_routines_thumb.png
+     :alt: Convolution routines
+
+     :ref:`sphx_glr_auto_examples_fluorescence_decay_plot_convolution_routines.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/fluorescence_decay/plot_convolution_routines
+
+.. raw:: html
+
     <div class="sphx-glr-thumbcontainer" tooltip="Generate n_samples random decays in range (tau_min, tau_max) with n_photons photons and fits li...">
 
 .. only:: html
 
  .. figure:: /auto_examples/fluorescence_decay/images/thumb/sphx_glr_plot_fit23_benchmark_1_thumb.png
-     :alt: Benchmark MLE
+     :alt: Benchmark MLE - fit23
 
      :ref:`sphx_glr_auto_examples_fluorescence_decay_plot_fit23_benchmark_1.py`
 
@@ -152,27 +173,6 @@ Fluorescence decay applications.
    :hidden:
 
    /auto_examples/fluorescence_decay/plot_fit23_benchmark_1
-
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="Convolution benchmark">
-
-.. only:: html
-
- .. figure:: /auto_examples/fluorescence_decay/images/thumb/sphx_glr_plot_benchmark_convolution_routines_thumb.png
-     :alt: Convolution benchmark
-
-     :ref:`sphx_glr_auto_examples_fluorescence_decay_plot_benchmark_convolution_routines.py`
-
-.. raw:: html
-
-    </div>
-
-
-.. toctree::
-   :hidden:
-
-   /auto_examples/fluorescence_decay/plot_benchmark_convolution_routines
 
 .. raw:: html
 

@@ -1,7 +1,36 @@
 """
 ===============================
-Convolution benchmark
+Convolution routines
 ===============================
+
+----------------
+Fast convolution
+----------------
+
+Overview
+^^^^^^^^
+In ``fit2x`` there are a set of different routines that can be used to compute
+fluorescence decays. Most fluorescence decays are linear combinations of exponential
+decays. Convolutions of such fluorescence decays with instrument response functions
+can be computed using the routines (fconv, fconv_per, fconv_per_cs, etc.). Here,
+fconv stands for fast convolution.
+
+Advanced vector extension
+^^^^^^^^^^^^^^^^^^^^^^^^^
+For faster convolutions ``fit2`` provides routines that make use of
+SIMD (Single Instruction Multiple Data). The SIMD routines use of the AVX2 extension
+(Advanced Vector Extension). For instance, the routines ``fconv`` and ``fconv_per``
+(periodic convolution) have corresponding SIMD routines named ``fconv_avx``and
+``fconv_per_avx``. The SIMD routines compute in parallel the decay in cases
+the decay is compose of more than a single fluorescence lifetime.
+
+The SIMD AVX make use of AVX2 and FMA (Fused Multiply Add). AVX2 and FMA require
+CPUs with 'modern' instruction sets. Most x86 CPUs that were manufacture since
+2012 are supported.
+
+---------
+Benchmark
+---------
 
 """
 from __future__ import annotations
@@ -11,26 +40,13 @@ import time
 import numpy as np
 import pylab as p
 
-def model_irf(
-        n_channels,
-        period,
-        irf_position,
-        irf_width
-):
-    time_axis = np.linspace(0, period, n_channels)
-    irf_np = scipy.stats.norm.pdf(
-        time_axis, loc=irf_position,
-        scale=irf_width)
-    return irf_np, time_axis
-
 
 period = 16
-irf, time_axis = model_irf(
-    n_channels=4505,
-    period=period,
-    irf_position=4.0,
-    irf_width=0.25
-)
+n_channels = 4505
+irf_position = 4.0
+irf_width = 0.25
+time_axis = np.linspace(0, period, n_channels)
+irf = scipy.stats.norm.pdf(time_axis, loc=irf_position, scale=irf_width)
 
 dt = time_axis[1]-time_axis[0]
 lifetime_spectrum = np.array([1., 10] + ([1., 4, 1., 0.4] * 4))

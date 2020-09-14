@@ -1,6 +1,6 @@
 """
 ===============================
-Benchmark MLE
+Benchmark MLE - fit23
 ===============================
 
 Generate n_samples random decays in range (tau_min, tau_max) with
@@ -20,7 +20,7 @@ n_photons_min = 20
 n_photons_max = 120
 n_photon_step = 2
 
-n_samples = 2000
+n_samples = 200
 
 n_channels = 32
 irf_position_p = 2.0

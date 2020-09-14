@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Convolution benchmark &#8212; fit2x  documentation</title>
+    <title>Convolution routines &#8212; fit2x  documentation</title>
     <link rel="stylesheet" href="../../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/fix_rtd.css" />
@@ -21,8 +21,8 @@
     <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Fluorescence decay analysis - 1" href="plot_decay_analysis_1.html" />
-    <link rel="prev" title="Benchmark MLE" href="plot_fit23_benchmark_1.html" />
+    <link rel="next" title="Benchmark MLE - fit23" href="plot_fit23_benchmark_1.html" />
+    <link rel="prev" title="Pile-up" href="plot_pile_up.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
@@ -81,7 +81,15 @@
   <ul class="dropdown-menu localtoc"
       role="menu"
       aria-labelledby="dLabelLocalToc"><ul>
-<li><a class="reference internal" href="#">Convolution benchmark</a></li>
+<li><a class="reference internal" href="#">Convolution routines</a><ul>
+<li><a class="reference internal" href="#fast-convolution">Fast convolution</a><ul>
+<li><a class="reference internal" href="#overview">Overview</a></li>
+<li><a class="reference internal" href="#advanced-vector-extension">Advanced vector extension</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#benchmark">Benchmark</a></li>
+</ul>
+</li>
 </ul>
 </ul>
 </li>
@@ -91,11 +99,11 @@
               
                 
   <li>
-    <a href="plot_fit23_benchmark_1.html" title="Previous Chapter: Benchmark MLE"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; Benchmark MLE</span>
+    <a href="plot_pile_up.html" title="Previous Chapter: Pile-up"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; Pile-up</span>
     </a>
   </li>
   <li>
-    <a href="plot_decay_analysis_1.html" title="Next Chapter: Fluorescence decay analysis - 1"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">Fluorescence ... &raquo;</span>
+    <a href="plot_fit23_benchmark_1.html" title="Next Chapter: Benchmark MLE - fit23"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">Benchmark MLE - fit23 &raquo;</span>
     </a>
   </li>
               
@@ -105,7 +113,7 @@
             
               <li class="hidden-sm">
 <div id="sourcelink">
-  <a href="../../_sources/auto_examples/fluorescence_decay/plot_benchmark_convolution_routines.rst.txt"
+  <a href="../../_sources/auto_examples/fluorescence_decay/plot_convolution_routines.rst.txt"
      rel="nofollow">Source</a>
 </div></li>
             
@@ -131,11 +139,36 @@
       
   <div class="sphx-glr-download-link-note admonition note">
 <p class="admonition-title">Note</p>
-<p>Click <a class="reference internal" href="#sphx-glr-download-auto-examples-fluorescence-decay-plot-benchmark-convolution-routines-py"><span class="std std-ref">here</span></a>     to download the full example code</p>
+<p>Click <a class="reference internal" href="#sphx-glr-download-auto-examples-fluorescence-decay-plot-convolution-routines-py"><span class="std std-ref">here</span></a>     to download the full example code</p>
 </div>
-<div class="sphx-glr-example-title section" id="convolution-benchmark">
-<span id="sphx-glr-auto-examples-fluorescence-decay-plot-benchmark-convolution-routines-py"></span><h1>Convolution benchmark<a class="headerlink" href="#convolution-benchmark" title="Permalink to this headline">¶</a></h1>
-<img alt="Convolution routines, Time per call" class="sphx-glr-single-img" src="../../_images/sphx_glr_plot_benchmark_convolution_routines_001.png" />
+<div class="sphx-glr-example-title section" id="convolution-routines">
+<span id="sphx-glr-auto-examples-fluorescence-decay-plot-convolution-routines-py"></span><h1>Convolution routines<a class="headerlink" href="#convolution-routines" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="fast-convolution">
+<h2>Fast convolution<a class="headerlink" href="#fast-convolution" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="overview">
+<h3>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h3>
+<p>In <code class="docutils literal notranslate"><span class="pre">fit2x</span></code> there are a set of different routines that can be used to compute
+fluorescence decays. Most fluorescence decays are linear combinations of exponential
+decays. Convolutions of such fluorescence decays with instrument response functions
+can be computed using the routines (fconv, fconv_per, fconv_per_cs, etc.). Here,
+fconv stands for fast convolution.</p>
+</div>
+<div class="section" id="advanced-vector-extension">
+<h3>Advanced vector extension<a class="headerlink" href="#advanced-vector-extension" title="Permalink to this headline">¶</a></h3>
+<p>For faster convolutions <code class="docutils literal notranslate"><span class="pre">fit2</span></code> provides routines that make use of
+SIMD (Single Instruction Multiple Data). The SIMD routines use of the AVX2 extension
+(Advanced Vector Extension). For instance, the routines <code class="docutils literal notranslate"><span class="pre">fconv</span></code> and <code class="docutils literal notranslate"><span class="pre">fconv_per</span></code>
+(periodic convolution) have corresponding SIMD routines named <code class="docutils literal notranslate"><span class="pre">fconv_avx``and</span>
+<span class="pre">``fconv_per_avx</span></code>. The SIMD routines compute in parallel the decay in cases
+the decay is compose of more than a single fluorescence lifetime.</p>
+<p>The SIMD AVX make use of AVX2 and FMA (Fused Multiply Add). AVX2 and FMA require
+CPUs with ‘modern’ instruction sets. Most x86 CPUs that were manufacture since
+2012 are supported.</p>
+</div>
+</div>
+<div class="section" id="benchmark">
+<h2>Benchmark<a class="headerlink" href="#benchmark" title="Permalink to this headline">¶</a></h2>
+<img alt="Convolution routines, Time per call" class="sphx-glr-single-img" src="../../_images/sphx_glr_plot_convolution_routines_001.png" />
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 <span class="kn">import</span> <span class="nn">fit2x</span>
 <span class="kn">import</span> <span class="nn">scipy.stats</span>
@@ -143,26 +176,13 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pylab</span> <span class="k">as</span> <span class="nn">p</span>
 
-<span class="k">def</span> <span class="nf">model_irf</span><span class="p">(</span>
-        <span class="n">n_channels</span><span class="p">,</span>
-        <span class="n">period</span><span class="p">,</span>
-        <span class="n">irf_position</span><span class="p">,</span>
-        <span class="n">irf_width</span>
-<span class="p">):</span>
-    <span class="n">time_axis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">period</span><span class="p">,</span> <span class="n">n_channels</span><span class="p">)</span>
-    <span class="n">irf_np</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span>
-        <span class="n">time_axis</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">irf_position</span><span class="p">,</span>
-        <span class="n">scale</span><span class="o">=</span><span class="n">irf_width</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">irf_np</span><span class="p">,</span> <span class="n">time_axis</span>
-
 
 <span class="n">period</span> <span class="o">=</span> <span class="mi">16</span>
-<span class="n">irf</span><span class="p">,</span> <span class="n">time_axis</span> <span class="o">=</span> <span class="n">model_irf</span><span class="p">(</span>
-    <span class="n">n_channels</span><span class="o">=</span><span class="mi">4505</span><span class="p">,</span>
-    <span class="n">period</span><span class="o">=</span><span class="n">period</span><span class="p">,</span>
-    <span class="n">irf_position</span><span class="o">=</span><span class="mf">4.0</span><span class="p">,</span>
-    <span class="n">irf_width</span><span class="o">=</span><span class="mf">0.25</span>
-<span class="p">)</span>
+<span class="n">n_channels</span> <span class="o">=</span> <span class="mi">4505</span>
+<span class="n">irf_position</span> <span class="o">=</span> <span class="mf">4.0</span>
+<span class="n">irf_width</span> <span class="o">=</span> <span class="mf">0.25</span>
+<span class="n">time_axis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">period</span><span class="p">,</span> <span class="n">n_channels</span><span class="p">)</span>
+<span class="n">irf</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">time_axis</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">irf_position</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">irf_width</span><span class="p">)</span>
 
 <span class="n">dt</span> <span class="o">=</span> <span class="n">time_axis</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">time_axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">lifetime_spectrum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mi">10</span><span class="p">]</span> <span class="o">+</span> <span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">]</span> <span class="o">*</span> <span class="mi">4</span><span class="p">))</span>
@@ -246,16 +266,17 @@
 <span class="n">p</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.234 seconds)</p>
-<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-fluorescence-decay-plot-benchmark-convolution-routines-py">
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.235 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-fluorescence-decay-plot-convolution-routines-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
-<p><a class="reference download internal" download="" href="../../_downloads/542e482928c0e25b3c012d48c57494ac/plot_benchmark_convolution_routines.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_benchmark_convolution_routines.py</span></code></a></p>
+<p><a class="reference download internal" download="" href="../../_downloads/c34bc3164edbd59b2a199c8f9c9318a8/plot_convolution_routines.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_convolution_routines.py</span></code></a></p>
 </div>
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
-<p><a class="reference download internal" download="" href="../../_downloads/2c33381f05c96e4561ec6955fe05630a/plot_benchmark_convolution_routines.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_benchmark_convolution_routines.ipynb</span></code></a></p>
+<p><a class="reference download internal" download="" href="../../_downloads/cfa464bca756e1746a73055f431d7854/plot_convolution_routines.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_convolution_routines.ipynb</span></code></a></p>
 </div>
 </div>
 <p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</div>
 </div>
 
 

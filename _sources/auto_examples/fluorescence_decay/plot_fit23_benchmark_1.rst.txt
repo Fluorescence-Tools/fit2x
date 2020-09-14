@@ -10,7 +10,7 @@
 
 
 ===============================
-Benchmark MLE
+Benchmark MLE - fit23
 ===============================
 
 Generate n_samples random decays in range (tau_min, tau_max) with
@@ -43,7 +43,7 @@ fitted lifetime
     n_photons_max = 120
     n_photon_step = 2
 
-    n_samples = 2000
+    n_samples = 200
 
     n_channels = 32
     irf_position_p = 2.0
@@ -134,7 +134,7 @@ fitted lifetime
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  24.506 seconds)
+   **Total running time of the script:** ( 0 minutes  1.644 seconds)
 
 
 .. _sphx_glr_download_auto_examples_fluorescence_decay_plot_fit23_benchmark_1.py:

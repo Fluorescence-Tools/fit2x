@@ -22,7 +22,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Phasor analysis of images" href="../imaging/plot_imaging_phasor.html" />
-    <link rel="prev" title="Convolution benchmark" href="plot_benchmark_convolution_routines.html" />
+    <link rel="prev" title="Benchmark MLE - fit23" href="plot_fit23_benchmark_1.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
@@ -102,7 +102,7 @@
               
                 
   <li>
-    <a href="plot_benchmark_convolution_routines.html" title="Previous Chapter: Convolution benchmark"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; Convolution benchmark</span>
+    <a href="plot_fit23_benchmark_1.html" title="Previous Chapter: Benchmark MLE - fit23"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; Benchmark MLE - fit23</span>
     </a>
   </li>
   <li>
@@ -331,20 +331,11 @@ Create an instance the <code class="docutils literal notranslate"><span class="p
 <span class="n">fit_map</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">x</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-pytb notranslate"><div class="highlight"><pre><span></span><span class="gt">Traceback (most recent call last):</span>
-  File <span class="nb">&quot;/home/travis/build/Fluorescence-Tools/fit2x/examples/fluorescence_decay/plot_decay_analysis_1.py&quot;</span>, line <span class="m">205</span>, in <span class="n">&lt;module&gt;</span>
-    <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="n">decay_object</span><span class="p">,</span> <span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-  File <span class="nb">&quot;/home/travis/miniconda/envs/docs_env/lib/python3.7/site-packages/scipy/optimize/_minimize.py&quot;</span>, line <span class="m">604</span>, in <span class="n">minimize</span>
-    <span class="k">return</span> <span class="n">_minimize_bfgs</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">jac</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span>
-  File <span class="nb">&quot;/home/travis/miniconda/envs/docs_env/lib/python3.7/site-packages/scipy/optimize/optimize.py&quot;</span>, line <span class="m">1003</span>, in <span class="n">_minimize_bfgs</span>
-    <span class="n">old_fval</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">x0</span><span class="p">)</span>
-  File <span class="nb">&quot;/home/travis/miniconda/envs/docs_env/lib/python3.7/site-packages/scipy/optimize/optimize.py&quot;</span>, line <span class="m">327</span>, in <span class="n">function_wrapper</span>
-    <span class="k">return</span> <span class="n">function</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">wrapper_args</span> <span class="o">+</span> <span class="n">args</span><span class="p">))</span>
-  File <span class="nb">&quot;/home/travis/build/Fluorescence-Tools/fit2x/examples/fluorescence_decay/plot_decay_analysis_1.py&quot;</span>, line <span class="m">110</span>, in <span class="n">objective_function_mle</span>
-    <span class="n">chi2_mle</span> <span class="o">=</span> <span class="n">decay_object</span><span class="o">.</span><span class="n">get_score</span><span class="p">(</span><span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="n">score_type</span><span class="o">=</span><span class="s2">&quot;poisson&quot;</span><span class="p">)</span>
-  File <span class="nb">&quot;/home/travis/miniconda/envs/docs_env/lib/python3.7/site-packages/fit2x.py&quot;</span>, line <span class="m">2007</span>, in <span class="n">get_score</span>
-    <span class="k">return</span> <span class="n">_fit2x</span><span class="o">.</span><span class="n">Decay_get_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-<span class="gr">TypeError</span>: <span class="n">in method &#39;Decay_get_score&#39;, argument 4 of type &#39;std::string&#39;</span>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>/home/travis/miniconda/envs/docs_env/lib/python3.7/site-packages/scipy/optimize/_numdiff.py:497: RuntimeWarning: invalid value encountered in subtract
+  df = fun(x) - f0
+/home/travis/miniconda/envs/docs_env/lib/python3.7/site-packages/scipy/optimize/_numdiff.py:497: RuntimeWarning: invalid value encountered in subtract
+  df = fun(x) - f0
 </pre></div>
 </div>
 </div>
@@ -367,7 +358,8 @@ Create an instance the <code class="docutils literal notranslate"><span class="p
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.014 seconds)</p>
+<img alt="plot decay analysis 1" class="sphx-glr-single-img" src="../../_images/sphx_glr_plot_decay_analysis_1_001.png" />
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.400 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-fluorescence-decay-plot-decay-analysis-1-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/104e984a8307b980c4c13863becfd8d8/plot_decay_analysis_1.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_decay_analysis_1.py</span></code></a></p>
