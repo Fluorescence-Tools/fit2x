@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <numeric>
 #include <algorithm>
+#include <string.h> /* strcmp */
 #include <memory> /* shared_ptr */
 
 #include "omp.h"
