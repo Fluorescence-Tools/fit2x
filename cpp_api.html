@@ -1914,9 +1914,9 @@ template&lt;class <code class="sig-name descname">T</code>, class <code class="s
 <dt><strong>Return</strong></dt><dd><p>integer (not used, 0 by default) </p>
 </dd>
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">param</span></code>: array containing the parameters of the model [0] tau, [1] gamma, [2] r0, [3] rho </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">irf</span></code>: instrument response function in Jordi format </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">bg[in]</span></code>: background pattern in Jordi format </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">param</span></code>: array containing the model parameters [0] tau, [1] gamma, [2] r0, [3] rho </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">irf</span></code>: instrument response function in Jordi format (parallel, perpendicular) </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bg[in]</span></code>: background pattern in Jordi format (parallel, perpendicular) </p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">Nchannels[in]</span></code>: number of channels (half the length of the Jordi arrays) </p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">dt[in]</span></code>: time difference between two consecutive counting channels </p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">corrections[in]</span></code>: [0] excitation period, [1] g factor, [2] l1, [3] l2, [4] convolution stop channel number </p></li>
@@ -1947,7 +1947,7 @@ template&lt;class <code class="sig-name descname">T</code>, class <code class="s
 <dl class="cpp function">
 <dt id="_CPPv45fit23PdPsP6MParam">
 <span class="target" id="fit23_8h_1a320b8346ca71feeb1908bd9bc887c557"></span>double <code class="sig-name descname">fit23</code><span class="sig-paren">(</span>double *<em>x</em>, short *<em>fixed</em>, <a class="reference internal" href="#_CPPv46MParam" title="MParam">MParam</a> *<em>p</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv45fit23PdPsP6MParam" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>Function optimizing parameters of model23 to the data.</p>
+<dd><p>Function that optimizes parameters of model23 to data.</p>
 <p><dl class="simple">
 <dt><strong>Return</strong></dt><dd><p></p>
 </dd>
