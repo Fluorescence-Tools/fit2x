@@ -7,7 +7,7 @@ channels:
 dependencies:
     # the versions are all pinned to reduce the memory load by conda
     # without that, the docs would not build on read the docs
-    - fit2x
+    - fit2x >=0.0.4
     - tttrlib >=0.0.19
     - pillow
     - numba
