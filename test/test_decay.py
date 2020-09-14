@@ -92,6 +92,38 @@ class Tests(unittest.TestCase):
         decay.irf_background = 892.1
         self.assertEqual(decay.irf_background, 892.1)
 
+    def test_parameter(self):
+        decay = fit2x.Decay()
+        decay.lifetime_spectrum = [1., 4.]
+        ref = {'irf_background_counts': 0.0,
+               'irf_shift_channels': 0.0,
+               'scatter_fraction': 0.0,
+               'constant_offset': 0.0,
+               'lifetime_spectrum': np.array([1., 4.], dtype=np.float64),
+               'number_of_photons': 0.0,
+               'acquisition_time': 1000000.0,
+               'instrument_dead_time': 1e-09,
+               'convolution_range': (0, -1),
+               'excitation_period': 100.0,
+               'scale_model_to_data': True,
+               'score_range': (0, -1),
+               'use_corrected_irf_as_scatter': False,
+               'amplitude_threshold': 1e-09,
+               'use_amplitude_threshold': False,
+               'use_pile_up_correction': False,
+               'convolution_method': 0,
+               'use_linearization': False}
+        a = decay.parameter
+        # test lifetime spectrum separately as == is not well defined for np.array
+        self.assertEqual(
+            np.alltrue(a.pop('lifetime_spectrum') == ref.pop('lifetime_spectrum')),
+            True
+        )
+        self.assertDictEqual(a, ref)
+        ref['irf_background_counts'] = 11
+        decay.set(**ref)
+        self.assertEqual(decay.parameter['irf_background_counts'], ref['irf_background_counts'])
+
     def test_constructor_1(self):
         decay = fit2x.Decay()
         # default values
