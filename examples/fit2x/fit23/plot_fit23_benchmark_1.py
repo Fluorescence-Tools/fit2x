@@ -1,15 +1,19 @@
 """
 ===============================
-Benchmark MLE - fit23
+MLE fit23: Benchmark
 ===============================
+This is a benchmark of ``fit2x.fit23`` that implements an maximum likelihood estimator
+to determine a fluorescence lifetime and a rotational correlation time for time
+and polarization resolved fluorescence decays with low photon counts.
 
-Generate n_samples random decays in range (tau_min, tau_max) with
-n_photons photons and fits lifetime. Compares recovered lifetime with
-fitted lifetime
+In this benchmark fluorescence decays are simulated for a fluorescence lifetime
+in the range ``(tau_min, tau_max)`` with varying number of photons. The simulated
+and the recovered fluorescence lifetimes are compared.
 """
 import fit2x
 import numpy as np
-import pylab as p
+import pylab as plt
+
 np.random.seed(0)
 
 # setup some parameters
@@ -40,7 +44,6 @@ irf_np = np.array([0, 0, 0, 260, 1582, 155, 0, 0, 0, 0,
 
 bg = np.zeros_like(irf_np)
 
-p.show()
 fit23 = fit2x.Fit23(
     dt=dt,
     irf=irf_np,
@@ -54,6 +57,10 @@ tau, gamma, r0, rho = 2.0, 0.01, 0.38, 1.22
 x0 = np.array([tau, gamma, r0, rho])
 fixed = np.array([0, 1, 1, 0])
 
+"""
+In this loop the fluorescence decays are simulated and the simulated decays are 
+fitted.
+"""
 
 n_photon_dict = dict()
 for n_photons in range(n_photons_min, n_photons_max, n_photon_step):
@@ -70,11 +77,8 @@ for n_photons in range(n_photons_min, n_photons_max, n_photon_step):
         fit2x.modelf23(param, irf_np, bg, dt, corrections, model)
         model *= n_photons / np.sum(model)
         data = np.random.poisson(model)
-        r = fit23(
-            data=data,
-            initial_values=x0,
-            fixed=fixed
-        )
+        # This performs a with on the data
+        r = fit23(data=data, initial_values=x0, fixed=fixed)
         # print("tau_sim: %.2f, tau_recov: %s" % (tau, r['x'][0]))
         tau_sim.append(tau)
         tau_recov.append(r['x'][0])
@@ -91,19 +95,42 @@ for k in n_photon_dict:
     devs.append(dev)
 
 
-fig, ax = p.subplots(nrows=1, ncols=3)
-ax[0].semilogy([x for x in fit23._m_param.get_data()], label='Data')
-ax[0].semilogy([x for x in fit23._m_param.get_irf()], label='IRF')
-ax[0].semilogy([x for x in fit23._m_param.get_model()], label='Model')
+
+"""
+The figures below demonstrate how well the fluorescence lifetime can be recovered.
+The left figure displays a typical simulated fluorescence decay. The middle figure
+illustrated the relative deviation of the recovered fluorescence lifetime :math:`\tau_{recov}` 
+from the simulated fluorescence lifetime :math:`\tau_{sim}`. The figure to the right
+displays the standard deviation of the relative deviations in dependence of the 
+number of simulated photons.
+"""
+
+fig, ax = plt.subplots(nrows=1, ncols=3, squeeze=True)
+fig.set_size_inches(12, 4)
+fig.subplots_adjust(bottom=0.2, left=0.125, right=0.9, wspace=0.3)
+ax[0].semilogy([x for x in fit23.data], label='Data')
+ax[0].semilogy([x for x in fit23.irf], label='IRF')
+ax[0].semilogy([x for x in fit23.model], label='Model')
 ax[0].set_ylim((0.1, 10000))
+ax[0].title.set_text(r'Example decay')
+ax[0].set_ylabel(r'Counts')
+ax[0].set_xlabel(r'Channel Nbr.')
 ax[0].legend()
+
 k = list(n_photon_dict.keys())[0]
 tau_sim = n_photon_dict[k]['tau_simulated']
 tau_recov = n_photon_dict[k]['tau_recovered']
 dev = (tau_recov - tau_sim) / tau_sim
+ax[1].title.set_text(r'$\tau_{recov}$ for 20 photons')
 ax[1].plot(tau_sim, dev, 'o', label='#Photons: %s' % k)
 ax[1].set_ylim((-1.5, 1.5))
-ax[0].legend()
+ax[1].set_ylabel(r'$\tau_{recov} - \tau_{sim} / \tau_{sim}$')
+ax[1].set_xlabel(r'$\tau_{sim}$')
+
 sq_dev = np.array(devs)**2
 ax[2].plot(list(n_photon_dict.keys()), np.sqrt(sq_dev.mean(axis=1)))
-p.show()
+ax[2].title.set_text(r'Photon count dependence')
+ax[2].set_ylabel(r'Std($\tau_{recov} - \tau_{sim} / \tau_{sim}$)')
+ax[2].set_xlabel(r'Nbr of photons')
+plt.show()
+
