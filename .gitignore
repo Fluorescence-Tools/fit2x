@@ -16,6 +16,7 @@ test/stage
 # Documentation and tools
 docs/_*
 docs/auto_examples
+docs/modules
 
 # JetBrains
 # User-specific stuff
