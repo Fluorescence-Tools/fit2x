@@ -15,6 +15,7 @@
 #endif
 #if defined(__GNUC__) || defined(__clang__)
 #include <immintrin.h>
+#include <avxintrin.h>
 #endif
 
 

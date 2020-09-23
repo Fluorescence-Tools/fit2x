@@ -85,6 +85,15 @@
 %feature("docstring") Decay "
 ";
 
+%feature("docstring") Decay::get_time_resolution "
+";
+
+%feature("docstring") Decay::size "
+";
+
+%feature("docstring") Decay::resize "
+";
+
 %feature("docstring") Decay::get_score_range "
 ";
 
@@ -109,9 +118,6 @@ fconv with AVX optimization 5 - fconv_per with AVX optimization
 ";
 
 %feature("docstring") Decay::get_abs_lifetime_spectrum "
-";
-
-%feature("docstring") Decay::set_weights_by_data "
 ";
 
 %feature("docstring") Decay::set_data "

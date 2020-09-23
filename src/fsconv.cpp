@@ -98,10 +98,11 @@ void fconv_avx(double *fit, double *x, double *lamp, int numexp, int start, int 
     int n_ele = numexp + pad;
 
     // copy the interleaved lifetime spectrum to vectors
-    auto *p = (double *) _mm_malloc((numexp + pad) * sizeof(double), 32);
+    auto *p = (double *) _mm_malloc(n_ele * sizeof(double), 32);
     std::fill(p, p + n_ele, 0.0);
     for (int i = 0; i < numexp; i++) p[i] = x[2 * i + 0];
-    auto *ex = (double *) _mm_malloc((numexp + pad) * sizeof(double), 32);
+
+    auto *ex = (double *) _mm_malloc(n_ele * sizeof(double), 32);
     std::fill(ex + numexp, ex + n_ele, 0.0);
     for (int i = 0; i < numexp; i++) ex[i] = exp(-dt / x[2 * i + 1]);
 
@@ -116,7 +117,6 @@ void fconv_avx(double *fit, double *x, double *lamp, int numexp, int start, int 
         e = _mm256_load_pd(&ex[ne]);
         // amplitudes
         a = _mm256_load_pd(&p[ne]);
-
         // take care of first channel
         // fit[0] += l2[0] * a;
         l2c = _mm256_set1_pd(l2[0]);
@@ -501,6 +501,7 @@ void fconv_cs_time_axis(
         int convolution_stop
 ){
     int number_of_exponentials = n_lifetime_spectrum / 2;
+    convolution_start = std::max(1, convolution_start);
 #if VERBOSE_FIT2X
     std::clog << "convolve_lifetime_spectrum... " << std::endl;
     std::clog << "-- number_of_exponentials: " << number_of_exponentials << std::endl;

@@ -55,7 +55,7 @@ class Tests(unittest.TestCase):
         self.assertEqual(decay.convolution_start, 3)
 
         decay.convolution_stop = 12
-        self.assertEqual(decay.convolution_stop, 0)  # no data set
+        self.assertEqual(decay.convolution_stop, 1)  # no data set but minimal irf length is 1
         decay.data = np.arange(20, dtype=np.float)
         self.assertEqual(decay.convolution_stop, 12)  # data set
         decay.convolution_stop = 3
@@ -101,14 +101,14 @@ class Tests(unittest.TestCase):
                'constant_offset': 0.0,
                'lifetime_spectrum': np.array([1., 4.], dtype=np.float64),
                'number_of_photons': 0.0,
-               'acquisition_time': 1000000.0,
-               'instrument_dead_time': 1e-09,
+               'acquisition_time': np.finfo(float).max,
+               'instrument_dead_time': np.finfo(float).eps,
                'convolution_range': (0, -1),
-               'excitation_period': 100.0,
+               'excitation_period': np.finfo(float).max,
                'scale_model_to_data': True,
                'score_range': (0, -1),
                'use_corrected_irf_as_scatter': False,
-               'amplitude_threshold': 1e-09,
+               'amplitude_threshold': np.finfo(float).eps,
                'use_amplitude_threshold': False,
                'use_pile_up_correction': False,
                'convolution_method': 0,
@@ -132,28 +132,28 @@ class Tests(unittest.TestCase):
         self.assertEqual(decay.convolution_stop, 0)
         self.assertEqual(decay.use_pile_up_correction, False)
         self.assertEqual(decay.use_amplitude_threshold, False)
-        self.assertEqual(decay.excitation_period, 100.0)
+        self.assertEqual(decay.excitation_period, np.finfo(float).max)
 
     def test_constructor_2(self):
         decay = fit2x.Decay(
             data=[1, 2, 3, 4, 56]
         )
-        self.assertListEqual(list(decay.get_data()), [1, 2, 3, 4, 56])
+        self.assertListEqual(list(decay.data), [1, 2, 3, 4, 56])
 
         decay = fit2x.Decay(
             irf_histogram=[1., 2, 3, 4, 56]
         )
-        self.assertListEqual(list(decay.get_irf()), [1, 2, 3, 4, 56])
+        self.assertListEqual(list(decay.irf), [1, 2, 3, 4, 56])
 
         decay = fit2x.Decay(
             time_axis=[1., 2, 3, 4, 56]
         )
-        self.assertListEqual(list(decay.get_time_axis()), [1, 2, 3, 4, 56])
+        self.assertListEqual(list(decay.time_axis), [1, 2, 3, 4, 56])
 
         decay = fit2x.Decay(
             data_weights=[1., 2, 3, 4, 56]
         )
-        self.assertListEqual(list(decay.get_data_weights()), [1, 2, 3, 4, 56])
+        self.assertListEqual(list(decay.data_weights), [1, 2, 3, 4, 56])
 
         data = np.linspace(1, 22, 12)
         decay = fit2x.Decay(
@@ -163,7 +163,7 @@ class Tests(unittest.TestCase):
             excitation_period=123.2
         )
         self.assertEqual(
-            np.allclose(1. / np.sqrt(data), decay.get_data_weights()),
+            np.allclose(1. / np.sqrt(data), decay.data_weights),
             True
         )
         self.assertEqual(len(decay.get_irf()), len(data))
@@ -361,9 +361,9 @@ class Tests(unittest.TestCase):
         irf *= n_peak
         irf[irf < 0.01] = 0.0
         lifetime_spectrum = np.array([1.0, 4.])
-        data_decay = np.zeros_like(time_axis)
+        data = np.zeros_like(time_axis)
         fit2x.fconv_per_cs_time_axis(
-            data_decay,
+            data,
             time_axis=time_axis,
             lifetime_spectrum=lifetime_spectrum,
             instrument_response_function=irf,
@@ -371,15 +371,15 @@ class Tests(unittest.TestCase):
             convolution_stop=len(irf),
             period=period
         )
-        data_decay = np.random.poisson(
-            np.clip(data_decay, 1e-9, None)
+        data = np.random.poisson(
+            np.clip(data, 1e-9, None)
         )
-        data_weight = 1. / np.clip(data_decay, 1, 1e6)
+        data_weight = 1. / np.clip(data, 1, 1e6)
         model = np.zeros_like(time_axis)
         irf += 0.0
         fit2x.Decay.compute_decay(
             model_function=model,
-            data=data_decay,
+            data=data,
             squared_data_weights=data_weight,
             time_axis=time_axis,
             irf_histogram=irf,
@@ -395,12 +395,12 @@ class Tests(unittest.TestCase):
             convolution_start=0,
             convolution_stop=len(irf),
         )
-        print(model[::16])
+        # print(model[::16])
         # import pylab as plt
         # plt.semilogy(time_axis, irf)
         # plt.semilogy(time_axis, model)
         # plt.show()
-        ref = np.array([59.72502663, 639.31947171, 274.26263987, 121.43610676])
+        ref = np.array([ 61.76549727, 665.14364895, 285.10667944, 126.00889674])
         self.assertEqual(np.allclose(ref, model[::16]), True)
 
     def test_decay_class(self):
@@ -427,36 +427,93 @@ class Tests(unittest.TestCase):
         print("irf:", irf.shape)
         print("weights:", weights.shape)
 
+        lt = [1, 0.2, 0.1, 4]
         decay_object = fit2x.Decay(
             data=data,
             data_weights=weights,
             irf_histogram=irf,
             time_axis=time_axis,
             constant_offset=0.0,
-            lifetime_spectrum=[1, 2],
+            lifetime_spectrum=lt,
             scale_model_to_data=False,
             convolution_range=(0, len(irf)),
             excitation_period=period
         )
         m = decay_object.model
         wres = decay_object.weighted_residuals
-        ref = np.array([1.20803660e-10, 1.55827821e-11, 2.01006408e-12, 3.86467220e-05,
-                        4.83026185e-03, 6.23068189e-04, 8.03712057e-05, 1.03672934e-05,
-                        1.33730446e-06, 1.72502422e-07, 2.22515415e-08, 2.87028490e-09,
-                        3.70245605e-10])
+        ref = np.array([6.53340861e-07, 4.13128530e-03, 6.87408535e-05, 1.14378588e-06])
 
         # import pylab as plt
         # plt.semilogy(decay_object.time_axis, decay_object.model)
         # plt.semilogy(decay_object.time_axis, decay_object.irf)
         # plt.show()
 
-        self.assertEqual(
-            np.allclose(m[::64], ref), True
+        self.assertEqual(np.allclose(m[::256], ref), True)
+        wres_ref = np.array([-0.0 , 12.44956777,  9.11042603,  8.77496426])
+        self.assertEqual(np.allclose(wres[::256], wres_ref), True)
+
+        parameter = decay_object.parameter
+        parameter['score_range'] = (0, 64)
+        parameter['lifetime_spectrum'] = [1, 0.2, 0.1, 4]
+        score = decay_object.compute_score(
+            data=decay_object.data,
+            time_axis=decay_object.time_axis,
+            irf_histogram=decay_object.irf,
+            data_weights=decay_object.data_weights,
+            **parameter
         )
-        wres_ref = np.array([ -0.        , 155.64703659,  56.77147171,  24.45403694,
-                              12.44951162,   9.32731225,   8.54399434,   8.36659903,
-                              9.11043343,   7.99999998,   7.87400787,   8.94427191,
-                              8.77496439])
-        self.assertEqual(
-            np.allclose(wres[::64], wres_ref), True
-        )
+        decay_object.lifetime_spectrum = [1, 0.2, 0.1, 4]
+        score_decay = decay_object.get_score(0, 64, 'poisson')
+        self.assertAlmostEqual(score_decay, score)
+
+    # def test_convolution_methods(self):
+    #     from matplotlib import pylab as plt
+    #     import scipy.stats
+    #     import fit2x
+    #
+    #     decay = fit2x.Decay()
+    #     decay.lifetime_spectrum = [1., 0.5, 0.1, 4]
+    #     period = 25
+    #     time_axis = np.linspace(0, period, 16)
+    #     irf_position = 5.0
+    #     irf_width = 0.3
+    #     irf = scipy.stats.norm.pdf(time_axis, loc=irf_position, scale=irf_width)
+    #     decay.irf = irf
+    #     decay.scale_model_to_data = False
+    #
+    #
+    #     plt.semilogy(irf)
+    #
+    #     decay.convolution_method = 0
+    #     plt.semilogy(decay.model, label=decay.convolution_method)
+    #
+    #     decay.convolution_method = 1
+    #     plt.semilogy(decay.model, label=decay.convolution_method)
+    #
+    #     decay.convolution_method = 2
+    #     plt.semilogy(decay.model, label=decay.convolution_method)
+    #
+    #     decay.convolution_method = 3
+    #     plt.semilogy(decay.model, label=decay.convolution_method)
+    #
+    #     decay.convolution_method = 4
+    #     plt.semilogy(decay.model, label=decay.convolution_method)
+    #
+    #     decay.convolution_method = 5
+    #     plt.semilogy(decay.model, label=decay.convolution_method)
+    #
+    #     plt.legend()
+    #     plt.show()
+    #
+    #     a = decay.parameter
+    #     # test lifetime spectrum separately as == is not well defined for np.array
+    #     self.assertEqual(
+    #         np.alltrue(a.pop('lifetime_spectrum') == ref.pop('lifetime_spectrum')),
+    #         True
+    #     )
+    #     self.assertDictEqual(a, ref)
+    #     ref['irf_background_counts'] = 11
+    #     decay.set(**ref)
+    #     self.assertEqual(decay.parameter['irf_background_counts'], ref['irf_background_counts'])
+    #
+    #

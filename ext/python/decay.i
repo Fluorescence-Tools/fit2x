@@ -9,12 +9,15 @@
     (double* scatter, int n_scatter),
     (double* weights, int n_weights),
     (double* data_weights, int n_data_weights),
+    (double *data_weights = nullptr, int n_data_weights = -1),
     (double* irf_histogram, int n_irf_histogram),
     (double* linearization, int n_linearization),
+    (double *linearization = nullptr, int n_linearization = -1),
     (double* data, int n_data),
     (double* curve1, int n_curve1),
     (double* curve2, int n_curve2),
-    (double *lifetime_spectrum, int n_lifetime_spectrum)
+    (double *lifetime_spectrum, int n_lifetime_spectrum),
+    (double *lifetime_spectrum = nullptr, int n_lifetime_spectrum = -1)
 }
 
 %apply(short* IN_ARRAY1, int DIM1){
