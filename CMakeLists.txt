@@ -75,8 +75,8 @@ else()
 endif()
 
 if(LINUX)
-    STRING(APPEND CMAKE_CXX_FLAGS " -march=native -Ofast -mavx2 -ffast-math -funroll-loops")
-    STRING(APPEND CMAKE_C_FLAGS " -march=native -Ofast -mavx2 -ffast-math -funroll-loops")
+    STRING(APPEND CMAKE_CXX_FLAGS " -march=native -Ofast -mavx2 -ffast-math -funroll-loops -mfma")
+    STRING(APPEND CMAKE_C_FLAGS " -march=native -Ofast -mavx2 -ffast-math -funroll-loops -mfma")
 endif()
 if(APPLE)
     FIND_PACKAGE(Threads)
@@ -127,8 +127,8 @@ ENDIF (CMAKE_BUILD_TYPE STREQUAL "Release")
 ## TTTRLIB
 LINK_LIBRARIES(tttrlib)
 
-## HDF5 -
-# Necessary to fulfil implicit of tttrlib
+## HDF5
+# Implicit dependency tttrlib -> HDF5
 ###########################
 FIND_PACKAGE(HDF5 1.10 REQUIRED COMPONENTS C)
 INCLUDE_DIRECTORIES(${HDF5_INCLUDE_DIRS})
