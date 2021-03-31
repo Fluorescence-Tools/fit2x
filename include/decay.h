@@ -12,7 +12,7 @@
 #include <limits> /* std::numeric_limits */
 
 #include "omp.h"
-#include "tttrlib/tttr.h"
+#include "tttrlib/TTTR.h"
 
 #include "fsconv.h"
 #include "statistics.h"
@@ -337,6 +337,7 @@ public:
             double* lifetime_spectrum, int n_lifetime_spectrum,
             double* scatter = nullptr, int n_scatter = -1,
             int convolution_start = 0, int convolution_stop = -1,
+            int scale_start = 0, int scale_stop = -1,
             double scatter_fraction = 0.0,
             double excitation_period = std::numeric_limits<double>::max(),
             double constant_offset = 0.0,
@@ -354,11 +355,11 @@ public:
             double* linearization= nullptr, int n_linearization = -1
     );
 
-
     void set_data(double *input, int n_input) {
         set_is_valid(false);
         resize(n_input);
         _data.assign(input, input + n_input);
+        set_weights_by_data();
     }
 
     void get_data(double **output_view, int *n_output) {
@@ -659,9 +660,10 @@ public:
         free(hist); free(time);
         _time_axis.clear();
         _time_axis.reserve(_data.size());
-        double micro_time_resolution = tttr_data->get_header().micro_time_resolution / tttr_micro_time_coarsening;
+        auto header = tttr_data->get_header();
+        double micro_time_resolution = header->get_micro_time_resolution() / tttr_micro_time_coarsening;
         for(size_t i = 0; i < _data.size(); i++) _time_axis.emplace_back(i * micro_time_resolution);
-        set_excitation_period(tttr_data->get_header().macro_time_resolution);
+        set_excitation_period(header->get_macro_time_resolution());
     }
 
     void set_tttr_irf(std::shared_ptr<TTTR> tttr_irf, int tttr_micro_time_coarsening){
@@ -875,6 +877,7 @@ public:
                     _lifetime_spectrum.data(), _lifetime_spectrum.size(),
                     scatter, n_scatter,
                     get_convolution_start(), get_convolution_stop(),
+                    get_score_range()[0], get_score_range()[1],
                     get_scatter_fraction(),
                     get_excitation_period(),
                     _constant_offset,

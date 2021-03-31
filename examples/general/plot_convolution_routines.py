@@ -49,7 +49,7 @@ time_axis = np.linspace(0, period, n_channels)
 irf = scipy.stats.norm.pdf(time_axis, loc=irf_position, scale=irf_width)
 
 dt = time_axis[1]-time_axis[0]
-lifetime_spectrum = np.array([1., 10] + ([1., 4, 1., 0.4] * 4))
+lifetime_spectrum = np.array([1., 4, 1., 0.4] * 4)
 model = np.zeros_like(irf)
 stop = len(irf)
 start = 0

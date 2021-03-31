@@ -4,7 +4,7 @@ fit2x
 
 General description
 ===================
-fits2x is a collection of fit models that use maximum likelihood
+fits2x is a collection of models and fits that use maximum likelihood
 estimators for polarization and time-resolved fluorescence decays
 (see :cite:`maus_experimental_2001`).
 
@@ -40,7 +40,7 @@ Contents
    :maxdepth: 1
 
    installation
-   models
+   introduction
    auto_examples/index
    cpp_api
    glossary

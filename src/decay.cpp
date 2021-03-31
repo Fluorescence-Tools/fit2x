@@ -132,7 +132,8 @@ double Decay::compute_score(
         std::vector<int> convolution_range,
         std::vector<int> score_range,
         double excitation_period,
-        bool scale_model_to_data, double number_of_photons,
+        bool scale_model_to_data,
+        double number_of_photons,
         double *linearization, int n_linearization,
         bool use_linearization,
         bool use_pile_up_correction, bool use_corrected_irf_as_scatter,
@@ -162,6 +163,7 @@ double Decay::compute_score(
             lifetime_spectrum, n_lifetime_spectrum,
             irf_histogram, n_irf_histogram,
             convolution_range[0], convolution_range[1],
+            score_range[0], score_range[1],
             scatter_fraction,
             excitation_period,
             constant_offset,
@@ -227,15 +229,13 @@ void Decay::set(
         bool force_fill_irf,
         bool force_time_axis
 ) {
-
     // set data
-    if (tttr_data != nullptr) {
+    if (tttr_data.get() != nullptr) {
         set_tttr_data(tttr_data, tttr_micro_time_coarsening);
         // sets also excitation period
     } else{
         if(!data.empty()){
             set_data(data.data(), data.size());
-            if(data_weights.empty()) set_weights_by_data();
         }
     }
 
@@ -308,7 +308,6 @@ void Decay::set(
         std::clog << "WARNING: The size of the data, time, weight array, or "
                      "irf do not match" << std::endl;
     }
-
 #if VERBOSE_FIT2X
     std::clog << "SET" << std::endl;
     std::clog << "irf_background_counts: " << irf_background_counts << std::endl;
@@ -340,12 +339,17 @@ void Decay::scale_model(
         double* data,
         double* squared_data_weights
         ){
+#if VERBOSE_FIT2X
+    std::clog << "-- scaling model to data..." << std::endl;
+#endif
     double scale = 1.0;
     if(scale_model_to_data || (number_of_photons < 0)){
-        // scale the area to the data in the range start, stop
 #if VERBOSE_FIT2X
-        std::clog << "-- scaling model to data..." << std::endl;
+        std::clog << "constant_background: " << constant_background << std::endl;
+        std::clog << "scale: " << scale << std::endl;
+        std::clog << "scale the area to the data in the range: " << start << "," << stop << std::endl;
 #endif
+        scale = 0.0;
         rescale_w_bg(
                 model, data, squared_data_weights, constant_background,
                 &scale, start, stop
@@ -374,6 +378,7 @@ int Decay::compute_decay(
         double* lifetime_spectrum, int n_lifetime_spectrum,
         double* scatter, int n_scatter,
         int convolution_start, int convolution_stop,
+        int scale_start, int scale_stop,
         double scatter_fraction,
         double excitation_period,
         double constant_offset,
@@ -399,6 +404,8 @@ int Decay::compute_decay(
     std::clog << "-- n_lifetime_spectrum: " << n_lifetime_spectrum << std::endl;
     std::clog << "-- convolution_start: " << convolution_start << std::endl;
     std::clog << "-- convolution_stop: " << convolution_stop << std::endl;
+    std::clog << "-- scale_start: " << scale_start << std::endl;
+    std::clog << "-- scale_stop: " << scale_stop << std::endl;
     std::clog << "-- scatter_fraction: " << scatter_fraction << std::endl;
     std::clog << "-- excitation_period: " << excitation_period << std::endl;
     std::clog << "-- constant_offset: " << constant_offset << std::endl;
@@ -531,10 +538,11 @@ int Decay::compute_decay(
         }
     }
     // scale model function
+    if(scale_stop < 0) scale_stop = convolution_stop;
     scale_model(
             scale_model_to_data,
             number_of_photons,
-            convolution_start, convolution_stop,
+            scale_start, scale_stop,
             constant_offset, model_function, data, squared_data_weights
     );
 #if VERBOSE_FIT2X

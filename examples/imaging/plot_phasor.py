@@ -8,7 +8,7 @@ For phasor image analysis the library fit2x provides functions
 from __future__ import print_function
 import tttrlib
 import fit2x
-import pylab as p
+import pylab as plt
 
 data = tttrlib.TTTR('../../test/data/imaging/pq/ht3/crn_clv_img.ht3')
 data_mirror = tttrlib.TTTR('../../test/data/imaging/pq/ht3/crn_clv_mirror.ht3')
@@ -43,9 +43,9 @@ phasor_1d = phasor.reshape((n_frames * image.n_lines * image.n_pixel, 2))
 phasor_x, phasor_y = phasor[:, :, :, 0], phasor[:, :, :, 1]
 phasor_x_1d, phasor_y_1d = phasor_1d.T[0], phasor_1d.T[1]
 
-fig, ax = p.subplots(nrows=2, ncols=3)
+fig, ax = plt.subplots(nrows=2, ncols=3)
 ax[0,2].set(xlim=(0, 1), ylim=(0, 0.6))
-a_circle = p.Circle(
+a_circle = plt.Circle(
     xy=(0.5, 0),
     radius=0.5,
     linewidth=1.5,
@@ -60,8 +60,8 @@ ax[0, 2].hist2d(
     range=((0, 1), (0, 0.6)),
     cmap='inferno'
 )
-ax[0,0].imshow(phasor_x[0,:,:])
-ax[0,1].imshow(phasor_y[0,:,:])
+ax[0, 0].imshow(phasor_x[0, :, :])
+ax[0, 1].imshow(phasor_y[0, :, :])
 
 # IRF correction
 data_irf = data_mirror[data_mirror.get_selection_by_channel([0, 1])]
@@ -80,22 +80,22 @@ phasor_x_1d, phasor_y_1d = phasor_1d.T[0], phasor_1d.T[1]
 ax[0, 2].set_title('No IRF correction')
 ax[1, 2].set_title('IRF correction')
 ax[1, 2].set(xlim=(0, 1), ylim=(0, 0.6))
-a_circle = p.Circle(
+a_circle = plt.Circle(
     xy=(0.5, 0),
     radius=0.5,
     linewidth=1.5,
     fill=False,
     color='w'
 )
-ax[1,2].add_artist(a_circle)
-ax[1,2].hist2d(
+ax[1, 2].add_artist(a_circle)
+ax[1, 2].hist2d(
     x=phasor_x_1d,
     y=phasor_y_1d,
     bins=101,
     range=((0, 1), (0, 0.6)),
     cmap='inferno'
 )
-ax[1,0].imshow(phasor_x[0,:,:])
-ax[1,1].imshow(phasor_y[0,:,:])
+ax[1, 0].imshow(phasor_x[0, :, :])
+ax[1, 1].imshow(phasor_y[0, :, :])
 
-p.show()
+plt.show()

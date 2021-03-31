@@ -35,7 +35,6 @@ import_array();
 %shared_ptr(TTTR) // to pass TTTR around
 %shared_ptr(std::string)
 
-
 // Generic input arrays
 // floating numbers
 %apply(double* IN_ARRAY1, int DIM1) {(double *input, int n_input)}

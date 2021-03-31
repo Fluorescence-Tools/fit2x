@@ -1,7 +1,11 @@
 """
 ===============================
-MLE - Fit23
+MLE fit23: Usage example 2
 ===============================
+
+1) Compute model function
+2) Simulate data for computed model function
+3) Fit simulated data with model function
 
 """
 import fit2x

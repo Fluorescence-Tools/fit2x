@@ -17,6 +17,10 @@
 #include <immintrin.h>
 #include <avxintrin.h>
 #endif
+#if !defined(__FMA__) && defined(__AVX2__)
+#define __FMA__ 1
+#endif
+
 
 
 

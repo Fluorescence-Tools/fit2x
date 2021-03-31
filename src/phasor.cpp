@@ -83,8 +83,9 @@ void phasor::get_phasor_image(
     auto tttr_data = image->tttr;
     // if stack frames only one output frame
     int o_frames = stack_frames? 1: image->get_n_frames();
+    auto header = tttr_data->get_header();
     if(frequency<0){
-        frequency = 1. / (1000 / tttr_data->get_header().micro_time_resolution);
+        frequency = 1. / (1000 / header->get_micro_time_resolution());
     }
     double factor = (2. * frequency * M_PI);
 

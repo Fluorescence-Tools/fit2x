@@ -50,14 +50,18 @@ void rescale_w_bg(double *fit, double *decay, double *w_sq, double bg, double *s
     std::clog << std::endl;
 #endif
     /* scaling */
-    if (*scale == 0.) {
+    if (*scale <= 0.) {
         double sumnom = 0., sumdenom = 0.;
         for (int i = start; i < stop; i++) {
-            if (decay[i] != 0.) {
+            if (w_sq[i] > 0.) {
                 sumnom += fit[i] * (decay[i] - bg) / w_sq[i];
                 sumdenom += fit[i] * fit[i] / w_sq[i];
             }
         }
+#if VERBOSE_FIT2X
+        std::clog << "-- sumnom: " << sumnom << std::endl;
+        std::clog << "-- sumdenom: " << sumdenom << std::endl;
+#endif
         if (sumdenom != 0.) *scale = sumnom / sumdenom;
     }
 #if VERBOSE_FIT2X
@@ -91,6 +95,7 @@ void fconv(double *fit, double *x, double *lamp, int numexp, int start, int stop
 
 // fast convolution AVX
 void fconv_avx(double *fit, double *x, double *lamp, int numexp, int start, int stop, double dt) {
+
     start = std::max(1, start);
     // make sure that there are always multiple of 4 in the lifetimes
     const int chunk_size = 4; int pad = 0;
@@ -132,14 +137,19 @@ void fconv_avx(double *fit, double *x, double *lamp, int numexp, int start, int 
 #endif
         // convolution
         for (int i = start; i < stop; i++) {
-            //fitcurr = (fitcurr + l2[i - 1]) * expcurr + l2[i];
             l2p = _mm256_set1_pd(l2[i - 1]);
             l2c = _mm256_set1_pd(l2[i]);
+            //fitcurr = (fitcurr + l2[i - 1]) * expcurr + l2[i];
             fitcurr = _mm256_add_pd(fitcurr, l2p);
+#ifdef __FMA__
             fitcurr = _mm256_fmadd_pd(fitcurr, e, l2c);
+#else
+            fitcurr = _mm256_mul_pd(fitcurr, e);
+            fitcurr = _mm256_add_pd(fitcurr, l2c);
+#endif
             // fit[i] += fitcurr * a;
             tmp = _mm256_mul_pd(fitcurr, a);
-#ifdef _WIN32
+            #ifdef _WIN32
             fit[i] = double(tmp.m256d_f64[0]);
             fit[i] += double(tmp.m256d_f64[1]);
             fit[i] += double(tmp.m256d_f64[2]);
@@ -258,7 +268,12 @@ void fconv_per_avx(double *fit, double *x, double *lamp, int numexp, int start, 
             l2p = _mm256_set1_pd(l2[i - 1]);
             l2c = _mm256_set1_pd(l2[i]);
             fitcurr = _mm256_add_pd(fitcurr, l2p);
+#ifdef __FMA__
             fitcurr = _mm256_fmadd_pd(fitcurr, e, l2c);
+#else
+            fitcurr = _mm256_mul_pd(fitcurr, e);
+            fitcurr = _mm256_add_pd(fitcurr, l2c);
+#endif
             // fit[i] += fitcurr * a;
             tmp = _mm256_mul_pd(fitcurr, a);
 #ifdef _WIN32

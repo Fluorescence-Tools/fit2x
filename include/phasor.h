@@ -5,8 +5,8 @@
 #include <cmath>
 #include <algorithm> /* std::max */
 
-#include "tttrlib/tttr.h" /* TTTR */
-#include "tttrlib/image.h" /* CLSMImage */
+#include "tttrlib/TTTR.h" /* TTTR */
+#include "tttrlib/CLSMImage.h" /* CLSMImage */
 
 // namespaces do not work well with SWIG.
 // thus, I use a class with static methods.
