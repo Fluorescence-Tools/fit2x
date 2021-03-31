@@ -2,7 +2,3 @@
 
 Fluorescence decay
 ------------------
-
-Examples
-^^^^^^^^
-Fluorescence decay applications.

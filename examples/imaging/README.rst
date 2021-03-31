@@ -1,8 +1,5 @@
 .. _fluorescence_decay_examples:
 
-Imaging
--------
+FLIM-Imaging
+------------
 
-Examples
-^^^^^^^^
-FLIM imaging
