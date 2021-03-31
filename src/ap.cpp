@@ -8,7 +8,7 @@ const double ap::minrealnumber  = std::numeric_limits<double>::min();
 //
 // ap::complex operations
 //
-const bool ap::operator==(const ap::complex& lhs, const ap::complex& rhs)
+bool ap::operator==(const ap::complex& lhs, const ap::complex& rhs)
 { return lhs.x==rhs.x && lhs.y==rhs.y; }
 
 const bool ap::operator!=(const ap::complex& lhs, const ap::complex& rhs)
