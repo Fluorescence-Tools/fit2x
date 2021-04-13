@@ -76,9 +76,9 @@ public:
         std::clog << "DecayLinearization::DecayLinearization" << std::endl;
 #endif
         set_linearization_table(linearization_table, n_linearization_table);
-        // TODO: Check why set_use_linearization cases segfault
+        // TODO: Check why setting _use_linearization causes a segfault
         // set_use_linearization(use_linearization);
-        _use_linearization = use_linearization;
+        // _use_linearization = use_linearization;
     }
 
     void add(DecayCurve* decay){
