@@ -10,7 +10,8 @@ void DecayScale::scale_model(
         double* data,
         double* squared_data_weights
         ){
-#if VERBOSE_FIT2X
+#ifdef VERBOSE_FIT2X
+    std::clog << "DecayScale::scale_model" << std::endl;
     std::clog << "-- scaling model to data..." << std::endl;
 #endif
     double scale = 1.0;

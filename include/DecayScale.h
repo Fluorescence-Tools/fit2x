@@ -56,6 +56,9 @@ public:
     );
 
     int get_scale_start(){
+#ifdef VERBOSE_FIT2X
+        std::clog << "DecayScale::get_scale_start" << std::endl;
+#endif
         int start = _scale_start;
         int nmax = data->size();
         if(start < 0){
@@ -65,10 +68,16 @@ public:
     }
 
     void set_scale_start(int v){
+#ifdef VERBOSE_FIT2X
+        std::clog << "DecayScale::set_scale_start" << std::endl;
+#endif
         _scale_start = v;
     }
 
     int get_scale_stop(){
+#ifdef VERBOSE_FIT2X
+        std::clog << "DecayScale::get_scale_stop" << std::endl;
+#endif
         int stop = _scale_stop;
         int nmax = data->size();
         if(stop < 0){
@@ -81,12 +90,18 @@ public:
     }
 
     void set_scale_stop(int v){
+#ifdef VERBOSE_FIT2X
+        std::clog << "DecayScale::set_scale_stop" << std::endl;
+#endif
         _scale_stop = v;
     }
 
     /// Number of photons in data between start and stop (if model is scaled to data). Otherwise
     /// user-specified number of photons
     double get_number_of_photons(){
+#ifdef VERBOSE_FIT2X
+        std::clog << "DecayScale::get_number_of_photons" << std::endl;
+#endif
         if(_scale_model_to_data){
             double re = 0.0;
             for(int i=get_scale_start(); i<get_scale_stop(); i++)
@@ -97,26 +112,44 @@ public:
     }
 
     void set_number_of_photons(double v){
+#ifdef VERBOSE_FIT2X
+        std::clog << "DecayScale::set_number_of_photons" << std::endl;
+#endif
         _number_of_photons = v;
     }
 
     void set_scale_model_to_data(bool v){
+#ifdef VERBOSE_FIT2X
+        std::clog << "DecayScale::set_scale_model_to_data" << std::endl;
+#endif
         _scale_model_to_data = v;
     }
 
     bool get_scale_model_to_data(){
+#ifdef VERBOSE_FIT2X
+        std::clog << "DecayScale::get_scale_model_to_data" << std::endl;
+#endif
         return _scale_model_to_data;
     }
 
     void set_data(DecayCurve* v){
+#ifdef VERBOSE_FIT2X
+        std::clog << "DecayScale::set_data" << std::endl;
+#endif
         data = v;
     }
 
     double get_constant_background(){
+#ifdef VERBOSE_FIT2X
+        std::clog << "DecayScale::get_constant_background" << std::endl;
+#endif
         return _constant_background;
     }
 
     void set_constant_background(double v){
+#ifdef VERBOSE_FIT2X
+        std::clog << "DecayScale::set_constant_background" << std::endl;
+#endif
         _constant_background = v;
     }
 
@@ -127,6 +160,9 @@ public:
             std::vector<int> scale_range = std::vector<int>({0, -1}),
             double constant_background = 0.0
     ){
+#ifdef VERBOSE_FIT2X
+        std::clog << "DecayScale::set" << std::endl;
+#endif
         set_scale_model_to_data(scale_model_to_data);
         set_data(data);
         set_number_of_photons(number_of_photons);
@@ -142,6 +178,10 @@ public:
             std::vector<int> scale_range = std::vector<int>({0, -1}),
             double constant_background = 0.0
             ){
+#ifdef VERBOSE_FIT2X
+        std::clog << "DecayScale::DecayScale" << std::endl;
+#endif
+
         set(
                 data,
                 scale_model_to_data,
@@ -153,6 +193,9 @@ public:
     ~DecayScale() = default;
 
     void resize(size_t n){
+#ifdef VERBOSE_FIT2X
+        std::clog << "DecayScale::resize" << std::endl;
+#endif
         // for potential future use
     }
 

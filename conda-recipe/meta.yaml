@@ -41,6 +41,12 @@ requirements:
 test:
   imports:
     - fit2x
+  requires:
+    - nose
+  source_files:
+    - test/*.py
+  commands:
+    - nosetests
 
 about:
   home: https://github.com/fluorescence-tools/fit2x

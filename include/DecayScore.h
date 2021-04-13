@@ -53,43 +53,73 @@ private:
 public:
 
     void set_score_range_start(int v){
+#ifdef VERBOSE_FIT2X
+        std::clog << "DecayScore::set_score_range_start" << std::endl;
+#endif
         _score_range_start = v;
     }
 
     int get_score_range_start(){
+#ifdef VERBOSE_FIT2X
+        std::clog << "DecayScore::get_score_range_start" << std::endl;
+#endif
         return clip_by_size(_score_range_start, true);
     }
 
     void set_score_range_stop(int v){
+#ifdef VERBOSE_FIT2X
+        std::clog << "DecayScore::set_score_range_stop" << std::endl;
+#endif
         _score_range_stop = v;
     }
 
     int get_score_range_stop(){
+#ifdef VERBOSE_FIT2X
+        std::clog << "DecayScore::get_score_range_stop" << std::endl;
+#endif
         return clip_by_size(_score_range_stop, false);
     }
 
     void set_score_range(std::vector<int> v){
+#ifdef VERBOSE_FIT2X
+        std::clog << "DecayScore::set_score_range" << std::endl;
+#endif
         set_score_range_start(v[0]);
         set_score_range_stop(v[1]);
     }
 
     std::vector<int> get_score_range(){
+#ifdef VERBOSE_FIT2X
+        std::clog << "DecayScore::DecayScore" << std::endl;
+#endif
         return std::vector<int>({_score_range_start, _score_range_stop});
     }
 
     void set_model(DecayCurve* v){
+#ifdef VERBOSE_FIT2X
+        std::clog << "DecayScore::set_model" << std::endl;
+#endif
         _model = v;
     }
 
     void set_data(DecayCurve* v){
+#ifdef VERBOSE_FIT2X
+        std::clog << "DecayScore::set_data" << std::endl;
+#endif
         _data = v;
     }
 
     void set_score_type(std::string v){
+#ifdef VERBOSE_FIT2X
+        std::clog << "DecayScore::set_score_type" << std::endl;
+#endif
         _score_type = v;
     }
 
     std::string get_score_type(){
+#ifdef VERBOSE_FIT2X
+        std::clog << "DecayScore::get_score_type" << std::endl;
+#endif
         return _score_type;
     }
 
@@ -99,6 +129,9 @@ public:
             std::vector<int> score_range = std::vector<int>({0, -1}),
             std::string score_type = "poisson"
     ){
+#ifdef VERBOSE_FIT2X
+        std::clog << "DecayScore::DecayScore" << std::endl;
+#endif
         set_score_range_start(score_range[0]);
         set_score_range_stop(score_range[1]);
         set_score_type(score_type);
@@ -107,12 +140,18 @@ public:
     }
 
     void get_weighted_residuals(double **output_view, int *n_output) {
+#ifdef VERBOSE_FIT2X
+        std::clog << "DecayScore::get_weighted_residuals" << std::endl;
+#endif
         update_weighted_residuals();
         *n_output = _weighted_residuals.size();
         *output_view = _weighted_residuals.data();
     }
 
     double get_score(int x_min, int x_max, const char* score_type){
+#ifdef VERBOSE_FIT2X
+        std::clog << "DecayScore::get_score" << std::endl;
+#endif
 #if VERBOSE_FIT2X
         std::clog << "CHI2" << std::endl;
 #endif
@@ -145,6 +184,9 @@ public:
 
     /// Evaluate and return the score
     double evaluate(){
+#ifdef VERBOSE_FIT2X
+        std::clog << "DecayScore::evaluate" << std::endl;
+#endif
         return get_score(
                 get_score_range_start(), get_score_range_stop(),
                 get_score_type().c_str()
@@ -157,6 +199,9 @@ public:
             std::vector<int> score_range = std::vector<int>({0, -1}),
             std::string score_type= "poisson"
     ){
+#ifdef VERBOSE_FIT2X
+        std::clog << "DecayScore::DecayScore" << std::endl;
+#endif
         set(
                 model,
                 data,

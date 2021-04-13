@@ -22,30 +22,48 @@ private:
 public:
 
     void resize(size_t n){
+#ifdef VERBOSE_FIT2X
+        std::clog << "DecayLinearization::resize" << std::endl;
+#endif
         _linearization_table.resize(n, 1.0);
     }
 
     void set_linearization_table(double *input, int n_input) {
+#ifdef VERBOSE_FIT2X
+        std::clog << "DecayLinearization::set_linearization_table" << std::endl;
+#endif
         _linearization_table.resize(n_input);
         _linearization_table.assign(input, input + n_input);
     }
 
     void get_linearization_table(double **output_view, int *n_output) {
+#ifdef VERBOSE_FIT2X
+        std::clog << "DecayLinearization::get_linearization_table" << std::endl;
+#endif
         *output_view = _linearization_table.data();
         *n_output = _linearization_table.size();
     }
 
     bool set_use_linearization(bool v){
+#ifdef VERBOSE_FIT2X
+        std::clog << "DecayLinearization::set_use_linearization" << std::endl;
+#endif
         use_linearization = v;
     }
 
     bool get_use_linearization(){
+#ifdef VERBOSE_FIT2X
+        std::clog << "DecayLinearization::get_use_linearization" << std::endl;
+#endif
         return use_linearization;
     }
 
     DecayLinearization(
             std::vector<double> linearization_table  = std::vector<double>(),
             bool use_linearization = false){
+#ifdef VERBOSE_FIT2X
+        std::clog << "DecayLinearization::DecayLinearization" << std::endl;
+#endif
         set_linearization_table(linearization_table.data(), linearization_table.size());
         set_use_linearization(use_linearization);
     }
