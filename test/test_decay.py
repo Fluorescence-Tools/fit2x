@@ -150,94 +150,93 @@ class Tests(unittest.TestCase):
     #                     0.01183495, 0.0113745 , 0.01093197, 0.01050666])
     #     self.assertEqual(np.allclose(ref, model_incl_irf), True)
 
-    # # BROKEN - segfault
-    # def test_getter_setter(self):
-    #     decay = fit2x.Decay(
-    #         scale_model_to_data=True
-    #     )
-    #
-    #     decay.use_amplitude_threshold = True
-    #     self.assertEqual(decay.use_amplitude_threshold, True)
-    #     decay.use_amplitude_threshold = False
-    #     self.assertEqual(decay.use_amplitude_threshold, False)
-    #
-    #     decay.amplitude_threshold = 11
-    #     self.assertEqual(decay.amplitude_threshold, 11)
-    #     decay.amplitude_threshold = 2.2
-    #     self.assertEqual(decay.amplitude_threshold, 2.2)
-    #
-    #     decay.constant_offset = 11
-    #     self.assertEqual(decay.constant_offset, 11)
-    #     decay.constant_offset = 2.2
-    #     self.assertEqual(decay.constant_offset, 2.2)
-    #
-    #     decay.irf_shift_channels = 2.1
-    #     self.assertAlmostEqual(decay.irf_shift_channels, 0.1)
-    #     decay.irf_shift_channels = 2.2
-    #     self.assertAlmostEqual(decay.irf_shift_channels, 0.2)
-    #
-    #     # The number of photons is computed by scaling the model to the data
-    #     # Here the data is zero. Hence, the number of photons is zero
-    #     decay.number_of_photons = 11
-    #     self.assertEqual(decay.number_of_photons, 0)
-    #
-    #     # If the scaling is turned off we get the number of photons that
-    #     # was specified by the attribute.
-    #     decay.scale_model_to_data = False
-    #     self.assertEqual(decay.number_of_photons, 11)
-    #
-    #     decay.number_of_photons = 2.2
-    #     self.assertEqual(decay.number_of_photons, 2.2)
-    #
-    #     decay.scatter_fraction = 0.2
-    #     self.assertEqual(decay.scatter_fraction, 0.2)
-    #     decay.scatter_fraction = 0.8
-    #     self.assertEqual(decay.scatter_fraction, 0.8)
-    #
-    #     decay.convolution_start = 12
-    #     # If there is not data convolution starts at zero
-    #     self.assertEqual(decay.convolution_start, 0)
-    #     decay.data = np.ones(200)
-    #     self.assertEqual(decay.convolution_start, 12)
-    #
-    #     decay.convolution_stop = 12
-    #     decay.data = []
-    #     self.assertEqual(decay.convolution_stop, 0)
-    #     decay.data = np.arange(20, dtype=np.float)
-    #     self.assertEqual(decay.convolution_stop, 12)  # data set
-    #     decay.convolution_stop = 3
-    #     self.assertEqual(decay.convolution_stop, 3)
-    #
-    #     decay.use_pile_up_correction = True
-    #     self.assertEqual(decay.use_pile_up_correction, True)
-    #     decay.use_pile_up_correction = False
-    #     self.assertEqual(decay.use_pile_up_correction, False)
-    #
-    #     decay.set_irf([1, 2, 3])
-    #     self.assertListEqual(list(decay.get_irf()), [1, 2, 3])
-    #     decay.set_irf([4, 5, 6])
-    #     self.assertListEqual(list(decay.get_irf()), [4, 5, 6])
-    #
-    #     decay.set_lifetime_spectrum([1, 2, 3, 4])
-    #     self.assertListEqual(list(decay.get_lifetime_spectrum()), [1, 2, 3, 4])
-    #     decay.set_lifetime_spectrum([4, 5, 6, 7])
-    #     self.assertListEqual(list(decay.get_lifetime_spectrum()), [4, 5, 6, 7])
-    #
-    #     decay.set_data_weights([1, 2, 3, 4])
-    #     self.assertListEqual(list(decay.get_data_weights()), [1, 2, 3, 4])
-    #     decay.set_data_weights([4, 5, 6, 7])
-    #     self.assertListEqual(list(decay.get_data_weights()), [4, 5, 6, 7])
-    #
-    #     decay.set_time_axis([1, 2, 3, 4])
-    #     self.assertListEqual(list(decay.get_time_axis()), [1, 2, 3, 4])
-    #     decay.set_time_axis([4, 5, 6, 7])
-    #     self.assertListEqual(list(decay.get_time_axis()), [4, 5, 6, 7])
-    #
-    #     decay.set_data([1, 2, 3, 45])
-    #     self.assertListEqual(list(decay.get_data()), [1, 2, 3, 45])
-    #
-    #     decay.irf_background = 892.1
-    #     self.assertEqual(decay.irf_background, 892.1)
+    def test_getter_setter(self):
+        decay = fit2x.Decay(
+            scale_model_to_data=True
+        )
+
+        decay.use_amplitude_threshold = True
+        self.assertEqual(decay.use_amplitude_threshold, True)
+        decay.use_amplitude_threshold = False
+        self.assertEqual(decay.use_amplitude_threshold, False)
+
+        decay.amplitude_threshold = 11
+        self.assertEqual(decay.amplitude_threshold, 11)
+        decay.amplitude_threshold = 2.2
+        self.assertEqual(decay.amplitude_threshold, 2.2)
+
+        decay.constant_offset = 11
+        self.assertEqual(decay.constant_offset, 11)
+        decay.constant_offset = 2.2
+        self.assertEqual(decay.constant_offset, 2.2)
+
+        decay.irf_shift_channels = 2.1
+        self.assertAlmostEqual(decay.irf_shift_channels, 0.1)
+        decay.irf_shift_channels = 2.2
+        self.assertAlmostEqual(decay.irf_shift_channels, 0.2)
+
+        # The number of photons is computed by scaling the model to the data
+        # Here the data is zero. Hence, the number of photons is zero
+        decay.number_of_photons = 11
+        self.assertEqual(decay.number_of_photons, 0)
+
+        # If the scaling is turned off we get the number of photons that
+        # was specified by the attribute.
+        decay.scale_model_to_data = False
+        self.assertEqual(decay.number_of_photons, 11)
+
+        decay.number_of_photons = 2.2
+        self.assertEqual(decay.number_of_photons, 2.2)
+
+        decay.scatter_fraction = 0.2
+        self.assertEqual(decay.scatter_fraction, 0.2)
+        decay.scatter_fraction = 0.8
+        self.assertEqual(decay.scatter_fraction, 0.8)
+
+        decay.convolution_start = 12
+        # If there is not data convolution starts at zero
+        self.assertEqual(decay.convolution_start, 0)
+        decay.data = np.ones(200)
+        self.assertEqual(decay.convolution_start, 12)
+
+        decay.convolution_stop = 12
+        decay.data = []
+        self.assertEqual(decay.convolution_stop, 0)
+        decay.data = np.arange(20, dtype=np.float)
+        self.assertEqual(decay.convolution_stop, 12)  # data set
+        decay.convolution_stop = 3
+        self.assertEqual(decay.convolution_stop, 3)
+
+        decay.use_pile_up_correction = True
+        self.assertEqual(decay.use_pile_up_correction, True)
+        decay.use_pile_up_correction = False
+        self.assertEqual(decay.use_pile_up_correction, False)
+
+        decay.set_irf([1, 2, 3])
+        self.assertListEqual(list(decay.get_irf()), [1, 2, 3])
+        decay.set_irf([4, 5, 6])
+        self.assertListEqual(list(decay.get_irf()), [4, 5, 6])
+
+        decay.set_lifetime_spectrum([1, 2, 3, 4])
+        self.assertListEqual(list(decay.get_lifetime_spectrum()), [1, 2, 3, 4])
+        decay.set_lifetime_spectrum([4, 5, 6, 7])
+        self.assertListEqual(list(decay.get_lifetime_spectrum()), [4, 5, 6, 7])
+
+        decay.set_data_weights([1, 2, 3, 4])
+        self.assertListEqual(list(decay.get_data_weights()), [1, 2, 3, 4])
+        decay.set_data_weights([4, 5, 6, 7])
+        self.assertListEqual(list(decay.get_data_weights()), [4, 5, 6, 7])
+
+        decay.set_time_axis([1, 2, 3, 4])
+        self.assertListEqual(list(decay.get_time_axis()), [1, 2, 3, 4])
+        decay.set_time_axis([4, 5, 6, 7])
+        self.assertListEqual(list(decay.get_time_axis()), [4, 5, 6, 7])
+
+        decay.set_data([1, 2, 3, 45])
+        self.assertListEqual(list(decay.get_data()), [1, 2, 3, 45])
+
+        decay.irf_background = 892.1
+        self.assertEqual(decay.irf_background, 892.1)
 
     def test_parameter(self):
         decay = fit2x.Decay()
