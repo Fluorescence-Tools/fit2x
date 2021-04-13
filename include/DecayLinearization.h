@@ -38,6 +38,13 @@ public:
         }
     }
 
+    void set_linearization_table(std::vector<double> v) {
+#ifdef VERBOSE_FIT2X
+        std::clog << "DecayLinearization::set_linearization_table" << std::endl;
+#endif
+        _linearization_table = v;
+    }
+
     void get_linearization_table(double **output_view, int *n_output) {
 #ifdef VERBOSE_FIT2X
         std::clog << "DecayLinearization::get_linearization_table" << std::endl;
@@ -66,7 +73,7 @@ public:
 #ifdef VERBOSE_FIT2X
         std::clog << "DecayLinearization::DecayLinearization" << std::endl;
 #endif
-        set_linearization_table(linearization_table.data(), linearization_table.size());
+        set_linearization_table(linearization_table);
         set_use_linearization(use_linearization);
     }
 
