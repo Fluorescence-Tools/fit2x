@@ -92,6 +92,9 @@ void DecayConvolution::convolve_lifetimes(){
 
 
 void DecayConvolution::add_scatter(){
+#ifdef VERBOSE_FIT2X
+    std::clog << "DecayConvolution::add_scatter" << std::endl;
+#endif
     DecayCurve sc = use_corrected_irf_as_scatter ?
                     *get_corrected_irf() : *get_irf() ;
     int n; double* v;

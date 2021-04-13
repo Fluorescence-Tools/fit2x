@@ -100,10 +100,10 @@ public:
 
     ~Decay(){
         delete decayPileup;
-//        delete decayScale;
-//        delete decayLinearization;
-//        delete decayScore;
-//        delete decayLinearization;
+        delete decayScale;
+        delete decayLinearization;
+        delete decayScore;
+        delete decayLinearization;
     }
 
     bool get_is_valid() const {

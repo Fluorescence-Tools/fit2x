@@ -240,6 +240,7 @@ class Tests(unittest.TestCase):
     #     self.assertEqual(decay.irf_background, 892.1)
 
     def test_parameter(self):
+        print("test_parameter")
         decay = fit2x.Decay()
         decay.lifetime_spectrum = [1., 4.]
         # ref = {
