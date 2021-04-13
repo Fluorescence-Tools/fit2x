@@ -240,7 +240,6 @@ class Tests(unittest.TestCase):
     #     self.assertEqual(decay.irf_background, 892.1)
 
     def test_parameter(self):
-        print("test_parameter")
         decay = fit2x.Decay()
         decay.lifetime_spectrum = [1., 4.]
         ref = {
@@ -282,54 +281,54 @@ class Tests(unittest.TestCase):
             )
         self.assertDictEqual(a, ref)
 
-    # def test_constructor_1(self):
-    #     decay = fit2x.Decay()
-    #     # default values
-    #     self.assertEqual(decay.is_valid, False)
-    #     self.assertEqual(decay.convolution_start, 0)
-    #     self.assertEqual(decay.convolution_stop, 0)
-    #     self.assertEqual(decay.use_pile_up_correction, False)
-    #     self.assertEqual(decay.use_amplitude_threshold, False)
-    #     self.assertEqual(decay.excitation_period, 100.0)
-    #
-    # def test_constructor_2(self):
-    #     decay = fit2x.Decay(
-    #         data=[1, 2, 3, 4, 56]
-    #     )
-    #     self.assertListEqual(list(decay.data), [1, 2, 3, 4, 56])
-    #
-    #     decay = fit2x.Decay(
-    #         irf_histogram=[1., 2, 3, 4, 56]
-    #     )
-    #     self.assertListEqual(list(decay.irf), [1, 2, 3, 4, 56])
-    #
-    #     decay = fit2x.Decay(
-    #         time_axis=[1., 2, 3, 4, 56]
-    #     )
-    #     self.assertListEqual(list(decay.time_axis), [1, 2, 3, 4, 56])
-    #
-    #     decay = fit2x.Decay(
-    #         data_weights=[1., 2, 3, 4, 56]
-    #     )
-    #     self.assertListEqual(list(decay.data_weights), [1, 2, 3, 4, 56])
-    #
-    #     data = np.linspace(1, 22, 12)
-    #     decay = fit2x.Decay(
-    #         data=data,
-    #         convolution_range=(2, 32),
-    #         use_pile_up_correction=True,
-    #         excitation_period=123.2
-    #     )
-    #     self.assertEqual(
-    #         np.allclose(1. / np.sqrt(data), decay.data_weights),
-    #         True
-    #     )
-    #     self.assertEqual(len(decay.get_irf()), len(data))
-    #     self.assertEqual(len(decay.get_time_axis()), len(data))
-    #     self.assertEqual(decay.convolution_start, 2)
-    #     self.assertEqual(decay.convolution_stop, min(len(data), 12))
-    #     self.assertEqual(decay.use_pile_up_correction, True)
-    #     self.assertEqual(decay.excitation_period, 123.2)
+    def test_constructor_1(self):
+        decay = fit2x.Decay()
+        # default values
+        self.assertEqual(decay.is_valid, False)
+        self.assertEqual(decay.convolution_start, 0)
+        self.assertEqual(decay.convolution_stop, 0)
+        self.assertEqual(decay.use_pile_up_correction, False)
+        self.assertEqual(decay.use_amplitude_threshold, False)
+        self.assertEqual(decay.excitation_period, 100.0)
+
+    def test_constructor_2(self):
+        decay = fit2x.Decay(
+            data=[1, 2, 3, 4, 56]
+        )
+        self.assertListEqual(list(decay.data), [1, 2, 3, 4, 56])
+
+        decay = fit2x.Decay(
+            irf_histogram=[1., 2, 3, 4, 56]
+        )
+        self.assertListEqual(list(decay.irf), [1, 2, 3, 4, 56])
+
+        decay = fit2x.Decay(
+            time_axis=[1., 2, 3, 4, 56]
+        )
+        self.assertListEqual(list(decay.time_axis), [1, 2, 3, 4, 56])
+
+        decay = fit2x.Decay(
+            data_weights=[1., 2, 3, 4, 56]
+        )
+        self.assertListEqual(list(decay.data_weights), [1, 2, 3, 4, 56])
+
+        data = np.linspace(1, 22, 12)
+        decay = fit2x.Decay(
+            data=data,
+            convolution_range=(2, 32),
+            use_pile_up_correction=True,
+            excitation_period=123.2
+        )
+        self.assertEqual(
+            np.allclose(1. / np.sqrt(data), decay.data_weights),
+            True
+        )
+        self.assertEqual(len(decay.get_irf()), len(data))
+        self.assertEqual(len(decay.get_time_axis()), len(data))
+        self.assertEqual(decay.convolution_start, 2)
+        self.assertEqual(decay.convolution_stop, min(len(data), 12))
+        self.assertEqual(decay.use_pile_up_correction, True)
+        self.assertEqual(decay.excitation_period, 123.2)
 
     # def test_convolve_lifetime_spectrum_variable_time_axis(self):
     #     period = 25
