@@ -55,7 +55,6 @@ test:linux:
     - echo "I am a test stage job for debian, running on docker"
     - source activate base
     - conda install mamba conda-verify -c conda-forge
-    - mamba update -y -n base -c defaults --all
     - |
       conda config --add channels salilab
       conda config --add channels conda-forge
