@@ -17,7 +17,7 @@ private:
     std::vector<double> _linearization_table;
 
     /// If set to true multiply the linearization to the model function
-    bool use_linearization = false;
+    bool _use_linearization = false;
 
 public:
 
@@ -38,7 +38,7 @@ public:
         }
     }
 
-    void set_linearization_table(std::vector<double> v) {
+    void set_linearization_table(std::vector<double>& v) {
 #ifdef VERBOSE_FIT2X
         std::clog << "DecayLinearization::set_linearization_table" << std::endl;
 #endif
@@ -57,14 +57,14 @@ public:
 #ifdef VERBOSE_FIT2X
         std::clog << "DecayLinearization::set_use_linearization" << std::endl;
 #endif
-        use_linearization = v;
+        _use_linearization = v;
     }
 
     bool get_use_linearization(){
 #ifdef VERBOSE_FIT2X
         std::clog << "DecayLinearization::get_use_linearization" << std::endl;
 #endif
-        return use_linearization;
+        return _use_linearization;
     }
 
     DecayLinearization(){
@@ -78,7 +78,7 @@ public:
         std::clog << "DecayLinearization::add" << std::endl;
         std::clog << "-- use_linearization: " << use_linearization << std::endl;
 #endif
-        if(use_linearization){
+        if(_use_linearization){
             if(!decay->equal_size(_linearization_table)){
                 std::cerr << "WARNING: Linearization size mismatch." << std::endl;
             }

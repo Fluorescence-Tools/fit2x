@@ -25,16 +25,14 @@
 
 class Decay {
 
-public:
-    DecayScore* decayScore;
-    DecayLifetimeSpectrum* decayLifetimeSpectrum;
-    DecayConvolution* decayConvolution;
-    DecayBackground* decayBackground;
-    DecayPileup* decayPileup;
-    DecayScale* decayScale;
-    DecayLinearization* decayLinearization;
-
 private:
+    DecayScore* decayScore = nullptr;
+    DecayLifetimeSpectrum* decayLifetimeSpectrum = nullptr;
+    DecayConvolution* decayConvolution = nullptr;
+    DecayBackground* decayBackground = nullptr;
+    DecayPileup* decayPileup = nullptr;
+    DecayScale* decayScale = nullptr;
+    DecayLinearization* decayLinearization = nullptr;
 
 
     /// The experimental histogram

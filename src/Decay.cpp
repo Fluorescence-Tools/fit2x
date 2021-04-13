@@ -70,7 +70,7 @@ Decay::Decay(
                                 constant_offset
     );
     decayLinearization = new DecayLinearization();
-    set_linearization_table(linearization_table.data(), linearization_table.size());
+    set_linearization_table(linearization_table);
     set_use_linearization(use_linearization);
     decayScore = new DecayScore(_model, &_data, score_range, score_type);
 //
