@@ -22,7 +22,7 @@ build:linux:
   stage: build
   tags:
     - linux
-  image: ubuntu:latest
+  image: ubuntu:18.04
   variables:
     MINICONDA_OS: "Linux"
   before_script:
@@ -56,7 +56,7 @@ test:linux:
   stage: test
   tags:
     - linux
-  image: ubuntu:latest
+  image: ubuntu:18.04
   before_script:
     - export DEBIAN_FRONTEND=noninteractive
     - apt update -yq

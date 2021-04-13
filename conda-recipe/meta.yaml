@@ -20,6 +20,8 @@ requirements:
     - doxygen
     - git
   build:
+    - {{ compiler('c') }}
+    - {{ compiler('cxx') }}
     - python {{ python }}
     - numpy
     - cmake
