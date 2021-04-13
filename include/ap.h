@@ -101,7 +101,7 @@ public:
 };
 
 const complex operator/(const complex& lhs, const complex& rhs);
-const bool operator==(const complex& lhs, const complex& rhs);
+bool operator==(const complex& lhs, const complex& rhs);
 const bool operator!=(const complex& lhs, const complex& rhs);
 const complex operator+(const complex& lhs);
 const complex operator-(const complex& lhs);
@@ -1001,7 +1001,7 @@ int minint(int m1, int m2);
 double maxreal(double m1, double m2);
 double minreal(double m1, double m2);
 
-};//namespace ap
+}//namespace ap
 
 
 #endif

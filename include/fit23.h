@@ -23,10 +23,9 @@
  * are in the Jordi format, i.e., one-dimensional arrays of the parallel and
  * perpendicular detection channel.
  *
- * @param[in] param array containing the parameters of the model
- * [0] tau, [1] gamma, [2] r0, [3] rho
- * @param[in] irf instrument response function in Jordi format
- * @param bg[in] background pattern in Jordi format
+ * @param[in] param array containing the model parameters [0] tau, [1] gamma, [2] r0, [3] rho
+ * @param[in] irf instrument response function in Jordi format (parallel, perpendicular)
+ * @param bg[in] background pattern in Jordi format (parallel, perpendicular)
  * @param Nchannels[in] number of channels (half the length of the Jordi arrays)
  * @param dt[in] time difference between two consecutive counting channels
  * @param corrections[in] [0] excitation period, [1] g factor, [2] l1, [3] l2,
@@ -71,7 +70,7 @@ double targetf23(double *x, void *pv);
 
 
 /*!
- * Function optimizing parameters of model23 to the data.
+ * Function that optimizes parameters of model23 to data.
  *
  * @param x[in,out] a vector of length that that contains the starting parameters
  * for the optimization and is used to return the optimized parameters.

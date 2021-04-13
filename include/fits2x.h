@@ -1,13 +1,13 @@
-#define FIT2X_VERSION                "0.0.4"
-//#define VERBOSE_FIT2X 0
+#define FIT2X_VERSION                "0.0.6"
+//#define VERBOSE_FIT2X 1
 
 #include <iostream>
 #include <cmath>
 #include <algorithm>
 
 #include "i_lbfgs.h"
-#include "fsconv.h"
 #include "lvarrays.h"
+#include "fsconv.h"
 #include "statistics.h"
 
 

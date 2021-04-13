@@ -1,0 +1,6 @@
+
+Bugs
+----
+There is a bug when creating a Decay object. Decay creates a DecayLinearization object
+when setting set_use_linearization in DecayLinearization causes segfault in CI pipeline
+

@@ -6,10 +6,29 @@ ENABLE_LANGUAGE(CXX)
 SET(CMAKE_CXX_STANDARD 11)
 add_definitions(-D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES)
 
+################################################################################
+###### CMAKE
+################################################################################
+SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
 
+################################################################################
+###### DEFINITIONS
+################################################################################
 if(UNIX AND NOT APPLE)
     set(LINUX TRUE)
 endif()
+
+################################################################################
+# BUILD OPTIONS
+################################################################################
+OPTION(INSTALL "Install the library and the include files" ON)
+OPTION(BUILD_PYTHON_INTERFACE "Build Python interface" ON)
+OPTION(BUILD_DOC "Build documentation" OFF)
+OPTION(BUILD_R_INTERFACE "Build R interface" OFF)
+
+################################################################################
+###### CONDA
+################################################################################
 
 ## Check for Conda
 ###########################
@@ -29,10 +48,9 @@ IF(DEFINED ENV{CONDA_PREFIX})
 ELSE()
     MESSAGE(STATUS "No conda environment defined")
 ENDIF()
-SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
 
-# Conda
-#######
+# Conda - INCLUDE and LIB DIR
+#############################################
 if(UNIX)
     if(DEFINED ENV{CONDA_PREFIX})
         LINK_DIRECTORIES("$ENV{CONDA_PREFIX}/lib")
@@ -44,11 +62,23 @@ if(UNIX)
 endif()
 
 
-# Compiler flags
-#################
+################################################################################
+###### Compiler flags
+################################################################################
+
+## Compiler warnings
+########################
+#IF (CMAKE_BUILD_TYPE STREQUAL "Debug")
+#    if(MSVC)
+#        ADD_COMPILE_OPTIONS(/Wall)
+#    else()
+#        ADD_COMPILE_OPTIONS(-Wall -Wextra -pedantic)
+#    endif()
+#ENDIF (CMAKE_BUILD_TYPE STREQUAL "Debug")
+
 if(LINUX)
-    STRING(APPEND CMAKE_CXX_FLAGS " -march=native -Ofast -mavx2 -ffast-math -funroll-loops")
-    STRING(APPEND CMAKE_C_FLAGS " -march=native -Ofast -mavx2 -ffast-math -funroll-loops")
+    STRING(APPEND CMAKE_CXX_FLAGS " -march=native -Ofast -mavx -ffast-math -funroll-loops")
+    STRING(APPEND CMAKE_C_FLAGS " -march=native -Ofast -mavx -ffast-math -funroll-loops")
 endif()
 if(APPLE)
     FIND_PACKAGE(Threads)
@@ -58,18 +88,16 @@ if(APPLE)
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
     SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pthread")
     # Requires AVX and FMA
-    STRING(APPEND CMAKE_CXX_FLAGS " -march=native -Ofast -mavx2 -ffast-math -funroll-loops -mfma")
-    STRING(APPEND CMAKE_C_FLAGS " -march=native -Ofast -mavx2 -ffast-math -funroll-loops -mfma")
+    STRING(APPEND CMAKE_CXX_FLAGS " -march=native -Ofast -mavx -ffast-math -funroll-loops")
+    STRING(APPEND CMAKE_C_FLAGS " -march=native -Ofast -mavx -ffast-math -funroll-loops")
 endif()
 if (MSVC)
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++latest")
     ADD_DEFINITIONS(-DMS_WIN64)
     ADD_DEFINITIONS(-D_USE_MATH_DEFINES)
     # https://devblogs.microsoft.com/cppblog/simd-extension-to-c-openmp-in-visual-studio/
     # /Oi is for intrinsics
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX2 -openmp:experimental /Oi /O2")
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX -openmp:experimental /Oi /O2")
 endif (MSVC)
-
 
 # MACOSX
 ##############
@@ -83,32 +111,63 @@ if (APPLE)
     endif()
 endif (APPLE)
 
-
-INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include)
-INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR})
-OPTION(BUILD_PYTHON_INTERFACE "Build Python interface" ON)
-
-################################################################################
-# Source groups
-################################################################################
-FILE(GLOB SRC_files "${CMAKE_SOURCE_DIR}/src/*.cpp")
-
 # Debug build detection
 ###########################
 IF (CMAKE_BUILD_TYPE STREQUAL "Release")
     MESSAGE("Release build")
-    ADD_DEFINITIONS("-DVERBOSE_FIT2X=0")
+    IF(MSVC)
+        ADD_COMPILE_OPTIONS(/w)
+    ELSE()
+        ADD_COMPILE_OPTIONS(-w)
+    ENDIF()
 ELSE (CMAKE_BUILD_TYPE STREQUAL "Debug")
     MESSAGE("Debug build")
     ADD_DEFINITIONS("-DVERBOSE_FIT2X=1")
+    ## Enable Compiler warnings
+    #############################
+    IF(MSVC)
+        ADD_COMPILE_OPTIONS(/W4)
+    ELSE()
+        ADD_COMPILE_OPTIONS(-Wall -Wextra -pedantic)
+    ENDIF()
 ENDIF (CMAKE_BUILD_TYPE STREQUAL "Release")
 
+
+################################################################################
+###### INCLUDES AND LIBRARIES
+################################################################################
 
 ## TTTRLIB
 LINK_LIBRARIES(tttrlib)
 
-## HDF5 -
-# Necessary to fulfil implicit of tttrlib
+## Boost
+###########################
+IF(DEFINED ENV{CONDA_PREFIX})
+    MESSAGE("Using Conda Boost")
+    SET(BOOST_ROOT $ENV{CONDA_PREFIX})
+    SET(Boost_NO_SYSTEM_PATHS ON)
+    SET(Boost_NO_BOOST_CMAKE ON)
+    IF (CMAKE_BUILD_TYPE STREQUAL "Debug")
+        SET(Boost_DEBUG ON)
+        SET(Boost_DETAILED_FAILURE_MESSAGE ON)
+    ENDIF (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    IF (WIN32)
+        # Win Boost Conda uses static linking
+        SET(Boost_USE_STATIC_LIBS ON)
+        SET(Boost_USE_STATIC ON)
+    ELSE()
+        SET(Boost_USE_STATIC_LIBS OFF)
+        SET(Boost_USE_STATIC OFF)
+        SET(Boost_USE_MULTITHREAD)
+    endif (WIN32)
+ENDIF()
+FIND_PACKAGE(Boost 1.36 REQUIRED COMPONENTS date_time filesystem iostreams)
+INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
+LINK_LIBRARIES(${Boost_LIBRARIES})
+MESSAGE(${Boost_INCLUDE_DIRS})
+
+## HDF5
+# Implicit dependency tttrlib -> HDF5
 ###########################
 FIND_PACKAGE(HDF5 1.10 REQUIRED COMPONENTS C)
 INCLUDE_DIRECTORIES(${HDF5_INCLUDE_DIRS})
@@ -125,20 +184,6 @@ ADD_DEFINITIONS(-DH5_BUILT_AS_DYNAMIC_LIB)
 #else ()
 #    message(WARNING "MKL libs not found")
 #endif ()
-
-## Boost
-###########################
-if (WIN32)
-    # use static Boost in Windows
-    set(Boost_USE_STATIC_LIBS ON)
-    set(Boost_USE_STATIC ON)
-    set(Boost_USE_MULTITHREAD)
-endif (WIN32)
-FIND_PACKAGE(Boost 1.36 REQUIRED COMPONENTS date_time filesystem iostreams)
-INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
-LINK_LIBRARIES(${Boost_LIBRARIES})
-MESSAGE(${Boost_INCLUDE_DIRS})
-
 
 ## OpenMP
 ###########################
@@ -165,16 +210,26 @@ endif ()
 FIND_PACKAGE(OpenMP REQUIRED)
 LINK_LIBRARIES(OpenMP::OpenMP_CXX)
 
+################################################################################
+# Source groups
+################################################################################
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/src)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include)
+INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include)
+INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR})
+FILE(GLOB SRC_files "${CMAKE_SOURCE_DIR}/src/*.cpp")
 ADD_SUBDIRECTORY(ext)
 
+
+################################################################################
+###### Targets
+################################################################################
 
 ## Shared / static library target
 ###########################
 # cmake needs unique target name, thus place shared in front of project
-ADD_LIBRARY(${PROJECT_NAME}Shared SHARED ${SRC_files})
+ADD_LIBRARY(${PROJECT_NAME}Shared SHARED ${SRC_files} include/DecayCurve.h)
 ADD_LIBRARY(${PROJECT_NAME}Static STATIC ${SRC_files})
 
 # Define which headers are going to be included in the install target

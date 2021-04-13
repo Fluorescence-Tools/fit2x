@@ -19,9 +19,9 @@ def read_version(
     return version.replace('"', '')
 
 
-__name__ = "fit2x"
-__version__ = read_version()
-__license__ = 'Mozilla Public License 2.0 (MPL 2.0)'
+NAME = "fit2x"
+VERSION = read_version()
+LICENSE = 'Mozilla Public License 2.0 (MPL 2.0)'
 
 
 class CMakeExtension(Extension):
@@ -49,7 +49,7 @@ class CMakeBuild(build_ext):
             '-DCMAKE_SWIG_OUTDIR=' + extdir
         ]
         cfg = 'Debug' if self.debug else 'Release'
-        build_args = ['--config', cfg, '-j 8']
+        build_args = ['--config', cfg, '-j 16']
         cmake_args += ['-DCMAKE_BUILD_TYPE=' + cfg]
         if platform.system() == "Windows":
             cmake_args += [
@@ -59,19 +59,6 @@ class CMakeBuild(build_ext):
             ]
         else:
             build_args += ['--', '-j8']
-            # When using conda try to convince cmake to use
-            # the conda boost
-            CONDA_PREFIX = os.getenv('CONDA_PREFIX')
-            if CONDA_PREFIX is not None:
-                print("Conda prefix is: ", CONDA_PREFIX)
-                print("Convincing cmake to use the conda boost")
-                cmake_args += [
-                    '-DCMAKE_PREFIX_PATH=' + CONDA_PREFIX,
-                    '-DBOOST_ROOT=' + CONDA_PREFIX,
-                    '-DBoost_NO_SYSTEM_PATHS=ON',
-                    '-DBoost_DEBUG=OFF',
-                    '-DBoost_DETAILED_FAILURE_MESSAGE=ON'
-                ]
         env = os.environ.copy()
         if not os.path.exists(self.build_temp):
             os.makedirs(self.build_temp)
@@ -103,9 +90,9 @@ class CMakeBuild(build_ext):
 
 
 setup(
-    name=__name__,
-    version=__version__,
-    license=__license__,
+    name=NAME,
+    version=VERSION,
+    license=LICENSE,
     author='Thomas-Otavio Peulen',
     author_email='thomas.otavio.peulen@gmail.com',
     ext_modules=[

@@ -1,8 +1,5 @@
-// fast and slow convolution routines, autoscaling and lamp shift
-// Version 2006.03.26
-
-#include "fsconv.h"
 #include "fits2x.h"
+#include "fsconv.h"
 
 /* rescaling -- old version. sum(fit)->sum(decay) */
 void rescale(double *fit, double *decay, double *scale, int start, int stop) {
@@ -42,25 +39,29 @@ void rescale_w_bg(double *fit, double *decay, double *w_sq, double bg, double *s
 #if VERBOSE_FIT2X
     std::clog << "RESCALE_W_BG" << std::endl;
     std::clog << "-- initial scale: " << *scale << std::endl;
-    std::clog << "w_sq [:64]: ";
-    for(int i=0; i<64; i++) std::clog << w_sq[i] << " ";
+    std::clog << "w_sq [start:stop]: ";
+    for(int i=start; i<stop; i++) std::clog << w_sq[i] << " ";
     std::clog << std::endl;
-    std::clog << "decay [:64]: ";
-    for(int i=0; i<64; i++) std::clog << decay[i] << " ";
+    std::clog << "decay [start:stop]: ";
+    for(int i=start; i<stop; i++) std::clog << decay[i] << " ";
     std::clog << std::endl;
-    std::clog << "fit [:64]: ";
-    for(int i=0; i<64; i++) std::clog << fit[i] << " ";
+    std::clog << "fit [start:stop]: ";
+    for(int i=start; i<stop; i++) std::clog << fit[i] << " ";
     std::clog << std::endl;
 #endif
     /* scaling */
-    if (*scale == 0.) {
+    if (*scale <= 0.) {
         double sumnom = 0., sumdenom = 0.;
         for (int i = start; i < stop; i++) {
-            if (decay[i] != 0.) {
+            if (w_sq[i] > 0.) {
                 sumnom += fit[i] * (decay[i] - bg) / w_sq[i];
                 sumdenom += fit[i] * fit[i] / w_sq[i];
             }
         }
+#if VERBOSE_FIT2X
+        std::clog << "-- sumnom: " << sumnom << std::endl;
+        std::clog << "-- sumdenom: " << sumdenom << std::endl;
+#endif
         if (sumdenom != 0.) *scale = sumnom / sumdenom;
     }
 #if VERBOSE_FIT2X
@@ -94,6 +95,7 @@ void fconv(double *fit, double *x, double *lamp, int numexp, int start, int stop
 
 // fast convolution AVX
 void fconv_avx(double *fit, double *x, double *lamp, int numexp, int start, int stop, double dt) {
+
     start = std::max(1, start);
     // make sure that there are always multiple of 4 in the lifetimes
     const int chunk_size = 4; int pad = 0;
@@ -101,10 +103,11 @@ void fconv_avx(double *fit, double *x, double *lamp, int numexp, int start, int 
     int n_ele = numexp + pad;
 
     // copy the interleaved lifetime spectrum to vectors
-    auto *p = (double *) _mm_malloc((numexp + pad) * sizeof(double), 32);
+    auto *p = (double *) _mm_malloc(n_ele * sizeof(double), 32);
     std::fill(p, p + n_ele, 0.0);
     for (int i = 0; i < numexp; i++) p[i] = x[2 * i + 0];
-    auto *ex = (double *) _mm_malloc((numexp + pad) * sizeof(double), 32);
+
+    auto *ex = (double *) _mm_malloc(n_ele * sizeof(double), 32);
     std::fill(ex + numexp, ex + n_ele, 0.0);
     for (int i = 0; i < numexp; i++) ex[i] = exp(-dt / x[2 * i + 1]);
 
@@ -119,7 +122,6 @@ void fconv_avx(double *fit, double *x, double *lamp, int numexp, int start, int 
         e = _mm256_load_pd(&ex[ne]);
         // amplitudes
         a = _mm256_load_pd(&p[ne]);
-
         // take care of first channel
         // fit[0] += l2[0] * a;
         l2c = _mm256_set1_pd(l2[0]);
@@ -135,14 +137,19 @@ void fconv_avx(double *fit, double *x, double *lamp, int numexp, int start, int 
 #endif
         // convolution
         for (int i = start; i < stop; i++) {
-            //fitcurr = (fitcurr + l2[i - 1]) * expcurr + l2[i];
             l2p = _mm256_set1_pd(l2[i - 1]);
             l2c = _mm256_set1_pd(l2[i]);
+            //fitcurr = (fitcurr + l2[i - 1]) * expcurr + l2[i];
             fitcurr = _mm256_add_pd(fitcurr, l2p);
+#ifdef __FMA__
             fitcurr = _mm256_fmadd_pd(fitcurr, e, l2c);
+#else
+            fitcurr = _mm256_mul_pd(fitcurr, e);
+            fitcurr = _mm256_add_pd(fitcurr, l2c);
+#endif
             // fit[i] += fitcurr * a;
             tmp = _mm256_mul_pd(fitcurr, a);
-#ifdef _WIN32
+            #ifdef _WIN32
             fit[i] = double(tmp.m256d_f64[0]);
             fit[i] += double(tmp.m256d_f64[1]);
             fit[i] += double(tmp.m256d_f64[2]);
@@ -161,6 +168,9 @@ void fconv_avx(double *fit, double *x, double *lamp, int numexp, int start, int 
 void fconv_per(double *fit, double *x, double *lamp, int numexp, int start, int stop,
                int n_points, double period, double dt)
 {
+#ifdef VERBOSE_FIT2X
+    std::clog << "fconv_per" << std::endl;
+#endif
     int ne, i, lamp_start = 0,
             stop1, period_n = (int)ceil(period/dt-0.5);
     double fitcurr, expcurr, tail_a, deltathalf = dt*0.5;
@@ -191,6 +201,16 @@ void fconv_per(double *fit, double *x, double *lamp, int numexp, int start, int 
 // fast convolution, high repetition rate, AVX
 void fconv_per_avx(double *fit, double *x, double *lamp, int numexp, int start, int stop,
                    int n_points, double period, double dt) {
+#ifdef VERBOSE_FIT2X
+    std::clog << "fconv_per_avx" << std::endl;
+    std::clog << "-- numexp: " << numexp << std::endl;
+    std::clog << "-- start: " << start << std::endl;
+    std::clog << "-- stop: " << stop << std::endl;
+    std::clog << "-- n_points: " << n_points << std::endl;
+    std::clog << "-- period: " << period << std::endl;
+    std::clog << "-- dt: " << dt << std::endl;
+#endif
+    stop = (stop < 0) ? n_points: stop;
     // make sure that there are always multiple of the AVX register size
     const int chunk_size = 4; // the number of lifetimes per AVX register
     int pad = 0;
@@ -261,7 +281,12 @@ void fconv_per_avx(double *fit, double *x, double *lamp, int numexp, int start, 
             l2p = _mm256_set1_pd(l2[i - 1]);
             l2c = _mm256_set1_pd(l2[i]);
             fitcurr = _mm256_add_pd(fitcurr, l2p);
+#ifdef __FMA__
             fitcurr = _mm256_fmadd_pd(fitcurr, e, l2c);
+#else
+            fitcurr = _mm256_mul_pd(fitcurr, e);
+            fitcurr = _mm256_add_pd(fitcurr, l2c);
+#endif
             // fit[i] += fitcurr * a;
             tmp = _mm256_mul_pd(fitcurr, a);
 #ifdef _WIN32
@@ -384,28 +409,28 @@ void add_pile_up_to_model(
         double* model, int n_model,
         double* data, int n_data,
         double repetition_rate,
-        double dead_time,
+        double instrument_dead_time,
         double measurement_time,
-        std::string pile_up_model
+        const char* pile_up_model
 ){
 #if VERBOSE_FIT2X
     std::clog << "ADD PILE-UP" << std::endl;
     std::clog << "-- Repetition_rate [MHz]: " << repetition_rate << std::endl;
-    std::clog << "-- Dead_time [ns]: " << dead_time << std::endl;
+    std::clog << "-- Dead_time [ns]: " << instrument_dead_time << std::endl;
     std::clog << "-- Measurement_time [s]: " << measurement_time << std::endl;
     std::clog << "-- n_data: " << n_data << std::endl;
     std::clog << "-- n_model: " << n_model << std::endl;
 #endif
-    if(pile_up_model == "coates"){
+    if(strcmp(pile_up_model, "coates") == 0){
 #if VERBOSE_FIT2X
         std::clog << "-- pile_up_model: " << pile_up_model << std::endl;
 #endif
         repetition_rate *= 1e6;
-        dead_time *= 1e-9;
+        instrument_dead_time *= 1e-9;
         std::vector<double> cum_sum(n_data);
         std::partial_sum(data, data + n_data, cum_sum.begin(), std::plus<double>());
         long n_pulse_detected = cum_sum[cum_sum.size() - 1];
-        double total_dead_time = n_pulse_detected * dead_time;
+        double total_dead_time = n_pulse_detected * instrument_dead_time;
         double live_time = measurement_time - total_dead_time;
         double n_excitation_pulses = std::max(live_time * repetition_rate, (double) n_pulse_detected);
 #if VERBOSE_FIT2X
@@ -482,15 +507,20 @@ void fconv_per_cs_time_axis(
     double dt = time_axis[1] - time_axis[0];
 #ifdef __AVX2__
     fconv_per_avx(
-            model, lifetime_spectrum, instrument_response_function, (int) n_lifetime_spectrum / 2,
-            convolution_start, convolution_stop, n_model, period, dt
-            );
+            model,
+            lifetime_spectrum,
+            instrument_response_function,
+            (int) n_lifetime_spectrum / 2,
+            convolution_start, convolution_stop,
+            n_model,
+            period, dt
+    );
 #endif
 #ifndef __AVX2__
     fconv_per(
             model, lifetime_spectrum, instrument_response_function, (int) n_lifetime_spectrum / 2,
             convolution_start, convolution_stop, n_model, period, dt
-            );
+    );
 #endif
 }
 
@@ -504,20 +534,26 @@ void fconv_cs_time_axis(
         int convolution_stop
 ){
     int number_of_exponentials = n_lifetime_spectrum / 2;
+    convolution_start = std::max(0, convolution_start);
 #if VERBOSE_FIT2X
     std::clog << "convolve_lifetime_spectrum... " << std::endl;
     std::clog << "-- number_of_exponentials: " << number_of_exponentials << std::endl;
     std::clog << "-- convolution_start: " << convolution_start << std::endl;
     std::clog << "-- convolution_stop: " << convolution_stop << std::endl;
 #endif
-    for(int i=0; i<n_output; i++) output[i] = 0.0;
+    std::fill(output, output+n_output, 0.0);
     for(int ne=0; ne<number_of_exponentials; ne++){
         double a = lifetime_spectrum[2 * ne];
         double current_lifetime = (lifetime_spectrum[2 * ne + 1]);
         if((a == 0.0) || (current_lifetime == 0.0)) continue;
         double current_model_value = 0.0;
         for(int i=convolution_start; i<convolution_stop; i++){
-            double dt = dt = (time_axis[i] - time_axis[i - 1]);
+            double dt;
+            if(i < convolution_stop - 1){
+                dt = (time_axis[i + 1] - time_axis[i]);
+            } else{
+                dt = (time_axis[i] - time_axis[i - 1]);
+            }
             double dt_2 = dt / 2.0;
             double current_exponential = std::exp(-dt / current_lifetime);
             current_model_value = (current_model_value + dt_2 * instrument_response_function[i - 1]) *

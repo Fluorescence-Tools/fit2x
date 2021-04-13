@@ -5,40 +5,41 @@ package:
   version: {{ data.get('version')|lower }}
 
 source:
-  path: ..
+  #  path: ..
+  git_url: ..
 
 build:
     number: 0
-    string: np{{ CONDA_NPY }}py{{ CONDA_PY }}_{{ data.get('GIT_BUILD_STR', "0")|lower }}
+    string: py{{ python }}
 
 requirements:
   host:
     - python {{ python }}
-    - {{ pin_compatible('numpy') }}
+    - numpy
     - setuptools
+    - doxygen
     - git
   build:
+    - {{ compiler('c') }}
+    - {{ compiler('cxx') }}
+    - cmake >=3.13
     - python {{ python }}
-    - {{ pin_compatible('numpy') }}
+    - numpy
     - cmake
-    - swig 3.0.12.*
-    - boost 1.67.0.*
-    - libboost 1.67.0.* # [not win]
-    - hdf5 1.10.2.*
-    - tttrlib>=0.0.18
+    - swig
+    - boost 1.67.0.* [py < 38]
+    - boost 1.71.0.* [py >= 38]
+    - tttrlib {{ tttrlib }}
     - llvm-openmp # [osx]
   run:
     - python {{ python }}
-    - {{ pin_compatible('numpy') }}
-    - boost 1.67.0.* # [win]
-    - libboost 1.67.0.* # [not win]
+    - numpy
     - llvm-openmp # [osx]
-    - hdf5 1.10.2.*
-    - tttrlib>=0.0.18
-
-test:
-  imports:
-    - fit2x
+    - tttrlib {{ tttrlib }}
+    - boost 1.67.0.* [py < 38]
+    - boost 1.71.0.* [py >= 38]
+    - libboost 1.71.0.* [py >= 38]
+    - libboost 1.67.0.* [py < 38]
 
 about:
   home: https://github.com/fluorescence-tools/fit2x
@@ -47,7 +48,6 @@ about:
   description: |
     fit2x is a C++ MLE fitting library including Python bindings for MFD
     data.
-  doc_url: https://fluorescence-tools.github.io/fit2x/
 
 extra:
   recipe-maintainers:

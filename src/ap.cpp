@@ -1,13 +1,14 @@
 #include "ap.h"
+#include <limits> /* std::numeric_limits */
 
-const double ap::machineepsilon = 5E-16;
-const double ap::maxrealnumber  = 1E300;
-const double ap::minrealnumber  = 1E-300;
+const double ap::machineepsilon = std::numeric_limits<double>::epsilon();
+const double ap::maxrealnumber  = std::numeric_limits<double>::max();
+const double ap::minrealnumber  = std::numeric_limits<double>::min();
 
 //
 // ap::complex operations
 //
-const bool ap::operator==(const ap::complex& lhs, const ap::complex& rhs)
+bool ap::operator==(const ap::complex& lhs, const ap::complex& rhs)
 { return lhs.x==rhs.x && lhs.y==rhs.y; }
 
 const bool ap::operator!=(const ap::complex& lhs, const ap::complex& rhs)

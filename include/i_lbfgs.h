@@ -2,7 +2,7 @@
 
 #include "ap.h"
 #include "lbfgs.h"
-#include <cmath>
+#include <cmath> /* isfinite */
 #include <iostream>
 
 // pointer to the target function

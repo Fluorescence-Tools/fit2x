@@ -4,32 +4,36 @@
 // This fixes numpy int casting to std::vector,int>
 // (see: https://github.com/swig/swig/issues/888)
 #define SWIG_PYTHON_CAST_MODE
-
 // This is needed for numpy as you need SWIG_FILE_WITH_INIT
 #define SWIG_FILE_WITH_INIT
+#include <assert.h>
 #include "../include/fits2x.h"
-#include "tttrlib/tttr.h"
 %}
 
-//%include <boost_shared_ptr.i>
+%include <typemaps.i>
+%include <std_string.i>
 %include <std_shared_ptr.i>
+%include <cpointer.i>
 %include <std_vector.i>
 %include <attribute.i>
-%include <typemaps.i>
-%include <cpointer.i>
-%include <shared_ptr.i>
-%include <std_string.i>
-%include <std_wstring.i>
 %include "exception.i"
 %include "numpy.i"
 %include "documentation.i"
 
-// Use shared_prt for TTTR to pass TTTR around
-%shared_ptr(TTTR)
 
 %init %{
 import_array();
 %}
+
+// Python code that should be included at the begining (import, Base class, etc)
+%pythoncode "../ext/python/fit2x.py"
+
+// Templates
+%template(VectorDouble) std::vector<double>;
+%template(VectorInt32) std::vector<int>;
+
+// shared_prt
+%shared_ptr(TTTR) // to pass TTTR around
 
 // Generic input arrays
 // floating numbers
@@ -46,14 +50,16 @@ import_array();
 // Generic output arrays views
 // floating points
 %apply(double** ARGOUTVIEW_ARRAY1, int* DIM1) {(double** output_view, int* n_output)}
+%apply(float** ARGOUTVIEW_ARRAY1, int* DIM1, int* DIM2, int* DIM3, int* DIM4) {(float **output, int *dim1, int *dim2, int *dim3, int *dim4)}
 
 // Generic output memory managed arrays
-// floating points
+// float and double
 %apply(double** ARGOUTVIEWM_ARRAY1, int* DIM1) {(double** output, int* n_output)}
 %apply(double** ARGOUTVIEWM_ARRAY2, int* DIM1, int* DIM2) {(double** output, int* n_output1, int* n_output2)}
 %apply(double** ARGOUTVIEWM_ARRAY1, int* DIM1) {(double** output, int* n_output)}
 %apply (double** ARGOUTVIEWM_ARRAY3, int* DIM1, int* DIM2, int* DIM3) {(double** output, int* dim1, int* dim2, int* dim3)}
-%apply (float** ARGOUTVIEWM_ARRAY4, int* DIM1, int* DIM2, int* DIM3, int* DIM4) {(float** output, int* dim1, int* dim2, int* dim3, int* dim4)}
+%apply (float** ARGOUTVIEWM_ARRAY4, int* DIM1, int* DIM2, int* DIM3, int* DIM4) {(float **output, int *dim1, int *dim2, int *dim3, int *dim4)}
+
 // integers
 %apply(long long** ARGOUTVIEWM_ARRAY1, int* DIM1) {(long long **output, int *n_output)}
 %apply(unsigned long long** ARGOUTVIEWM_ARRAY1, int* DIM1) {(unsigned long long** output, int* n_output)}
@@ -70,22 +76,31 @@ import_array();
 // Generic inplace arrays
 %apply(double* INPLACE_ARRAY1, int DIM1) {(double* inplace_output, int n_output)}
 
-
-// Templates
-%template(VectorDouble) std::vector<double>;
-%template(VectorInt32) std::vector<int>;
-
+// for fit23, fit24, etc.
 %apply (int DIM1, double* INPLACE_ARRAY1) {(int len1, double* x)}
 %apply (int DIM1, short* IN_ARRAY1) {(int len2, short* fixed)}
 
-%include "../include/fits2x.h"
-%pythoncode "../ext/python/fit2x.py"
 
+/* Convolution and LabView interface*/
 %include "lvarray.i"
 %include "fsconv.i"
+%include "phasor.i"
+
+/* Fits */
 %include "fit23.i"
 %include "fit24.i"
 %include "fit25.i"
 %include "fit26.i"
-%include "decay.i"
-%include "phasor.i"
+
+/* Decay */
+%include "DecayCurve.i"
+%include "DecayBackground.i"
+%include "DecayPileup.i"
+%include "DecayLinearization.i"
+%include "DecayLifetimeSpectrum.i"
+%include "DecayConvolution.i"
+%include "DecayScale.i"
+%include "DecayScore.i"
+%include "Decay.i"
+
+%include "../include/fits2x.h"

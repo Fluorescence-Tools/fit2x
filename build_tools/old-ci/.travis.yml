@@ -1,0 +1,109 @@
+language: generic
+sudo: required
+
+matrix:
+  include:
+    - os: linux
+      dist: bionic
+      addons:
+        apt:
+          packages:
+            - doxygen
+    - os: osx
+      osx_image: xcode9.4
+      addons:
+        homebrew:
+          packages:
+            - doxygen
+            - libomp
+          update: true
+
+# The Sphinx C++ docs are build with doxygen and breathe
+addons:
+  apt:
+    packages:
+      - doxygen
+  homebrew:
+    packages:
+      - doxygen
+    update: true
+
+env:
+  # Build and test package on all supported python versions
+  - BUILD_TARGET=3.7 MINICONDA_VERSION=latest CONDA_PACKAGE=fit2x
+
+before_install:
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then MINICONDA_OS=Linux; else MINICONDA_OS=MacOSX; fi
+  # unlink homebrew's boost so that is does not interfere with conda's boost in the build
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew unlink boost; fi
+  - wget https://repo.continuum.io/miniconda/Miniconda3-$MINICONDA_VERSION-$MINICONDA_OS-x86_64.sh -O miniconda.sh
+  - bash miniconda.sh -b -p $HOME/miniconda
+  - export PATH="$HOME/miniconda/bin:$PATH"
+  - hash -r
+  - source activate base
+  - conda config --set always_yes yes --set changeps1 no
+  - conda update -q conda
+  - conda info -a
+  - conda install python=$BUILD_TARGET conda-build anaconda-client jinja2 git nose coverage anaconda-client scipy
+  - export CONDA_LABEL=$(if [ "TRAVIS_PULL_REQUEST_BRANCH" == "master" ]; then echo main; else echo nightly; fi)
+  - conda config --add channels tpeulen/label/$CONDA_LABEL
+  - conda build conda-recipe --output-folder bld-dir
+  - conda config --add channels "file://`pwd`/bld-dir"
+
+install:
+  - conda install $CONDA_PACKAGE -c "file://`pwd`/bld-dir"
+
+script:
+  # create a link from nosetests in test to make sure that the correct nosetests is used
+  - ln -sf $(which nosetests) $(pwd)/test/
+  - cd $(pwd)/test/
+  - echo $PWD
+  # skip nosetests on macOS (there may be an AVX issue with travis)
+  - |
+    if [[ "$TRAVIS_OS_NAME" == "linux" ]]
+    then
+      nosetests --nocapture --with-coverage test_*.py
+      # Code coverage
+      pip install codacy-coverage
+      coverage xml && python-codacy-coverage -r coverage.xml
+    fi
+  - cd ..
+
+after_success:
+  - OS=$TRAVIS_OS_NAME-64
+  - conda activate base
+  - anaconda -t $ANACONDA_API_TOKEN upload -u $CONDA_USER -l $CONDA_LABEL bld-dir/$OS/*.tar.bz2 --force
+  # build the documentation only on linux
+  - |
+    if [[ "$TRAVIS_OS_NAME" == "linux" ]]
+    then
+      # Build Sphinx docs
+      cd docs
+      conda env create -f environment.yml
+      conda activate docs_env
+      make clean; make html
+      touch _build/html/.nojekyll
+      cd ..
+      conda deactivate
+    fi
+
+
+# Tell Travis CI to copy the documentation to the gh-pages branch of
+# your GitHub repository.
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN  # Set in travis-ci.org dashboard, marked secure
+  keep-history: true
+  on:
+    branch: development
+    condition: $TRAVIS_OS_NAME = linux
+  local_dir: docs/_build/html/
+
+
+notifications:
+  email:
+    recipients:
+      - thomas.otavio.peulen@gmail.com
+    on_success: change # default: change
+    on_failure: change # default: always

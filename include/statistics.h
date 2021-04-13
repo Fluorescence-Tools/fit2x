@@ -5,11 +5,10 @@
 #include <cmath>
 #include <vector>
 #include <numeric>
-#include <string>
 #include <algorithm>
 #include <iostream>
-#include <omp.h>
-
+#include <cstring> /* strcmp */
+#include "omp.h"
 
 
 /*!
@@ -129,9 +128,10 @@ namespace statistics{
     double chi2_counting(
             std::vector<double> &data,
             std::vector<double> &model,
+            std::vector<double> &weights,
             int x_min = -1,
             int x_max = -1,
-            std::string type="neyman"
+            const char* type="neyman"
     );
 }
 

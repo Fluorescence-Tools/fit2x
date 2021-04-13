@@ -259,7 +259,7 @@ void bfgs::lbfgsminimize(const int& n,
                 return;
             }
         }
-	if (!isfinite(f))	// Stas 2008-04-14
+	if (!std::isfinite(f))	// Stas 2008-04-14
 	{
 		info = 0;
 		return;

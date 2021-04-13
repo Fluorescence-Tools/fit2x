@@ -1,7 +1,8 @@
-%include "typemaps.i"
+%{
+#include "../include/fsconv.h"
+%}
 
 // manually added instead of including header file as all other functions
-// are also manually added
 %apply (double* INPLACE_ARRAY1, int DIM1) {
     (double* fit, int len1),
     (double* model, int len3),
@@ -18,7 +19,6 @@
     (double* lampsh, int len2) // used by shift_lamp
 }
 
-
 void fconv_per_cs_time_axis(
         double *model, int n_model,
         double *time_axis, int n_time_axis,
@@ -34,14 +34,14 @@ void add_pile_up_to_model(
         double* model, int n_model,
         double* data, int n_data,
         double repetition_rate,
-        double dead_time,
+        double instrument_dead_time,
         double measurement_time,
-        std::string pile_up_model
+        const char* pile_up_model = "coates"
 );
+
 
 //// rescale
 //////////////
-
 %rename (rescale) my_rescale;
 %exception my_rescale{$action if (PyErr_Occurred()) SWIG_fail;}
 %inline %{
@@ -490,4 +490,3 @@ void my_shift_lamp(
     shift_lamp(lampsh, lamp, ts, len1);
 }
 %}
-

@@ -5,7 +5,6 @@
 
 #include <cmath>
 #include <numeric> /* accumulate */
-#include <string>
 #include <vector>
 #include "omp.h"
 
@@ -16,7 +15,12 @@
 #endif
 #if defined(__GNUC__) || defined(__clang__)
 #include <immintrin.h>
+#include <avxintrin.h>
 #endif
+#if !defined(__FMA__) && defined(__AVX2__)
+#define __FMA__ 1
+#endif
+
 
 
 
@@ -253,36 +257,33 @@ void shift_lamp(double *lampsh, double *lamp, double ts, int n_points, double ou
 
 
 /*!
- * @brief Correct the model function for pile up
+ * @brief Add a pile-up distortion to the model function
  *
- * Add pile up to a model function. The pile-up model follows the
- * description by Coates, 1968, eq. 2
- *
- * p = data / (n_excitation_pulses - np.cumsum(data))
- * Coates, 1968, eq. 4
+ * This function adds a pile up distortion to a model fluorescence decay. The
+ * model used to compute the pile-up distortion follows the description of Coates
+ * (1968, eq. 2 and eq. 4)
  *
  * Reference:
- * Coates, P.: The correction for photonpile-up’ in the measurement of radiative
+ * Coates, P.: The correction for photonpile-up in the measurement of radiative
  * lifetimes. J. Phys. E: Sci. Instrum. 1(8), 878–879 (1968)
- *
  *
  * @param model[in,out] The array containing the model function
  * @param n_model[in] Number of elements in the model array
  * @param data[in] The array containing the experimental decay
  * @param n_data[in] number of elements in experimental decay
- * @param repetition_rate[in] The repetition-rate in MHz
- * @param dead_time[in] The dead-time of the detection system in nanoseconds
+ * @param repetition_rate[in] The repetition-rate (excitation rate) in MHz
+ * @param instrument_dead_time[in] The overall dead-time of the detection system in nanoseconds
  * @param measurement_time[in] The measurement time in seconds
- * @param pile_up_model[in] The model used to compute the pile up distortion of
- * the data (currently only Coates)
+ * @param pile_up_model[in] The model used to compute the pile up distortion.
+ * (default "coates")
  */
 void add_pile_up_to_model(
         double* model, int n_model,
         double* data, int n_data,
         double repetition_rate,
-        double dead_time,
+        double instrument_dead_time,
         double measurement_time,
-        std::string pile_up_model="coates"
+        const char* pile_up_model = "coates"
 );
 
 
