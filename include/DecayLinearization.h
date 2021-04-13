@@ -14,7 +14,7 @@ class DecayLinearization: public DecayModifier{
 
 private:
     /// The model function is multiplied by this vector is _use_linearization is true
-    std::vector<double> _linearization_table;
+    std::vector<double> _linearization_table = std::vector<double>();
 
     /// If set to true multiply the linearization to the model function
     bool _use_linearization = false;
@@ -67,10 +67,14 @@ public:
         return _use_linearization;
     }
 
-    DecayLinearization(){
+    DecayLinearization(
+            double* linearization_table, int n_linearization_table,
+            bool use_linearization = false){
 #ifdef VERBOSE_FIT2X
         std::clog << "DecayLinearization::DecayLinearization" << std::endl;
 #endif
+        set_linearization_table(linearization_table, n_linearization_table);
+        set_use_linearization(use_linearization);
     }
 
     void add(DecayCurve* decay){
