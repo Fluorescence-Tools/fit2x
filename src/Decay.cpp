@@ -71,17 +71,18 @@ Decay::Decay(
     );
     decayLinearization = new DecayLinearization();
     decayLinearization->set_linearization_table(linearization_table, n_linearization_table);
+    // TODO: This line segfault in tests!!
     //decayLinearization->set_use_linearization(use_linearization);
     decayScore = new DecayScore(_model, &_data, score_range, score_type);
-//
-//    _data.set_tttr(tttr_data, tttr_micro_time_coarsening);
-//    _irf.set_tttr(tttr_irf, tttr_micro_time_coarsening);
-//    if(!time_axis.empty())
-//        set_time_axis(time_axis.data(), time_axis.size());
-//    if(!irf_histogram.empty())
-//        set_irf(irf_histogram.data(), irf_histogram.size());
-//    if(!data.empty())
-//        set_data(data.data(), data.size());
-//    if(!data_weights.empty())
-//        set_data_weights(data_weights.data(), data_weights.size());
+
+    _data.set_tttr(tttr_data, tttr_micro_time_coarsening);
+    _irf.set_tttr(tttr_irf, tttr_micro_time_coarsening);
+    if(!time_axis.empty())
+        set_time_axis(time_axis.data(), time_axis.size());
+    if(!irf_histogram.empty())
+        set_irf(irf_histogram.data(), irf_histogram.size());
+    if(!data.empty())
+        set_data(data.data(), data.size());
+    if(!data_weights.empty())
+        set_data_weights(data_weights.data(), data_weights.size());
 }
