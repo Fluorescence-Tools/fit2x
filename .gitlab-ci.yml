@@ -95,3 +95,4 @@ deploy:
     - source activate
     - conda install anaconda-client
     - anaconda -t ${ANACONDA_API_TOKEN} upload -l ${DEPLOY_VARIABLE} -u ${CONDA_USER} --force bld-dir/linux-64/*.tar.bz2
+
