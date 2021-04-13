@@ -78,7 +78,7 @@ public:
         std::clog << "DecayLinearization::add" << std::endl;
         std::clog << "-- use_linearization: " << get_use_linearization() << std::endl;
 #endif
-        if(_use_linearization){
+        if(get_use_linearization()){
             if(!decay->equal_size(_linearization_table)){
                 std::cerr << "WARNING: Linearization size mismatch." << std::endl;
             }

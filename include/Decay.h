@@ -89,7 +89,7 @@ public:
             bool scale_model_to_data = false,
             double number_of_photons = -1,
             // Linearization
-            std::vector<double> linearization_table = std::vector<double>(),
+            double* linearization_table=nullptr, int n_linearization_table=-1,
             bool use_linearization = false,
             // Scoring
             std::vector<int> score_range = std::vector<int>({0, -1}),

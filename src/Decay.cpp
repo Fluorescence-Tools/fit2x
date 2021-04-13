@@ -34,7 +34,7 @@ Decay::Decay(
         bool scale_model_to_data,
         double number_of_photons,
         // Linearization
-        std::vector<double> linearization_table,
+        double* linearization_table, int n_linearization_table,
         bool use_linearization,
         // Scoring
         std::vector<int> score_range,
@@ -70,7 +70,7 @@ Decay::Decay(
                                 constant_offset
     );
     decayLinearization = new DecayLinearization();
-    decayLinearization->set_linearization_table(linearization_table);
+    decayLinearization->set_linearization_table(linearization_table, n_linearization_table);
     decayLinearization->set_use_linearization(use_linearization);
     decayScore = new DecayScore(_model, &_data, score_range, score_type);
 //
