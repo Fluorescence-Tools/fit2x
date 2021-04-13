@@ -54,6 +54,7 @@ public:
     }
 
     bool set_use_linearization(bool v){
+        // TODO: Check with this causes a segfault in linux CI pipeline
 #ifdef VERBOSE_FIT2X
         std::clog << "DecayLinearization::set_use_linearization" << std::endl;
         std::clog << "-- use_linearization:" << v << std::endl;
@@ -75,7 +76,9 @@ public:
         std::clog << "DecayLinearization::DecayLinearization" << std::endl;
 #endif
         set_linearization_table(linearization_table, n_linearization_table);
-        set_use_linearization(use_linearization);
+        // TODO: Check why set_use_linearization cases segfault
+        // set_use_linearization(use_linearization);
+        _use_linearization = use_linearization;
     }
 
     void add(DecayCurve* decay){

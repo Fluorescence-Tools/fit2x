@@ -96,13 +96,13 @@ public:
             std::string score_type= "poisson"
     );
 
-//    ~Decay(){
-//        delete decayPileup;
-//        delete decayScale;
-//        delete decayLinearization;
-//        delete decayScore;
-//        delete decayLinearization;
-//    }
+    ~Decay(){
+        delete decayPileup;
+        delete decayScale;
+        delete decayLinearization;
+        delete decayScore;
+        delete decayLinearization;
+    }
 
     bool get_is_valid() const {
         return _is_valid;
