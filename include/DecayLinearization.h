@@ -67,14 +67,10 @@ public:
         return use_linearization;
     }
 
-    DecayLinearization(
-            std::vector<double> linearization_table  = std::vector<double>(),
-            bool use_linearization = false){
+    DecayLinearization(){
 #ifdef VERBOSE_FIT2X
         std::clog << "DecayLinearization::DecayLinearization" << std::endl;
 #endif
-        set_linearization_table(linearization_table);
-        set_use_linearization(use_linearization);
     }
 
     void add(DecayCurve* decay){
