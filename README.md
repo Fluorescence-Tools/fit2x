@@ -1,7 +1,5 @@
 # fits2x
-[![Build Status](https://travis-ci.org/fluorescence-tools/fit2x.svg?branch=master)](https://travis-ci.org/fluorescence-tools/fit2x)
-[![Documentation Status](https://readthedocs.org/projects/fit2x/badge/?version=latest)](https://fit2x.readthedocs.io/en/latest/?badge=latest)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/23eed581443e47e6b739613f540dc6c2)](https://www.codacy.com/gh/Fluorescence-Tools/fit2x?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Fluorescence-Tools/fit2x&amp;utm_campaign=Badge_Grade)
+[![pipeline status](https://gitlab.peulen.xyz/tpeulen/fit2x/badges/master/pipeline.svg)](https://gitlab.peulen.xyz/tpeulen/fit2x/badges/master/pipeline.svg)
 [![Anaconda-Server Badge](https://anaconda.org/tpeulen/fit2x/badges/installer/conda.svg)](https://anaconda.org/tpeulen/fit2x)
 
 ## Warning
