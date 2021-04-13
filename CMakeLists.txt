@@ -115,9 +115,21 @@ endif (APPLE)
 ###########################
 IF (CMAKE_BUILD_TYPE STREQUAL "Release")
     MESSAGE("Release build")
+    IF(MSVC)
+        ADD_COMPILE_OPTIONS(/w)
+    ELSE()
+        ADD_COMPILE_OPTIONS(-w)
+    ENDIF()
 ELSE (CMAKE_BUILD_TYPE STREQUAL "Debug")
     MESSAGE("Debug build")
     ADD_DEFINITIONS("-DVERBOSE_FIT2X=1")
+    ## Enable Compiler warnings
+    #############################
+    IF(MSVC)
+        ADD_COMPILE_OPTIONS(/W4)
+    ELSE()
+        ADD_COMPILE_OPTIONS(-Wall -Wextra -pedantic)
+    ENDIF()
 ENDIF (CMAKE_BUILD_TYPE STREQUAL "Release")
 
 

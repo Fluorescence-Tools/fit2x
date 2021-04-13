@@ -71,7 +71,7 @@ public:
     }
 
 
-    DecayLinearization() : _use_linearization(false){
+    DecayLinearization() : _use_linearization(true){
 #ifdef VERBOSE_FIT2X
         std::clog << "DecayLinearization::DecayLinearization" << std::endl;
 #endif
