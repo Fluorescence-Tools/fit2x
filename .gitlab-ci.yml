@@ -23,6 +23,8 @@ build:linux:
   tags:
     - linux
   image: ubuntu:latest
+  variables:
+    MINICONDA_OS: "Linux"
   before_script:
     - export DEBIAN_FRONTEND=noninteractive
     - apt update -yq
