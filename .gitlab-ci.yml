@@ -40,33 +40,33 @@ build:linux:
     paths:
       - bld-dir/
 
-#test:linux:
-#  variables:
-#    MINICONDA_OS: "Linux"
-#  stage: test
-#  tags:
-#    - linux
-#  image: continuumio/miniconda3:latest
-#  before_script:
-#    - apt update -yq
-#    - apt install -yq procps wget git git-lfs
-#    - conda config --set always_yes yes --set changeps1 no
-#  script:
-#    - echo "I am a test stage job for debian, running on docker"
-#    - source activate base
-#    - conda install mamba conda-verify -c conda-forge
-#    - |
-#      conda config --add channels salilab
-#      conda config --add channels conda-forge
-#      conda config --add channels tpeulen
-#      conda config --add channels tpeulen/label/nightly
-#      conda config --add channels "file://`pwd`/bld-dir"
-##    - git clone https://gitlab.peulen.xyz/tpeulen/tttr-data --depth 1
-#    - mamba create -n test python=3.7 ${CONDA_PACKAGE} nose scipy
-#    - conda activate test
-#    - |
-#      cd test
-#      nosetests
+test:linux:
+  variables:
+    MINICONDA_OS: "Linux"
+  stage: test
+  tags:
+    - linux
+  image: continuumio/miniconda3:latest
+  before_script:
+    - apt update -yq
+    - apt install -yq procps wget git git-lfs
+    - conda config --set always_yes yes --set changeps1 no
+  script:
+    - echo "I am a test stage job for debian, running on docker"
+    - source activate base
+    - conda install mamba conda-verify -c conda-forge
+    - |
+      conda config --add channels salilab
+      conda config --add channels conda-forge
+      conda config --add channels tpeulen
+      conda config --add channels tpeulen/label/nightly
+      conda config --add channels "file://`pwd`/bld-dir"
+#    - git clone https://gitlab.peulen.xyz/tpeulen/tttr-data --depth 1
+    - mamba create -n test python=3.7 ${CONDA_PACKAGE} nose scipy
+    - conda activate test
+    - |
+      cd test
+      nosetests
 
 #deploy:
 #  stage: deploy

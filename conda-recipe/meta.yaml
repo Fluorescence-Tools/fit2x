@@ -38,15 +38,15 @@ requirements:
     - libboost 1.71.0.* [py >= 38]
     - libboost 1.67.0.* [py < 38]
 
-test:
-  imports:
-    - fit2x
-  requires:
-    - nose
-  source_files:
-    - test/*.py
-  commands:
-    - nosetests
+#test:
+#  imports:
+#    - fit2x
+#  requires:
+#    - nose
+#  source_files:
+#    - test/*.py
+#  commands:
+#    - nosetests
 
 about:
   home: https://github.com/fluorescence-tools/fit2x
