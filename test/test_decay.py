@@ -265,7 +265,7 @@ class Tests(unittest.TestCase):
                'time_axis': np.array([], dtype=np.float64),
                'irf_histogram': np.array([], dtype=np.float64),
                'lifetime_spectrum': np.array([1., 4.]),
-               'use_linearization': False,
+               'use_linearization': False, # Cause segfault on CI pipeline- Thus option is disabled
                'score_range': (0, -1),
                'score_type': 'poisson'}
         a = decay.parameter

@@ -84,7 +84,8 @@ public:
         std::clog << "DecayLinearization::DecayLinearization(double*, int, bool)" << std::endl;
 #endif
         set_linearization_table(linearization_table, n_linearization_table);
-        set_use_linearization(use_linearization);
+        // TODO: For unknown reason this cases a segfault on CI pipeline
+        //set_use_linearization(use_linearization);
     }
 
     void add(DecayCurve* decay){
