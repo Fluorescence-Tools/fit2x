@@ -96,7 +96,7 @@ void fconv(double *fit, double *x, double *lamp, int numexp, int start, int stop
 // fast convolution AVX
 void fconv_avx(double *fit, double *x, double *lamp, int numexp, int start, int stop, double dt) {
 
-    start = std::max(0, start);
+    start = std::max(1, start);
     // make sure that there are always multiple of 4 in the lifetimes
     const int chunk_size = 4; int pad = 0;
     if (numexp % chunk_size) pad = chunk_size - (numexp % chunk_size);
