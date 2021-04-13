@@ -71,7 +71,7 @@ Decay::Decay(
     );
     decayLinearization = new DecayLinearization();
     decayLinearization->set_linearization_table(linearization_table, n_linearization_table);
-    decayLinearization->set_use_linearization(use_linearization);
+    //decayLinearization->set_use_linearization(use_linearization);
     decayScore = new DecayScore(_model, &_data, score_range, score_type);
 //
 //    _data.set_tttr(tttr_data, tttr_micro_time_coarsening);
