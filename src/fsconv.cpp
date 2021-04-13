@@ -74,7 +74,7 @@ void rescale_w_bg(double *fit, double *decay, double *w_sq, double bg, double *s
 
 // fast convolution
 void fconv(double *fit, double *x, double *lamp, int numexp, int start, int stop, double dt) {
-    start = std::max(0, start);
+    start = std::max(1, start);
     std::vector<double> l2(stop);
     for (int i = 0; i < stop; i++) l2[i] = dt * 0.5 * lamp[i];
     /* convolution */
