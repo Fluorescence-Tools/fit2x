@@ -84,7 +84,7 @@ public:
     void add(DecayCurve* decay){
 #ifdef VERBOSE_FIT2X
         std::clog << "DecayLinearization::add" << std::endl;
-        std::clog << "-- use_linearization: " << get_use_linearization() << std::endl;
+        std::clog << "-- use_linearization: " << _use_linearization << std::endl;
 #endif
         if(get_use_linearization()){
             if(!decay->equal_size(_linearization_table)){
