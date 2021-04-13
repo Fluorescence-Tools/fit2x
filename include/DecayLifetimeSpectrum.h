@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <limits>
+#include <iostream>
 
 #include "fsconv.h"
 

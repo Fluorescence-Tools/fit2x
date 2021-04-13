@@ -1,6 +1,8 @@
 #ifndef FIT2X_DECAYBACKGROUND_H
 #define FIT2X_DECAYBACKGROUND_H
 
+#include <iostream>
+
 # include "DecayModifier.h"
 
 class DecayBackground: public DecayModifier{

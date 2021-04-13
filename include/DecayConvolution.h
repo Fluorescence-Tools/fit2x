@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <cmath> /* std::fmod */
+#include <iostream>
 
 #include "fsconv.h"
 
@@ -327,9 +328,6 @@ public:
     }
 
     void set(
-#ifdef VERBOSE_FIT2X
-            std::clog << "DecayConvolution::set" << std::endl;
-#endif
             DecayCurve* instrument_response_function,
             DecayLifetimeSpectrum* lifetime_spectrum,
             std::vector<int> convolution_range = std::vector<int>({0, -1}),
@@ -340,6 +338,9 @@ public:
             double irf_shift_channels = 0.0,
             double irf_background_counts = 0
     ){
+#ifdef VERBOSE_FIT2X
+        std::clog << "DecayConvolution::set" << std::endl;
+#endif
         set_irf(instrument_response_function);
         set_lifetime_spectrum(lifetime_spectrum);
         set_irf_background_counts(irf_background_counts);

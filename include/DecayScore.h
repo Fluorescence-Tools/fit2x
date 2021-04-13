@@ -3,6 +3,7 @@
 #define FIT2X_DECAYSCORE_H
 
 #include <string>
+#include <iostream>
 
 #include "DecayCurve.h"
 #include "statistics.h"

@@ -1,6 +1,8 @@
 #ifndef FIT2X_DECAYSCALE_H
 #define FIT2X_DECAYSCALE_H
 
+#include <iostream>
+
 #include "DecayCurve.h"
 #include "DecayModifier.h"
 #include "fsconv.h"
