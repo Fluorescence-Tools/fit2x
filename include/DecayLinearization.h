@@ -17,7 +17,7 @@ private:
     std::vector<double> _linearization_table = std::vector<double>();
 
     /// If set to true multiply the linearization to the model function
-    bool _use_linearization = false;
+    int _use_linearization = false;
 
 public:
 
@@ -56,6 +56,7 @@ public:
     bool set_use_linearization(bool v){
 #ifdef VERBOSE_FIT2X
         std::clog << "DecayLinearization::set_use_linearization" << std::endl;
+        std::clog << "-- use_linearization:" << v << std::endl;
 #endif
         _use_linearization = v;
     }
