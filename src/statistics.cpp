@@ -27,6 +27,7 @@ double twoIstar_1ch(int* C, double* M, int Ndata)
 double statistics::chi2_counting(
         std::vector<double> &data,
         std::vector<double> &model,
+        std::vector<double> &weights,
         int x_min,
         int x_max,
         const char* type
@@ -70,6 +71,11 @@ double statistics::chi2_counting(
             if(m <= 1e-12) continue;
             double mu = model[i];
             chi2 += (mu - m) * (mu - m) / (3. / (1./m + 2./mu));
+        }
+    } else{
+        for(int i=x_min;i<x_max;i++){
+            double d = (data[i] - model[i]) / weights[i];
+            chi2 += d * d;
         }
     }
 #if VERBOSE_FIT2X

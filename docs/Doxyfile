@@ -982,7 +982,7 @@ IMAGE_PATH             =
 INPUT_FILTER           =
 
 # The FILTER_PATTERNS tag can be used to specify filters on a per file pattern
-# basis. Doxygen will compare the file name with each pattern and apply the
+# basis. Doxygen will compare the file name with each pattern and modify the
 # filter if there is a match. The filters are a list of the form: pattern=filter
 # (like *.cpp=my_cpp_filter). See INPUT_FILTER for further information on how
 # filters are used. If the FILTER_PATTERNS tag is empty or if none of the

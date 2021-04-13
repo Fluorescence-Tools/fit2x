@@ -1,5 +1,5 @@
 #define FIT2X_VERSION                "0.0.6"
-//#define VERBOSE_FIT2X 0
+//#define VERBOSE_FIT2X 1
 
 #include <iostream>
 #include <cmath>

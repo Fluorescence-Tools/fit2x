@@ -11,6 +11,7 @@
 %}
 
 %include <typemaps.i>
+%include <std_string.i>
 %include <std_shared_ptr.i>
 %include <cpointer.i>
 %include <std_vector.i>
@@ -33,7 +34,6 @@ import_array();
 
 // shared_prt
 %shared_ptr(TTTR) // to pass TTTR around
-%shared_ptr(std::string)
 
 // Generic input arrays
 // floating numbers
@@ -86,11 +86,21 @@ import_array();
 %include "fsconv.i"
 %include "phasor.i"
 
-/* Fits and Decay*/
+/* Fits */
 %include "fit23.i"
 %include "fit24.i"
 %include "fit25.i"
 %include "fit26.i"
-%include "decay.i"
+
+/* Decay */
+%include "DecayCurve.i"
+%include "DecayBackground.i"
+%include "DecayPileup.i"
+%include "DecayLinearization.i"
+%include "DecayLifetimeSpectrum.i"
+%include "DecayConvolution.i"
+%include "DecayScale.i"
+%include "DecayScore.i"
+%include "Decay.i"
 
 %include "../include/fits2x.h"

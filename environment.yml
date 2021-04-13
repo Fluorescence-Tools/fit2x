@@ -15,4 +15,4 @@ dependencies:
   - anaconda-client
   - conda-build
   - mkl
-  - tttrlib >=0.0.19
+  - tttrlib >=0.20.0

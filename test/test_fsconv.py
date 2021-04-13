@@ -131,7 +131,7 @@ class Tests(unittest.TestCase):
             np.allclose(model_ref, model_fconv), True
         )
 
-        # Compare to AVX code - on macOS SIMD-AVX code wont be supported in the future
+        # AVX wont be supported on Apple -> M1
         if platform != "darwin":
             model_fconv_avx = np.zeros_like(irf)
             fit2x.fconv_avx(
@@ -190,7 +190,7 @@ class Tests(unittest.TestCase):
             np.allclose(model_fconv_per, ref), True
         )
 
-        # Compare to AVX code - on macOS SIMD-AVX code wont be supported in the future
+        # AVX wont be supported on Apple -> M1
         if platform != "darwin":
             model_fconv_avx = np.zeros_like(irf)
             fit2x.fconv_per_avx(

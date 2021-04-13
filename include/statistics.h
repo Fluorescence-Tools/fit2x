@@ -128,6 +128,7 @@ namespace statistics{
     double chi2_counting(
             std::vector<double> &data,
             std::vector<double> &model,
+            std::vector<double> &weights,
             int x_min = -1,
             int x_max = -1,
             const char* type="neyman"

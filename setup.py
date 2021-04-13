@@ -49,7 +49,7 @@ class CMakeBuild(build_ext):
             '-DCMAKE_SWIG_OUTDIR=' + extdir
         ]
         cfg = 'Debug' if self.debug else 'Release'
-        build_args = ['--config', cfg, '-j 8']
+        build_args = ['--config', cfg, '-j 16']
         cmake_args += ['-DCMAKE_BUILD_TYPE=' + cfg]
         if platform.system() == "Windows":
             cmake_args += [

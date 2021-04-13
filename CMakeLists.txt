@@ -19,10 +19,10 @@ if(UNIX AND NOT APPLE)
 endif()
 
 ################################################################################
-###### OPTIONS
+# BUILD OPTIONS
 ################################################################################
 OPTION(INSTALL "Install the library and the include files" ON)
-OPTION(BUILD_PYTHON_INTERFACE "Build the python interface" ON)
+OPTION(BUILD_PYTHON_INTERFACE "Build Python interface" ON)
 OPTION(BUILD_DOC "Build documentation" OFF)
 OPTION(BUILD_R_INTERFACE "Build R interface" OFF)
 
@@ -68,11 +68,13 @@ endif()
 
 ## Compiler warnings
 ########################
-if(MSVC)
-    ADD_COMPILE_OPTIONS(/Wall)
-else()
-    ADD_COMPILE_OPTIONS(-Wall -Wextra -pedantic)
-endif()
+#IF (CMAKE_BUILD_TYPE STREQUAL "Debug")
+#    if(MSVC)
+#        ADD_COMPILE_OPTIONS(/Wall)
+#    else()
+#        ADD_COMPILE_OPTIONS(-Wall -Wextra -pedantic)
+#    endif()
+#ENDIF (CMAKE_BUILD_TYPE STREQUAL "Debug")
 
 if(LINUX)
     STRING(APPEND CMAKE_CXX_FLAGS " -march=native -Ofast -mavx -ffast-math -funroll-loops")
@@ -113,7 +115,7 @@ endif (APPLE)
 ###########################
 IF (CMAKE_BUILD_TYPE STREQUAL "Release")
     MESSAGE("Release build")
-    ADD_DEFINITIONS("-DVERBOSE_FIT2X=0")
+    ADD_DEFINITIONS("-DVERBOSE_FIT2X=1")
 ELSE (CMAKE_BUILD_TYPE STREQUAL "Debug")
     MESSAGE("Debug build")
     ADD_DEFINITIONS("-DVERBOSE_FIT2X=1")
@@ -198,11 +200,6 @@ FIND_PACKAGE(OpenMP REQUIRED)
 LINK_LIBRARIES(OpenMP::OpenMP_CXX)
 
 ################################################################################
-# BUILD OPTIONS
-################################################################################
-OPTION(BUILD_PYTHON_INTERFACE "Build Python interface" ON)
-
-################################################################################
 # Source groups
 ################################################################################
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
@@ -221,7 +218,7 @@ ADD_SUBDIRECTORY(ext)
 ## Shared / static library target
 ###########################
 # cmake needs unique target name, thus place shared in front of project
-ADD_LIBRARY(${PROJECT_NAME}Shared SHARED ${SRC_files})
+ADD_LIBRARY(${PROJECT_NAME}Shared SHARED ${SRC_files} include/DecayCurve.h)
 ADD_LIBRARY(${PROJECT_NAME}Static STATIC ${SRC_files})
 
 # Define which headers are going to be included in the install target

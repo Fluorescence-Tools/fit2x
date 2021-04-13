@@ -174,34 +174,34 @@ double targetf23(double *x, void *pv) {
         w -= Bgamma * log(Bexpected) - loggammaf(Bgamma + 1.);
     }
     double v = w / Nchannels + penalty;
-#if VERBOSE_FIT2X
-    std::cout << "xm:" ;
-    for(int i=0; i<8;i++) std::cout << xm[i] << " ";
-    std::cout << std::endl;
-
-    std::cout << "corrections:" ;
-    for(int i=0; i<corrections->length;i++) std::cout << corrections->data[i] << " ";
-    std::cout << std::endl;
-
-    std::cout << "irf:" ;
-    for(int i=0; i<irf->length;i++) std::cout << irf->data[i] << " ";
-    std::cout << std::endl;
-
-    std::cout << "bg:" ;
-    for(int i=0; i<bg->length;i++) std::cout << bg->data[i] << " ";
-    std::cout << std::endl;
-
-    std::cout << "Data:" ;
-    for(int i=0; i<expdata->length;i++) std::cout << expdata->data[i] << " ";
-    std::cout << std::endl;
-
-    std::cout << "Model:" ;
-    for(int i=0; i<M->length;i++) std::cout << std::setprecision(2) << M->data[i] << " ";
-    std::cout << std::endl;
-
-    std::cout << "g" << std::endl;
-    std::cout << v << std::endl;
-#endif
+//#if VERBOSE_FIT2X
+//    std::cout << "xm:" ;
+//    for(int i=0; i<8;i++) std::cout << xm[i] << " ";
+//    std::cout << std::endl;
+//
+//    std::cout << "corrections:" ;
+//    for(int i=0; i<corrections->length;i++) std::cout << corrections->data[i] << " ";
+//    std::cout << std::endl;
+//
+//    std::cout << "irf:" ;
+//    for(int i=0; i<irf->length;i++) std::cout << irf->data[i] << " ";
+//    std::cout << std::endl;
+//
+//    std::cout << "bg:" ;
+//    for(int i=0; i<bg->length;i++) std::cout << bg->data[i] << " ";
+//    std::cout << std::endl;
+//
+//    std::cout << "Data:" ;
+//    for(int i=0; i<expdata->length;i++) std::cout << expdata->data[i] << " ";
+//    std::cout << std::endl;
+//
+//    std::cout << "Model:" ;
+//    for(int i=0; i<M->length;i++) std::cout << std::setprecision(2) << M->data[i] << " ";
+//    std::cout << std::endl;
+//
+//    std::cout << "g" << std::endl;
+//    std::cout << v << std::endl;
+//#endif
     return v;
 }
 

@@ -39,14 +39,14 @@ void rescale_w_bg(double *fit, double *decay, double *w_sq, double bg, double *s
 #if VERBOSE_FIT2X
     std::clog << "RESCALE_W_BG" << std::endl;
     std::clog << "-- initial scale: " << *scale << std::endl;
-    std::clog << "w_sq [:64]: ";
-    for(int i=0; i<64; i++) std::clog << w_sq[i] << " ";
+    std::clog << "w_sq [start:stop]: ";
+    for(int i=start; i<stop; i++) std::clog << w_sq[i] << " ";
     std::clog << std::endl;
-    std::clog << "decay [:64]: ";
-    for(int i=0; i<64; i++) std::clog << decay[i] << " ";
+    std::clog << "decay [start:stop]: ";
+    for(int i=start; i<stop; i++) std::clog << decay[i] << " ";
     std::clog << std::endl;
-    std::clog << "fit [:64]: ";
-    for(int i=0; i<64; i++) std::clog << fit[i] << " ";
+    std::clog << "fit [start:stop]: ";
+    for(int i=start; i<stop; i++) std::clog << fit[i] << " ";
     std::clog << std::endl;
 #endif
     /* scaling */
@@ -74,7 +74,7 @@ void rescale_w_bg(double *fit, double *decay, double *w_sq, double bg, double *s
 
 // fast convolution
 void fconv(double *fit, double *x, double *lamp, int numexp, int start, int stop, double dt) {
-    start = std::max(1, start);
+    start = std::max(0, start);
     std::vector<double> l2(stop);
     for (int i = 0; i < stop; i++) l2[i] = dt * 0.5 * lamp[i];
     /* convolution */
@@ -96,7 +96,7 @@ void fconv(double *fit, double *x, double *lamp, int numexp, int start, int stop
 // fast convolution AVX
 void fconv_avx(double *fit, double *x, double *lamp, int numexp, int start, int stop, double dt) {
 
-    start = std::max(1, start);
+    start = std::max(0, start);
     // make sure that there are always multiple of 4 in the lifetimes
     const int chunk_size = 4; int pad = 0;
     if (numexp % chunk_size) pad = chunk_size - (numexp % chunk_size);
@@ -168,6 +168,9 @@ void fconv_avx(double *fit, double *x, double *lamp, int numexp, int start, int 
 void fconv_per(double *fit, double *x, double *lamp, int numexp, int start, int stop,
                int n_points, double period, double dt)
 {
+#ifdef VERBOSE_FIT2X
+    std::clog << "fconv_per" << std::endl;
+#endif
     int ne, i, lamp_start = 0,
             stop1, period_n = (int)ceil(period/dt-0.5);
     double fitcurr, expcurr, tail_a, deltathalf = dt*0.5;
@@ -198,6 +201,16 @@ void fconv_per(double *fit, double *x, double *lamp, int numexp, int start, int 
 // fast convolution, high repetition rate, AVX
 void fconv_per_avx(double *fit, double *x, double *lamp, int numexp, int start, int stop,
                    int n_points, double period, double dt) {
+#ifdef VERBOSE_FIT2X
+    std::clog << "fconv_per_avx" << std::endl;
+    std::clog << "-- numexp: " << numexp << std::endl;
+    std::clog << "-- start: " << start << std::endl;
+    std::clog << "-- stop: " << stop << std::endl;
+    std::clog << "-- n_points: " << n_points << std::endl;
+    std::clog << "-- period: " << period << std::endl;
+    std::clog << "-- dt: " << dt << std::endl;
+#endif
+    stop = (stop < 0) ? n_points: stop;
     // make sure that there are always multiple of the AVX register size
     const int chunk_size = 4; // the number of lifetimes per AVX register
     int pad = 0;
@@ -494,15 +507,20 @@ void fconv_per_cs_time_axis(
     double dt = time_axis[1] - time_axis[0];
 #ifdef __AVX2__
     fconv_per_avx(
-            model, lifetime_spectrum, instrument_response_function, (int) n_lifetime_spectrum / 2,
-            convolution_start, convolution_stop, n_model, period, dt
-            );
+            model,
+            lifetime_spectrum,
+            instrument_response_function,
+            (int) n_lifetime_spectrum / 2,
+            convolution_start, convolution_stop,
+            n_model,
+            period, dt
+    );
 #endif
 #ifndef __AVX2__
     fconv_per(
             model, lifetime_spectrum, instrument_response_function, (int) n_lifetime_spectrum / 2,
             convolution_start, convolution_stop, n_model, period, dt
-            );
+    );
 #endif
 }
 
@@ -516,21 +534,26 @@ void fconv_cs_time_axis(
         int convolution_stop
 ){
     int number_of_exponentials = n_lifetime_spectrum / 2;
-    convolution_start = std::max(1, convolution_start);
+    convolution_start = std::max(0, convolution_start);
 #if VERBOSE_FIT2X
     std::clog << "convolve_lifetime_spectrum... " << std::endl;
     std::clog << "-- number_of_exponentials: " << number_of_exponentials << std::endl;
     std::clog << "-- convolution_start: " << convolution_start << std::endl;
     std::clog << "-- convolution_stop: " << convolution_stop << std::endl;
 #endif
-    for(int i=0; i<n_output; i++) output[i] = 0.0;
+    std::fill(output, output+n_output, 0.0);
     for(int ne=0; ne<number_of_exponentials; ne++){
         double a = lifetime_spectrum[2 * ne];
         double current_lifetime = (lifetime_spectrum[2 * ne + 1]);
         if((a == 0.0) || (current_lifetime == 0.0)) continue;
         double current_model_value = 0.0;
         for(int i=convolution_start; i<convolution_stop; i++){
-            double dt = dt = (time_axis[i] - time_axis[i - 1]);
+            double dt;
+            if(i < convolution_stop - 1){
+                dt = (time_axis[i + 1] - time_axis[i]);
+            } else{
+                dt = (time_axis[i] - time_axis[i - 1]);
+            }
             double dt_2 = dt / 2.0;
             double current_exponential = std::exp(-dt / current_lifetime);
             current_model_value = (current_model_value + dt_2 * instrument_response_function[i - 1]) *

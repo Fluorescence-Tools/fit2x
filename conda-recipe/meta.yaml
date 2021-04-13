@@ -1,4 +1,4 @@
-{% set data = load_setup_py_data(setup_file='../../setup.py', from_recipe_dir=True) %}
+{% set data = load_setup_py_data(setup_file='../setup.py', from_recipe_dir=True) %}
 
 package:
   name: {{ data.get('name')|lower }}
@@ -6,36 +6,37 @@ package:
 
 source:
   #  path: ..
-  git_url: ../..
+  git_url: ..
 
 build:
     number: 0
-    string: py{{ python }}np{{ CONDA_NPY }}boost{{ boost }}hdf5{{ hdf5 }}
+    string: py{{ python }}
 
 requirements:
   host:
     - python {{ python }}
-    - {{ pin_compatible('numpy') }}
+    - numpy
     - setuptools
     - doxygen
     - git
   build:
     - python {{ python }}
-    - {{ pin_compatible('numpy') }}
+    - numpy
     - cmake
-    - swig {{ swig }}
-    - boost {{ boost }}
-    - hdf5 {{ hdf5 }}
+    - swig
+    - boost 1.67.0.* [py < 38]
+    - boost 1.71.0.* [py >= 38]
     - tttrlib {{ tttrlib }}
     - llvm-openmp # [osx]
   run:
     - python {{ python }}
-    - {{ pin_compatible('numpy') }}
+    - numpy
     - llvm-openmp # [osx]
-    - boost {{ boost }} # [win]
-    - libboost {{ boost }} # [not win]
-    - hdf5 {{ hdf5 }}
     - tttrlib {{ tttrlib }}
+    - boost 1.67.0.* [py < 38]
+    - boost 1.71.0.* [py >= 38]
+    - libboost 1.71.0.* [py >= 38]
+    - libboost 1.67.0.* [py < 38]
 
 test:
   imports:
