@@ -32,8 +32,10 @@ public:
 #ifdef VERBOSE_FIT2X
         std::clog << "DecayLinearization::set_linearization_table" << std::endl;
 #endif
-        _linearization_table.resize(n_input);
-        _linearization_table.assign(input, input + n_input);
+        if((input != nullptr) && (n_input >= 0)){
+            _linearization_table.resize(n_input);
+            _linearization_table.assign(input, input + n_input);
+        }
     }
 
     void get_linearization_table(double **output_view, int *n_output) {
