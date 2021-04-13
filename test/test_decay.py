@@ -398,64 +398,64 @@ class Tests(unittest.TestCase):
         )
 
 
-    # def test_compute_decay(self):
-    #     # import numpy as np
-    #     # import fit2x
-    #     # import scipy.stats
-    #     np.random.seed(0)
-    #     period = 13.6
-    #     time_axis = np.linspace(0, period, 16)
-    #     irf_position = 2.0
-    #     irf_width = 0.5
-    #     n_peak = 1000
-    #     irf = scipy.stats.norm.pdf(
-    #         time_axis,
-    #         loc=irf_position,
-    #         scale=irf_width
-    #     )
-    #     irf *= n_peak
-    #     irf[irf < 0.01] = 0.0
-    #     lifetime_spectrum = np.array([1.0, 4., 2., 0.1])
-    #     data = np.zeros_like(time_axis)
-    #     fit2x.fconv_per_cs_time_axis(
-    #         data,
-    #         time_axis=time_axis,
-    #         lifetime_spectrum=lifetime_spectrum,
-    #         instrument_response_function=irf,
-    #         convolution_start=1,
-    #         convolution_stop=len(irf),
-    #         period=period
-    #     )
-    #     data = np.random.poisson(
-    #         np.clip(data, 1e-9, None)
-    #     )
-    #     data_weight = 1./np.clip(np.sqrt(data), 1, 1e9)
-    #     irf += 0.0
-    #     decay = fit2x.Decay(
-    #         data=data,
-    #         data_weights=data_weight,
-    #         time_axis=time_axis,
-    #         irf_histogram=irf,
-    #         lifetime_spectrum=lifetime_spectrum,
-    #         scatter_fraction=0.1,
-    #         excitation_period=period,
-    #         constant_offset=10,
-    #         number_of_photons=-1,
-    #         scale_model_to_data=False,
-    #         use_amplitude_threshold=False,
-    #         convolution_range=(0, -1),
-    #     )
-    #     model = decay.model
-    #
-    #     # print(model[::16])
-    #     # import pylab as plt
-    #     # plt.semilogy(time_axis, irf)
-    #     # plt.semilogy(time_axis, model)
-    #     # plt.show()
-    #
-    #     ref = np.array([  56.83308935,  159.6799803 , 1229.85116673,  937.6613214 ,
-    #                       572.69332145,  455.9380128 ,  365.4952043 ,  293.39596583,
-    #                       235.91942871,  190.09991116,  153.57321186,  124.45462149,
-    #                       101.24167532,   82.73662878,   67.9846561 ,   59.87080939])
-    #     self.assertEqual(np.allclose(ref, model), True)
+    def test_compute_decay(self):
+        # import numpy as np
+        # import fit2x
+        # import scipy.stats
+        np.random.seed(0)
+        period = 13.6
+        time_axis = np.linspace(0, period, 16)
+        irf_position = 2.0
+        irf_width = 0.5
+        n_peak = 1000
+        irf = scipy.stats.norm.pdf(
+            time_axis,
+            loc=irf_position,
+            scale=irf_width
+        )
+        irf *= n_peak
+        irf[irf < 0.01] = 0.0
+        lifetime_spectrum = np.array([1.0, 4., 2., 0.1])
+        data = np.zeros_like(time_axis)
+        fit2x.fconv_per_cs_time_axis(
+            data,
+            time_axis=time_axis,
+            lifetime_spectrum=lifetime_spectrum,
+            instrument_response_function=irf,
+            convolution_start=1,
+            convolution_stop=len(irf),
+            period=period
+        )
+        data = np.random.poisson(
+            np.clip(data, 1e-9, None)
+        )
+        data_weight = 1./np.clip(np.sqrt(data), 1, 1e9)
+        irf += 0.0
+        decay = fit2x.Decay(
+            data=data,
+            data_weights=data_weight,
+            time_axis=time_axis,
+            irf_histogram=irf,
+            lifetime_spectrum=lifetime_spectrum,
+            scatter_fraction=0.1,
+            excitation_period=period,
+            constant_offset=10,
+            number_of_photons=-1,
+            scale_model_to_data=False,
+            use_amplitude_threshold=False,
+            convolution_range=(0, -1),
+        )
+        model = decay.model
+
+        # print(model[::16])
+        # import pylab as plt
+        # plt.semilogy(time_axis, irf)
+        # plt.semilogy(time_axis, model)
+        # plt.show()
+
+        ref = np.array([  56.83308935,  159.6799803 , 1229.85116673,  937.6613214 ,
+                          572.69332145,  455.9380128 ,  365.4952043 ,  293.39596583,
+                          235.91942871,  190.09991116,  153.57321186,  124.45462149,
+                          101.24167532,   82.73662878,   67.9846561 ,   59.87080939])
+        self.assertEqual(np.allclose(ref, model), True)
 
