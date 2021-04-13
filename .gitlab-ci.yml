@@ -83,15 +83,15 @@ test:linux:
       cd test
       nosetests
 
-#deploy:
-#  stage: deploy
-#  image: continuumio/miniconda3:latest
-#  tags:
-#    - linux
-#  dependencies:
-#    - build:linux
-#  script:
-#    - echo "I am a depolyment stage job for debian, running on docker using continuumio/miniconda3:latest image"
-#    - source activate
-#    - conda install anaconda-client
-#    - anaconda -t ${ANACONDA_API_TOKEN} upload -l ${DEPLOY_VARIABLE} -u ${CONDA_USER} --force bld-dir/linux-64/*.tar.bz2
+deploy:
+  stage: deploy
+  image: continuumio/miniconda3:latest
+  tags:
+    - linux
+  dependencies:
+    - build:linux
+  script:
+    - echo "I am a depolyment stage job for debian, running on docker using continuumio/miniconda3:latest image"
+    - source activate
+    - conda install anaconda-client
+    - anaconda -t ${ANACONDA_API_TOKEN} upload -l ${DEPLOY_VARIABLE} -u ${CONDA_USER} --force bld-dir/linux-64/*.tar.bz2
