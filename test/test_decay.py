@@ -366,37 +366,37 @@ class Tests(unittest.TestCase):
             True
         )
 
-    # def test_convolve_lifetime_spectrum_periodic(self):
-    #     period = 25
-    #     time_axis = np.linspace(0, period, 64)
-    #     irf_position = 6.0
-    #     irf_width = 0.5
-    #     irf = scipy.stats.norm.pdf(time_axis, loc=irf_position, scale=irf_width)
-    #     irf /= np.max(irf)
-    #     irf[irf < 0.0001] = 0.0
-    #     lifetime_spectrum = np.array([0.2, 1.1 , 0.8, 4.1])
-    #     model_decay = np.zeros_like(time_axis)
-    #     fit2x.fconv_per_cs_time_axis(
-    #         model_decay,
-    #         time_axis=time_axis,
-    #         lifetime_spectrum=lifetime_spectrum,
-    #         instrument_response_function=irf,
-    #         convolution_start=0,
-    #         convolution_stop=len(irf),
-    #         period=period
-    #     )
-    #     reference = np.array([0.00987956, 0.78140209, 0.19914572, 0.04219551])
-    #     print(model_decay[::16])
-    #     # import pylab as plt
-    #     # plt.semilogy(irf, label='irf')
-    #     # plt.semilogy(reference, label='ref')
-    #     # plt.semilogy(model_decay, label='model')
-    #     # plt.legend()
-    #     # plt.show()
-    #     self.assertEqual(
-    #         np.allclose(reference, model_decay[::16]), True
-    #     )
-    #
+    def test_convolve_lifetime_spectrum_periodic(self):
+        period = 25
+        time_axis = np.linspace(0, period, 64)
+        irf_position = 6.0
+        irf_width = 0.5
+        irf = scipy.stats.norm.pdf(time_axis, loc=irf_position, scale=irf_width)
+        irf /= np.max(irf)
+        irf[irf < 0.0001] = 0.0
+        lifetime_spectrum = np.array([0.2, 1.1 , 0.8, 4.1])
+        model_decay = np.zeros_like(time_axis)
+        fit2x.fconv_per_cs_time_axis(
+            model_decay,
+            time_axis=time_axis,
+            lifetime_spectrum=lifetime_spectrum,
+            instrument_response_function=irf,
+            convolution_start=0,
+            convolution_stop=len(irf),
+            period=period
+        )
+        reference = np.array([0.00987956, 0.78140209, 0.19914572, 0.04219551])
+        print(model_decay[::16])
+        # import pylab as plt
+        # plt.semilogy(irf, label='irf')
+        # plt.semilogy(reference, label='ref')
+        # plt.semilogy(model_decay, label='model')
+        # plt.legend()
+        # plt.show()
+        self.assertEqual(
+            np.allclose(reference, model_decay[::16]), True
+        )
+
 
     # def test_compute_decay(self):
     #     # import numpy as np
