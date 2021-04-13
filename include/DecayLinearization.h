@@ -77,7 +77,7 @@ public:
 #endif
         set_linearization_table(linearization_table, n_linearization_table);
         // TODO: Check why setting _use_linearization causes a segfault
-        // set_use_linearization(use_linearization);
+        set_use_linearization(use_linearization);
         // _use_linearization = use_linearization;
     }
 

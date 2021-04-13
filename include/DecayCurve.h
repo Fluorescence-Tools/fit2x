@@ -20,6 +20,7 @@ class DecayCurve: std::enable_shared_from_this<DecayCurve>{
     friend class DecayLinearization;
     friend class DecayScale;
     friend class DecayScore;
+    friend class DecayBackground;
     friend class Decay;
 
 private:

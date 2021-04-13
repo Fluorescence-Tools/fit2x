@@ -97,10 +97,12 @@ public:
     );
 
     ~Decay(){
+        delete decayScore;
+        delete decayLifetimeSpectrum;
+        delete decayConvolution;
+        delete decayBackground;
         delete decayPileup;
         delete decayScale;
-        delete decayLinearization;
-        delete decayScore;
         delete decayLinearization;
     }
 
