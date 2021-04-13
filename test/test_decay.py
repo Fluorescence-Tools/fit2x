@@ -110,7 +110,7 @@ class Tests(unittest.TestCase):
             np.allclose(shifted_irf_irp, shifted_irf_ip), True
         )
 
-    # # OK - seems ok
+    # # Seems ok
     # def test_add_irf(self):
     #     time_axis = np.linspace(0, 10, 64)
     #     irf_position = 1.0
