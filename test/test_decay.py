@@ -330,42 +330,42 @@ class Tests(unittest.TestCase):
         self.assertEqual(decay.use_pile_up_correction, True)
         self.assertEqual(decay.excitation_period, 123.2)
 
-    # def test_convolve_lifetime_spectrum_variable_time_axis(self):
-    #     period = 25
-    #     time_axis = np.linspace(0, period, 16)
-    #     irf_position = 5.0
-    #     irf_width = 1.0
-    #     irf = scipy.stats.norm.pdf(time_axis, loc=irf_position, scale=irf_width)
-    #     irf /= np.max(irf)
-    #     lifetime_spectrum = np.array([0.8, 1.1, 0.2, 4.0])
-    #     model_decay = np.zeros_like(time_axis)
-    #     irf[irf < 0.0001] = 0.0
-    #
-    #     fit2x.fconv_per_cs_time_axis(
-    #         model_decay,
-    #         convolution_stop=len(irf),
-    #         convolution_start=0,
-    #         time_axis=time_axis,
-    #         lifetime_spectrum=lifetime_spectrum,
-    #         instrument_response_function=irf,
-    #         period=period
-    #     )
-    #     print(model_decay)
-    #     reference = np.array(
-    #         [0.00349525, 0.00552579, 0.21129489, 0.96300658, 0.77383893, 0.36838528,
-    #          0.18074355, 0.10503629, 0.06614159, 0.04292135, 0.02814564, 0.01852181,
-    #          0.01220309, 0.00804318, 0.00530204, 0.00349525]
-    #     )
-    #     # import pylab as plt
-    #     # plt.semilogy(irf)
-    #     # plt.semilogy(reference)
-    #     # plt.semilogy(model_decay)
-    #     # plt.show()
-    #     self.assertEqual(
-    #         np.allclose(reference, model_decay, atol=1e-9),
-    #         True
-    #     )
-    #
+    def test_convolve_lifetime_spectrum_variable_time_axis(self):
+        period = 25
+        time_axis = np.linspace(0, period, 16)
+        irf_position = 5.0
+        irf_width = 1.0
+        irf = scipy.stats.norm.pdf(time_axis, loc=irf_position, scale=irf_width)
+        irf /= np.max(irf)
+        lifetime_spectrum = np.array([0.8, 1.1, 0.2, 4.0])
+        model_decay = np.zeros_like(time_axis)
+        irf[irf < 0.0001] = 0.0
+
+        fit2x.fconv_per_cs_time_axis(
+            model_decay,
+            convolution_stop=len(irf),
+            convolution_start=0,
+            time_axis=time_axis,
+            lifetime_spectrum=lifetime_spectrum,
+            instrument_response_function=irf,
+            period=period
+        )
+        print(model_decay)
+        reference = np.array(
+            [0.00349525, 0.00552579, 0.21129489, 0.96300658, 0.77383893, 0.36838528,
+             0.18074355, 0.10503629, 0.06614159, 0.04292135, 0.02814564, 0.01852181,
+             0.01220309, 0.00804318, 0.00530204, 0.00349525]
+        )
+        # import pylab as plt
+        # plt.semilogy(irf)
+        # plt.semilogy(reference)
+        # plt.semilogy(model_decay)
+        # plt.show()
+        self.assertEqual(
+            np.allclose(reference, model_decay, atol=1e-9),
+            True
+        )
+
     # def test_convolve_lifetime_spectrum_periodic(self):
     #     period = 25
     #     time_axis = np.linspace(0, period, 64)
