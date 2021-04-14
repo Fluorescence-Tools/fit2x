@@ -17,8 +17,6 @@ requirements:
     - python {{ python }}
     - numpy
     - setuptools
-    - doxygen
-    - git
   build:
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
