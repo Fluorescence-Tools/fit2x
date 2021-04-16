@@ -74,7 +74,7 @@ deploy:
   tags:
     - linux
   dependencies:
-    - build:linux
+    - test:linux
   script:
     - echo "I am a deploy stage job for linux, running on docker."
     - source activate
