@@ -4,12 +4,10 @@ stages:
 - deploy
 - Trigger-cross-projects
 
-
 # Change pip's cache directory to be inside the project directory since we can
 # only cache local items.
 variables:
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
-  CONDA_PACKAGE: "fit2x"
   DEPLOY_VARIABLE: "nightly"
   MINICONDA_VERSION: "latest"
 
@@ -28,7 +26,7 @@ build:linux:
   before_script:
     - apt update -yq && apt -yq install build-essential
   script:
-    - echo "I am a build stage job."
+    - echo "I am the build stage."
     - source activate
     - conda install mamba boa conda-verify -c conda-forge
     - |
@@ -48,21 +46,29 @@ test:linux:
   stage: test
   tags:
     - linux
-  image: continuumio/miniconda3:latest
+  image: ubuntu:latest
   before_script:
+    - export DEBIAN_FRONTEND=noninteractive
+    - apt update -yq
+    - apt install -yq procps wget git git-lfs
+    # Download and install miniconda
+    - wget https://repo.continuum.io/miniconda/Miniconda3-$MINICONDA_VERSION-$MINICONDA_OS-x86_64.sh -O miniconda.sh
+    - bash miniconda.sh -b -p $HOME/miniconda
+    - export PATH="$HOME/miniconda/bin:$PATH"
     # setup conda to always accept commands
     - conda config --set always_yes yes --set changeps1 no
   script:
-    - echo "I am a test stage job for linux, running on docker."
+    - echo "I am a test stage job for debian, running on docker"
     - source activate base
     - conda install mamba conda-verify -c conda-forge
+    - mamba update -y -n base -c defaults --all
     - |
       conda config --add channels salilab
       conda config --add channels conda-forge
       conda config --add channels tpeulen
       conda config --add channels tpeulen/label/nightly
       conda config --add channels "file://`pwd`/bld-dir"
-    - mamba create -n test fit2x nose scipy
+    - mamba create -n test python=3.7 fit2x nose scipy
     - conda activate test
     - |
       cd test
@@ -74,12 +80,13 @@ deploy:
   tags:
     - linux
   dependencies:
-    - test:linux
+    - build:linux
   script:
-    - echo "I am a deploy stage job for linux, running on docker."
+    - echo "I am a depolyment stage job for debian, running on docker using continuumio/miniconda3:latest image"
     - source activate
     - conda install anaconda-client
     - anaconda -t ${ANACONDA_API_TOKEN} upload -l ${DEPLOY_VARIABLE} -u ${CONDA_USER} --force bld-dir/linux-64/*.tar.bz2
+
 
 # # Downstream projects
 # chisurf:
