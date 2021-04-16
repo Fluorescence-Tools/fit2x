@@ -22,19 +22,9 @@ build:linux:
   stage: build
   tags:
     - linux
-  image: ubuntu:latest
-  variables:
-    MINICONDA_OS: "Linux"
+  image: continuumio/miniconda3:latest
   before_script:
-    - export DEBIAN_FRONTEND=noninteractive
-    - apt update -yq
-    - apt install -yq procps wget git git-lfs build-essential doxygen
-    # Download and install miniconda
-    - wget https://repo.continuum.io/miniconda/Miniconda3-$MINICONDA_VERSION-$MINICONDA_OS-x86_64.sh -O miniconda.sh
-    - bash miniconda.sh -b -p $HOME/miniconda
-    - export PATH="$HOME/miniconda/bin:$PATH"
-    # setup conda to always accept commands
-    - conda config --set always_yes yes --set changeps1 no
+    - apt update -yq && apt -yq install build-essential
   script:
     - echo "I am a build stage job."
     - source activate
@@ -53,22 +43,15 @@ build:linux:
 test:linux:
   variables:
     MINICONDA_OS: "Linux"
-  stage: test
+  stage: build
   tags:
     - linux
-  image: ubuntu:latest
+  image: continuumio/miniconda3:latest
   before_script:
-    - export DEBIAN_FRONTEND=noninteractive
-    - apt update -yq
-    - apt install -yq procps wget git git-lfs
-    # Download and install miniconda
-    - wget https://repo.continuum.io/miniconda/Miniconda3-$MINICONDA_VERSION-$MINICONDA_OS-x86_64.sh -O miniconda.sh
-    - bash miniconda.sh -b -p $HOME/miniconda
-    - export PATH="$HOME/miniconda/bin:$PATH"
     # setup conda to always accept commands
     - conda config --set always_yes yes --set changeps1 no
   script:
-    - echo "I am a test stage job for debian, running on docker"
+    - echo "I am a test stage job for linux, running on docker."
     - source activate base
     - conda install mamba conda-verify -c conda-forge
     - |
@@ -91,7 +74,7 @@ deploy:
   dependencies:
     - build:linux
   script:
-    - echo "I am a depolyment stage job for debian, running on docker using continuumio/miniconda3:latest image"
+    - echo "I am a deploy stage job for linux, running on docker."
     - source activate
     - conda install anaconda-client
     - anaconda -t ${ANACONDA_API_TOKEN} upload -l ${DEPLOY_VARIABLE} -u ${CONDA_USER} --force bld-dir/linux-64/*.tar.bz2

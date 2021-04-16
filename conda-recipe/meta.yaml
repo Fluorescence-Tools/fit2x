@@ -24,6 +24,7 @@ requirements:
     - python {{ python }}
     - numpy
     - cmake
+    - doxygen
     - swig
     - boost 1.67.0.* [py < 38]
     - boost 1.71.0.* [py >= 38]

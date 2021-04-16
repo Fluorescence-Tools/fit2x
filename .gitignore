@@ -1,39 +1,18 @@
-build
-bld-dir
-dist
-*.pro.user
-*.pro.user.*
-scratch.py
-CMakeLists.txt.user
-CMakeLists.txt.user.*
-cmake-build-*
-playground
-temp
-*.egg-info
-docs/_build
-test/stage
+build/
+bld-dir/
+dist/
+cmake-build-*/
+*.egg-info/
+docs/_build/
+playground/
+temp/
+test/stage/
+
+__pycache__
 
 # Documentation and tools
-docs/_*
-docs/auto_examples
-docs/modules
-
-# JetBrains
-# User-specific stuff
-.idea
-.idea/**/workspace.xml
-.idea/**/tasks.xml
-.idea/**/usage.statistics.xml
-.idea/**/dictionaries
-.idea/**/shelf
-# Generated files
-.idea/**/contentModel.xml
-# Sensitive or high-churn files
-.idea/**/dataSources/
-.idea/**/dataSources.ids
-.idea/**/dataSources.local.xml
-.idea/**/sqlDataSources.xml
-.idea/**/dynamic.xml
-.idea/**/uiDesigner.xml
-.idea/**/dbnavigator.xml
-/dist/
+docs/_*/
+docs/auto_examples/
+docs/modules/
+.history/
+.vscode/
