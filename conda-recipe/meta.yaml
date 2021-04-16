@@ -28,19 +28,15 @@ requirements:
     - cmake
     - doxygen
     - swig
-    - boost 1.67.0.* [py < 38]
-    - boost 1.71.0.* [py >= 38]
+    - boost
     - tttrlib {{ tttrlib }}
     - llvm-openmp # [osx]
   run:
     - python {{ python }}
-    - numpy
+    - {{ pin_compatible('numpy') }}
+    - {{ pin_compatible('tttrlib') }}
+    - {{ pin_compatible('boost', max_pin='x.x.x') }}
     - llvm-openmp # [osx]
-    - tttrlib {{ tttrlib }}
-    - boost 1.67.0.* [py < 38]
-    - boost 1.71.0.* [py >= 38]
-    - libboost 1.71.0.* [py >= 38]
-    - libboost 1.67.0.* [py < 38]
 
 about:
   home: https://github.com/fluorescence-tools/fit2x
