@@ -26,7 +26,6 @@ requirements:
     - python {{ python }}
     - numpy
     - cmake
-    - doxygen
     - swig
     - boost
     - tttrlib {{ tttrlib }}
