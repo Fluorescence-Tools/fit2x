@@ -24,8 +24,8 @@ requirements:
     - {{ compiler('cxx') }}
     - cmake >=3.13
     - python {{ python }}
+    - setuptools
     - numpy
-    - cmake
     - swig
     - boost
     - tttrlib {{ tttrlib }}
