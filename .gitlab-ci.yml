@@ -27,7 +27,7 @@ build:linux:
     - apt update -yq && apt -yq install build-essential doxygen
   script:
     - echo "I am the build stage."
-    - source activate
+    - source activate base
     - conda install mamba boa conda-verify -c conda-forge
     - |
       conda config --add channels salilab
