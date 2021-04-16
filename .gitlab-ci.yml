@@ -2,6 +2,8 @@ stages:
 - build
 - test
 - deploy
+- Trigger-cross-projects
+
 
 # Change pip's cache directory to be inside the project directory since we can
 # only cache local items.
@@ -78,4 +80,9 @@ deploy:
     - source activate
     - conda install anaconda-client
     - anaconda -t ${ANACONDA_API_TOKEN} upload -l ${DEPLOY_VARIABLE} -u ${CONDA_USER} --force bld-dir/linux-64/*.tar.bz2
+
+# # Downstream projects
+# chisurf:
+#   stage: Trigger-cross-projects
+#   trigger: tpeulen/chisurf
 
