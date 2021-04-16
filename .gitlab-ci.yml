@@ -45,7 +45,7 @@ build:linux:
 test:linux:
   variables:
     MINICONDA_OS: "Linux"
-  stage: build
+  stage: test
   tags:
     - linux
   image: continuumio/miniconda3:latest
