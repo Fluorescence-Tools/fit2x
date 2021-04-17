@@ -8,15 +8,7 @@ stages:
 # only cache local items.
 variables:
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
-  DEPLOY_VARIABLE: "nightly"
   MINICONDA_VERSION: "latest"
-
-workflow:
-  rules:
-    - if: $CI_COMMIT_REF_NAME =~ /master/
-      variables:
-        DEPLOY_VARIABLE: "main"  # Override globally-defined DEPLOY_VARIABLE
-    - when: always               # Run the pipeline in other cases
 
 build:linux:
   stage: build
@@ -24,16 +16,14 @@ build:linux:
     - linux
   image: continuumio/miniconda3:latest
   before_script:
-    - apt update -yq && apt -yq install build-essential
+    - apt update -yq && apt -yq install build-essential doxygen
   script:
     - echo "I am the build stage."
-    - source activate
+    - source activate base
     - conda install mamba boa conda-verify -c conda-forge
     - |
       conda config --add channels salilab
-      conda config --add channels conda-forge
       conda config --add channels tpeulen
-      conda config --add channels tpeulen/label/nightly
     - conda mambabuild conda-recipe --output-folder bld-dir
   artifacts:
     expire_in: 7 days
@@ -64,9 +54,7 @@ test:linux:
     - mamba update -y -n base -c defaults --all
     - |
       conda config --add channels salilab
-      conda config --add channels conda-forge
       conda config --add channels tpeulen
-      conda config --add channels tpeulen/label/nightly
       conda config --add channels "file://`pwd`/bld-dir"
     - mamba create -n test python=3.7 fit2x nose scipy
     - conda activate test
@@ -85,6 +73,7 @@ deploy:
     - echo "I am a depolyment stage job for debian, running on docker using continuumio/miniconda3:latest image"
     - source activate
     - conda install anaconda-client
+    - if [[ "$CI_COMMIT_REF_NAME" == "master" ]]; then DEPLOY_VARIABLE=main; else DEPLOY_VARIABLE=nightly; fi
     - anaconda -t ${ANACONDA_API_TOKEN} upload -l ${DEPLOY_VARIABLE} -u ${CONDA_USER} --force bld-dir/linux-64/*.tar.bz2
 
 
