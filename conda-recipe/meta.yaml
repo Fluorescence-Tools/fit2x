@@ -23,7 +23,6 @@ requirements:
     - tttrlib
     - numpy
     - cmake
-    - doxygen
     - swig
     - boost
   host:
