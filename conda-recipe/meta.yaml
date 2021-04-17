@@ -15,26 +15,26 @@ build:
     string: py{{ PY_VER_MAJOR }}{{ PY_VER_MINOR }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}
 
 requirements:
-  host:
-    - python {{ python }}
-    - numpy
-    - setuptools
   build:
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
     - cmake >=3.13
-    - python {{ python }}
+    - python
+    - tttrlib
     - numpy
     - cmake
     - doxygen
     - swig
     - boost
-    - tttrlib {{ tttrlib }}
-    - llvm-openmp # [osx]
+  host:
+    - python {{ python }}
+    - numpy
+    - setuptools
+    - tttrlib
   run:
     - python {{ python }}
-    - {{ pin_compatible('numpy') }}
-    - {{ pin_compatible('tttrlib') }}
+    - numpy
+    - {{ pin_compatible('tttrlib', max_pin='x.x.x') }}
     - {{ pin_compatible('boost', max_pin='x.x.x') }}
     - llvm-openmp # [osx]
 
