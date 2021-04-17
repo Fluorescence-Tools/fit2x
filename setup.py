@@ -2,7 +2,6 @@
 import os
 import platform
 import subprocess
-import pathlib
 
 from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext
@@ -62,22 +61,6 @@ class CMakeBuild(build_ext):
         env = os.environ.copy()
         if not os.path.exists(self.build_temp):
             os.makedirs(self.build_temp)
-        try:
-            # build the documentation.i file using doxygen and doxy2swig
-            working_directory = pathlib.Path(__file__).parent.absolute()
-            subprocess.check_call(
-                ["doxygen"],
-                cwd=str(working_directory / "docs"),
-                env=env
-            )
-            subprocess.check_call(
-                ["python", "./build_tools/doxy2swig.py", 
-                "../docs/_build/xml/index.xml", "../ext/python/documentation.i"],
-                cwd=str(working_directory / "utility"),
-                env=env
-            )
-        except:
-            print("Problem calling doxygen")
         print("cmake building: " + " ".join(cmake_args))
         subprocess.check_call(
             ['cmake', ext.sourcedir] + cmake_args,
