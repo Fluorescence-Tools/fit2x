@@ -24,15 +24,16 @@ requirements:
     - numpy
     - cmake
     - swig
-    - boost
+    - imp {{ imp }} # for correct linking for IMP
   host:
     - python {{ python }}
     - numpy
     - setuptools
     - tttrlib
+    - imp {{ imp }} # for correct linking for IMP
   run:
     - python {{ python }}
-    - numpy
+    - {{ pin_compatible('numpy') }}
     - {{ pin_compatible('tttrlib', max_pin='x.x.x') }}
     - {{ pin_compatible('boost', max_pin='x.x.x') }}
     - llvm-openmp # [osx]
