@@ -9,6 +9,7 @@ stages:
 variables:
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
   MINICONDA_VERSION: "latest"
+  MAMBA_VERSION: "0.10"
 
 build:linux:
   stage: build
@@ -20,7 +21,7 @@ build:linux:
   script:
     - echo "I am the build stage."
     - source activate base
-    - conda install mamba boa conda-verify -c conda-forge
+    - conda install mamba=$MAMBA_VERSION boa conda-verify -c conda-forge
     - |
       conda config --add channels salilab
       conda config --add channels tpeulen
@@ -50,13 +51,13 @@ test:linux:
   script:
     - echo "I am a test stage job for debian, running on docker"
     - source activate base
-    - conda install mamba conda-verify -c conda-forge
+    - conda install mamba -c conda-forge
     - mamba update -y -n base -c defaults --all
     - |
       conda config --add channels salilab
       conda config --add channels tpeulen
       conda config --add channels "file://`pwd`/bld-dir"
-    - mamba create -n test python=3.7 fit2x nose scipy
+    - mamba create -n test python fit2x nose scipy
     - conda activate test
     - |
       cd test
@@ -77,8 +78,8 @@ deploy:
     - anaconda -t ${ANACONDA_API_TOKEN} upload -l ${DEPLOY_VARIABLE} -u ${CONDA_USER} --force bld-dir/linux-64/*.tar.bz2
 
 
-# # Downstream projects
-# chisurf:
-#   stage: Trigger-cross-projects
-#   trigger: tpeulen/chisurf
+# Downstream projects
+scikit-fluorescence:
+  stage: Trigger-cross-projects
+  trigger: tpeulen/scikit-fluorescence
 
