@@ -70,5 +70,5 @@ deploy:
 # Downstream projects
 scikit-fluorescence:
   stage: Trigger-cross-projects
-  trigger: tpeulen/scikit-fluorescence
+  trigger: skf/scikit-fluorescence
 
