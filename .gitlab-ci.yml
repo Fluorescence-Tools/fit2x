@@ -8,8 +8,6 @@ stages:
 # only cache local items.
 variables:
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
-  MINICONDA_VERSION: "latest"
-  MAMBA_VERSION: "0.10"
 
 build:linux:
   stage: build
@@ -19,12 +17,9 @@ build:linux:
   before_script:
     - apt update -yq && apt -yq install build-essential doxygen
   script:
-    - echo "I am the build stage."
     - source activate base
     - conda install mamba=$MAMBA_VERSION boa conda-verify -c conda-forge
-    - |
-      conda config --add channels salilab
-      conda config --add channels tpeulen
+    - echo $CONDARC >> ~/.condarc
     - conda mambabuild conda-recipe --output-folder bld-dir
   artifacts:
     expire_in: 7 days
@@ -39,7 +34,6 @@ test:linux:
     - linux
   image: ubuntu:latest
   before_script:
-    - export DEBIAN_FRONTEND=noninteractive
     - apt update -yq
     - apt install -yq procps wget git git-lfs
     # Download and install miniconda
@@ -49,14 +43,10 @@ test:linux:
     # setup conda to always accept commands
     - conda config --set always_yes yes --set changeps1 no
   script:
-    - echo "I am a test stage job for debian, running on docker"
     - source activate base
     - conda install mamba -c conda-forge
-    - mamba update -y -n base -c defaults --all
-    - |
-      conda config --add channels salilab
-      conda config --add channels tpeulen
-      conda config --add channels "file://`pwd`/bld-dir"
+    - echo $CONDARC >> ~/.condarc
+    - conda config --add channels "file://`pwd`/bld-dir"
     - mamba create -n test python fit2x nose scipy
     - conda activate test
     - |
@@ -71,10 +61,9 @@ deploy:
   dependencies:
     - build:linux
   script:
-    - echo "I am a depolyment stage job for debian, running on docker using continuumio/miniconda3:latest image"
     - source activate
     - conda install anaconda-client
-    - if [[ "$CI_COMMIT_REF_NAME" == "master" ]]; then DEPLOY_VARIABLE=main; else DEPLOY_VARIABLE=nightly; fi
+    - if [[ "$CI_COMMIT_REF_NAME" == "master" ]]; then DEPLOY_VARIABLE=$LABEL_RELEASE; else DEPLOY_VARIABLE=$LABEL_TESTING; fi
     - anaconda -t ${ANACONDA_API_TOKEN} upload -l ${DEPLOY_VARIABLE} -u ${CONDA_USER} --force bld-dir/linux-64/*.tar.bz2
 
 
