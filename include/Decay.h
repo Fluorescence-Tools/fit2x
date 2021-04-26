@@ -25,6 +25,46 @@
 
 class Decay {
 
+public:
+
+    //***********************************************//
+    //*      STATIC METHODS                         *//
+    //***********************************************//
+
+    /*!
+     * Compute a mean lifetime by the moments of the decay and the instrument
+     * response function.
+     *
+     * The computed lifetime is the first lifetime determined by the method of
+     * moments (Irvin Isenberg, 1973, Biophysical journal).
+     *
+     * @param irf_histogram
+     * @param decay_histogram
+     * @param micro_time_resolution
+     * @return
+     */
+    static double compute_mean_lifetime(
+            std::vector<double> irf_histogram,
+            std::vector<double> decay_histogram,
+            double micro_time_resolution
+            ){
+        double m0_irf = std::accumulate(
+                irf_histogram.begin(),
+                irf_histogram.end(),
+                0.0);
+        double m1_irf = 0.0;
+        for(size_t i = 0; i<irf_histogram.size(); i++)
+            m1_irf += i * irf_histogram[i];
+        double mu0 = std::accumulate(decay_histogram.begin(), decay_histogram.end(),0.0);
+        double mu1 = 0.0;
+        for(size_t i = 0; i<decay_histogram.size(); i++)
+            mu1 += i * decay_histogram[i];
+        double g1 = mu0 / m0_irf;
+        double g2 = (mu1 - g1 * m1_irf) / m0_irf;
+        double tau1 = g2 / g1 * micro_time_resolution;
+        return tau1;
+    }
+
 private:
     DecayScore* decayScore = nullptr;
     DecayLifetimeSpectrum* decayLifetimeSpectrum = nullptr;
@@ -192,6 +232,10 @@ public:
 
     void get_irf(double **output_view, int *n_output) {
         decayConvolution->get_irf(output_view, n_output);
+    }
+
+    void get_corrected_irf(double **output_view, int *n_output) {
+        decayConvolution->get_corrected_irf(output_view, n_output);
     }
 
     void set_irf_background_counts(double v) {
@@ -492,43 +536,6 @@ public:
         decayScore->set_score_type(v);
     }
 
-    //***********************************************//
-    //*      STATIC METHODS                         *//
-    //***********************************************//
-
-    /*!
-     * Compute a mean lifetime by the moments of the decay and the instrument
-     * response function.
-     *
-     * The computed lifetime is the first lifetime determined by the method of
-     * moments (Irvin Isenberg, 1973, Biophysical journal).
-     *
-     * @param irf_histogram
-     * @param decay_histogram
-     * @param micro_time_resolution
-     * @return
-     */
-    static double compute_mean_lifetime(
-            std::vector<double> irf_histogram,
-            std::vector<double> decay_histogram,
-            double micro_time_resolution
-            ){
-        double m0_irf = std::accumulate(
-                irf_histogram.begin(),
-                irf_histogram.end(),
-                0.0);
-        double m1_irf = 0.0;
-        for(size_t i = 0; i<irf_histogram.size(); i++)
-            m1_irf += i * irf_histogram[i];
-        double mu0 = std::accumulate(decay_histogram.begin(), decay_histogram.end(),0.0);
-        double mu1 = 0.0;
-        for(size_t i = 0; i<decay_histogram.size(); i++)
-            mu1 += i * decay_histogram[i];
-        double g1 = mu0 / m0_irf;
-        double g2 = (mu1 - g1 * m1_irf) / m0_irf;
-        double tau1 = g2 / g1 * micro_time_resolution;
-        return tau1;
-    }
 
 };
 

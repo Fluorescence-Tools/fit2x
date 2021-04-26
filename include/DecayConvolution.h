@@ -287,6 +287,13 @@ public:
         return &corrected_irf;
     }
 
+    void get_corrected_irf(double **output_view, int *n_output){
+#ifdef VERBOSE_FIT2X
+        std::clog << "DecayConvolution::get_corrected_irf" << std::endl;
+#endif
+        corrected_irf.get_y(output_view, n_output);
+    }
+
     void set_lifetime_spectrum(DecayLifetimeSpectrum* v){
 #ifdef VERBOSE_FIT2X
         std::clog << "DecayConvolution::set_lifetime_spectrum" << std::endl;

@@ -83,3 +83,4 @@ Decay::Decay(
     if(!data_weights.empty())
         set_data_weights(data_weights.data(), data_weights.size());
 }
+

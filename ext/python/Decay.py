@@ -1,152 +1,184 @@
-# Score
-#######################
-@property
-def score_range(self):
-    return self.get_score_range()
 
-@score_range.setter
-def score_range(self, v):
-    self.set_score_range(v[0], v[1])
+    # A list of all accessible parameters
+    _parameter_keys = [
+            # Data
+            'data',
+            'acquisition_time',
+            'data_weights',
+            'time_axis',
+            'irf_histogram',
+            # Lifetime spectrum
+            'lifetime_spectrum',
+            'use_amplitude_threshold',
+            'abs_lifetime_spectrum',
+            'amplitude_threshold',
+            # Convolution
+            'convolution_range',
+            'use_corrected_irf_as_scatter',
+            'scatter_fraction',
+            'convolution_method',
+            'excitation_period',
+            'irf_shift_channels',
+            'irf_background_counts',
+            # Background
+            'constant_offset',
+            # Pile up
+            'pile_up_model',
+            'instrument_dead_time',
+            'use_pile_up_correction',
+            # Scaling
+            'scale_model_to_data',
+            'number_of_photons',
+            # Linearization
+            'linearization_table',
+            'use_linearization',
+            # Scoring
+            'score_range',
+            'score_type'
+    ]
 
-# Lifetime spectrum
-#######################
-@property
-def lifetime_spectrum(self):
-    return self.get_lifetime_spectrum()
+    # Score
+    #######################
+    @property
+    def score_range(self):
+        return self.get_score_range()
 
-@lifetime_spectrum.setter
-def lifetime_spectrum(self, v):
-    self.set_lifetime_spectrum(v)
+    @score_range.setter
+    def score_range(self, v):
+        self.set_score_range(v[0], v[1])
 
-# CONVOLUTION
-#######################
-@property
-def convolution_range(self):
-    return self.get_convolution_range()
+    # Lifetime spectrum
+    #######################
+    @property
+    def lifetime_spectrum(self):
+        return self.get_lifetime_spectrum()
 
-@convolution_range.setter
-def convolution_range(self, v):
-    self.set_convolution_range(v)
+    @lifetime_spectrum.setter
+    def lifetime_spectrum(self, v):
+        self.set_lifetime_spectrum(v)
 
-@property
-def irf(self):
-    return self.get_irf()
+    # CONVOLUTION
+    #######################
+    @property
+    def convolution_range(self):
+        return self.get_convolution_range()
 
-@irf.setter
-def irf(self, v):
-    self.set_irf(v)
+    @convolution_range.setter
+    def convolution_range(self, v):
+        self.set_convolution_range(v)
 
-@property
-def corrected_irf(self):
-    return self.get_corrected_irf()
+    @property
+    def irf(self):
+        return self.get_irf()
 
-# LINEARIZATION
-#######################
-@property
-def linearization_table(self):
-    return self.get_linearization_table()
+    @irf.setter
+    def irf(self, v):
+        self.set_irf(v)
 
-@linearization_table.setter
-def linearization_table(self, v):
-    self.set_linearization_table(v)
+    @property
+    def irf_histogram(self):
+        return self.get_irf()
 
-# DATA
-#######################
-@property
-def data(self):
-    return self.get_data()
+    # For backwards compatability
+    @irf_histogram.setter
+    def irf_histogram(self, v):
+        self.set_irf(v)
 
-@data.setter
-def data(self, v):
-    self.set_data(v)
+    @property
+    def corrected_irf(self):
+        return self.get_corrected_irf()
 
-@property
-def data_weights(self):
-    return self.get_data_weights()
+    # LINEARIZATION
+    #######################
+    @property
+    def linearization_table(self):
+        return self.get_linearization_table()
 
-@data_weights.setter
-def data_weights(self, v):
-    return self.set_data_weights(v)
+    @linearization_table.setter
+    def linearization_table(self, v):
+        self.set_linearization_table(v)
 
-@property
-def time_axis(self):
-    return self.get_time_axis()
+    # DATA
+    #######################
+    @property
+    def data(self):
+        return self.get_data()
 
-@time_axis.setter
-def time_axis(self, v):
-    return self.set_time_axis(v)
+    @data.setter
+    def data(self, v):
+        self.set_data(v)
 
-# Model
-######################
-@property
-def model(self):
-    return self.get_model()
+    @property
+    def data_weights(self):
+        return self.get_data_weights()
 
-# Scoring
-######################
-@property
-def weighted_residuals(self):
-    return self.get_weighted_residuals()
+    @data_weights.setter
+    def data_weights(self, v):
+        return self.set_data_weights(v)
 
-@property
-def score_range(self):
-    return self.get_score_range()
+    @property
+    def time_axis(self):
+        return self.get_time_axis()
 
-@score_range.setter
-def score_range(self, v):
-    self.set_score_range(v)
+    @time_axis.setter
+    def time_axis(self, v):
+        return self.set_time_axis(v)
 
-@property
-def chi2(self):
-    return self.get_score()
+    # Model
+    ######################
+    @property
+    def model(self):
+        return self.get_model()
 
-@property
-def n_scoring_channels(self):
-    """Number of channels used for scoring
-    """
-    score_range = self.score_range
-    return score_range[1] - score_range[0]
+    # Scoring
+    ######################
+    @property
+    def weighted_residuals(self):
+        return self.get_weighted_residuals()
 
-@property
-def parameter(self):
-    re = {
-        # Data
-        'data': self.data,
-        'acquisition_time': self.acquisition_time,
-        'data_weights': self.data_weights,
-        'time_axis': self.time_axis,
-        'irf_histogram': self.irf,
-        # Lifetime spectrum
-        'lifetime_spectrum': self.lifetime_spectrum,
-        'use_amplitude_threshold': self.use_amplitude_threshold,
-        'abs_lifetime_spectrum': self.abs_lifetime_spectrum,
-        'amplitude_threshold': self.amplitude_threshold,
-        # Convolution
-        'convolution_range': self.convolution_range,
-        'use_corrected_irf_as_scatter': self.use_corrected_irf_as_scatter,
-        'scatter_fraction': self.scatter_fraction,
-        'convolution_method': self.convolution_method,
-        'excitation_period': self.excitation_period,
-        'irf_shift_channels': self.irf_shift_channels,
-        'irf_background_counts': self.irf_background_counts,
-        # Background
-        'constant_offset': self.constant_offset,
-        # Pile up
-        'pile_up_model': self.pile_up_model,
-        'instrument_dead_time': self.instrument_dead_time,
-        'use_pile_up_correction': self.use_pile_up_correction,
-        # Scaling
-        'scale_model_to_data': self.scale_model_to_data,
-        'number_of_photons': self.number_of_photons,
-        # Linearization
-        'linearization_table': self.linearization_table,
-        'use_linearization': self.use_linearization,
-        # Scoring
-        'score_range': self.score_range,
-        'score_type': self.score_type
-    }
-    return re
+    @property
+    def score_range(self):
+        return self.get_score_range()
 
-@property
-def mean_lifetime(self):
-    return self.get_mean_lifetime()
+    @score_range.setter
+    def score_range(self, v):
+        self.set_score_range(v)
+
+    @property
+    def chi2(self):
+        return self.get_score()
+
+    @property
+    def n_scoring_channels(self):
+        """Number of channels used for scoring
+        """
+        score_range = self.score_range
+        return score_range[1] - score_range[0]
+
+    def set(self, **kwargs):
+        for k in kwargs:
+            if k in Decay._parameter_keys:
+                v = kwargs[k]
+                if v is not None:
+                    self.__setattr__(k, kwargs[k])
+            else:
+                raise AttributeError("The parameter '%s' cannot be set." % k)
+
+    @property
+    def parameter(self):
+        return dict(
+            zip(
+                self._parameter_keys,
+                [self.__getattribute__(k) for k in Decay._parameter_keys]
+            )
+        )
+
+    @parameter.setter
+    def parameter(self, v):
+        self.set(v)
+
+    @property
+    def mean_lifetime(self):
+        return self.get_mean_lifetime()
+
+
