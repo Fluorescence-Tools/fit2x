@@ -398,9 +398,9 @@ class Tests(unittest.TestCase):
 
 
     def test_compute_decay(self):
-        # import numpy as np
-        # import fit2x
-        # import scipy.stats
+        import numpy as np
+        import fit2x
+        import scipy.stats
         np.random.seed(0)
         period = 13.6
         time_axis = np.linspace(0, period, 16)

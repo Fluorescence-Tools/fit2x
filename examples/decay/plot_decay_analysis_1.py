@@ -168,7 +168,10 @@ x0 = np.hstack(
 )
 
 
-x0 = np.hstack([scatter, background, time_shift, irf_background, lifetime_spectrum])
+x0 = np.hstack([
+    scatter, background, 
+    time_shift, irf_background, 
+    lifetime_spectrum])
 fit = scipy.optimize.minimize(
     objective_function_chi2, x0,
     args=(decay, x_min, x_max)
@@ -182,13 +185,9 @@ fig, ax = plt.subplots(nrows=2, ncols=1, sharex=True, sharey=False)
 ax[1].semilogy(decay.time_axis, decay.corrected_irf, label="IRF")
 ax[1].semilogy(decay.time_axis, decay.data, label="Data")
 ax[1].semilogy(decay.time_axis[x_min:x_max], decay.model[x_min:x_max], label="Model")
-
 ax[1].legend()
-ax[0].plot(
-    time_axis[x_min:x_max],
-    decay.weighted_residuals[x_min:x_max],
-    label='w.res.',
-    color='green'
-)
+ax[0].plot(decay.time_axis[x_min:x_max], 
+    decay.weighted_residuals[x_min:x_max], 
+    label='w.res.', color='green')
 plt.show()
 
