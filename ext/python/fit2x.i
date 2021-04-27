@@ -20,6 +20,10 @@
 %include "numpy.i"
 %include "documentation.i"
 
+// Warning 509: Overloaded method ignored,
+// Warning 511: Ignore overloaded functions
+// Warning 401: Nothing known about base class
+#pragma SWIG nowarn=401,509,511
 
 %init %{
 import_array();
