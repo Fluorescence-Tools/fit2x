@@ -66,6 +66,7 @@ public:
     }
 
 private:
+
     DecayScore* decayScore = nullptr;
     DecayLifetimeSpectrum* decayLifetimeSpectrum = nullptr;
     DecayConvolution* decayConvolution = nullptr;
@@ -261,6 +262,7 @@ public:
     //***********************************************//
     void set_abs_lifetime_spectrum(bool v){
         set_is_valid(false);
+        decayConvolution->set_is_valid(false);
         decayLifetimeSpectrum->set_abs_lifetime_spectrum(v);
     }
 
@@ -270,6 +272,7 @@ public:
 
     void set_use_amplitude_threshold(bool v) {
         set_is_valid(false);
+        decayConvolution->set_is_valid(false);
         decayLifetimeSpectrum->set_use_amplitude_threshold(v);
     }
 
@@ -279,6 +282,7 @@ public:
 
     void set_amplitude_threshold(double v) {
         set_is_valid(false);
+        decayConvolution->set_is_valid(false);
         decayLifetimeSpectrum->set_amplitude_threshold(v);
     }
 
@@ -288,11 +292,25 @@ public:
 
     void set_lifetime_spectrum(double *input, int n_input = 0) {
         set_is_valid(false);
+        decayConvolution->set_is_valid(false);
         decayLifetimeSpectrum->set_lifetime_spectrum(input, n_input);
     }
 
     void get_lifetime_spectrum(double **output_view, int *n_output) {
         decayLifetimeSpectrum->get_lifetime_spectrum(output_view, n_output);
+    }
+
+    /*!
+     * @brief Get the mean lifetime computed using irf and data
+     * 
+     * @return double 
+     */
+    double get_mean_lifetime(){
+        return compute_mean_lifetime(
+            decayConvolution->corrected_irf.y,
+            _data.y,
+            micro_time_resolution()
+        );
     }
 
     //***********************************************//
@@ -417,6 +435,7 @@ public:
 
     void set_data(double *input, int n_input) {
         set_is_valid(false);
+        decayConvolution->set_is_valid(false);
         resize(n_input);
         _data.set_y(input, n_input);
     }
@@ -428,6 +447,7 @@ public:
 
     void set_data_weights(double *input, int n_input) {
         set_is_valid(false);
+        decayConvolution->set_is_valid(false);
         resize(n_input);
         _data.set_w(input, n_input);
     }
@@ -450,6 +470,7 @@ public:
 
     void set_time_axis(double *input, int n_input) {
         set_is_valid(false);
+        decayConvolution->set_is_valid(false);
         resize(n_input);
         _data.set_x(input, n_input);
         _irf.set_x(input, n_input);
@@ -495,6 +516,14 @@ public:
                 tttr->get_header()->
                         get_macro_time_resolution()
         );
+    }
+
+    double micro_time_resolution(){
+        double v = 1.0;
+        if(_data.size() > 2){
+            v = _data.x[1] - _data.x[0];
+        }
+        return v;
     }
 
     //***********************************************//

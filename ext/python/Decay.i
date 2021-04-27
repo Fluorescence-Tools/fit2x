@@ -41,6 +41,7 @@
 
 // Experimental data
 %attribute(Decay, double, acquisition_time, get_acquisition_time, set_acquisition_time);
+%attribute(Decay, double, mean_lifetime, get_mean_lifetime);
 
 // Scale
 %attribute(Decay, bool, scale_model_to_data, get_scale_model_to_data, set_scale_model_to_data);

@@ -177,8 +177,4 @@
     def parameter(self, v):
         self.set(v)
 
-    @property
-    def mean_lifetime(self):
-        return self.get_mean_lifetime()
-
 
