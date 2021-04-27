@@ -93,6 +93,11 @@ double DecayCurve::get_dx(){
 
 void DecayCurve::resize(int n){
     int old_size = size();
+#if VERBOSE_FIT2X
+    std::clog << "DecayCurve::resize" << std::endl;
+    std::clog << "-- old_size:" << old_size << std::endl;
+    std::clog << "-- new_size:" << n << std::endl;
+#endif
 
     x.resize(n);
     y.resize(n, 0.0); _y.resize(n, 0.0);

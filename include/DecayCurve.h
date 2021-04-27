@@ -63,8 +63,6 @@ private:
         }
     }
 
-protected:
-
     std::vector<double> x;
     std::vector<double> y;
     /// error in y
@@ -91,6 +89,8 @@ public:
             bool set_outside = true,
             double outside_value = 0.0
     );
+
+    bool restrict_to_positive_values = true;
 
     /*!
      * Computes the sum of two arrays considering their respective
@@ -165,6 +165,11 @@ public:
     }
 
     std::vector<double> get_y(){
+        if(restrict_to_positive_values){
+            for(auto &d: y){
+                d = std::max(0.0, d);
+            }
+        }
         return y;
     }
 
@@ -191,6 +196,7 @@ public:
         *output_view = y.data();
         *n_output = y.size();
     }
+
 
     void set_y(std::vector<double> v){
         resize(v.size());
