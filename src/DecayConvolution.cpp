@@ -59,7 +59,6 @@ void DecayConvolution::convolve_lifetimes(){
                     dt
             );
         } else if (convolution_method == ConvFast) {
-            std::cout << "fconv" << std::endl;
             fconv(
                     decay.y.data(), lt,
                     irfc.y.data(), nl,
