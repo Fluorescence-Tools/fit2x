@@ -4,3 +4,6 @@
 [submodule "cmake"]
 	path = cmake
 	url = https://gitlab.peulen.xyz/build/cmake
+[submodule "tools"]
+	path = tools
+	url = https://gitlab.peulen.xyz/build/tools
