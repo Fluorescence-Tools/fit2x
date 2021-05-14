@@ -244,7 +244,7 @@ public:
 
     void set_tttr(
             std::shared_ptr<TTTR> tttr_data,
-            int tttr_micro_time_coarsening
+            int tttr_micro_time_coarsening=1
     ){
 #if VERBOSE_FIT2X
         std::clog << "DecayCurve::set_tttr" << std::endl;
