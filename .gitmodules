@@ -1,3 +1,6 @@
 [submodule "tttr-data"]
 	path = tttr-data
 	url = https://gitlab.peulen.xyz/skf/tttr-data
+[submodule "cmake"]
+	path = cmake
+	url = https://gitlab.peulen.xyz/build/cmake
