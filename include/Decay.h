@@ -14,6 +14,7 @@
 #include "omp.h"
 #include "tttrlib/TTTR.h"
 
+#include "ConditionalUpdater.h"
 #include "DecayCurve.h"
 #include "DecayLifetimeSpectrum.h"
 #include "DecayConvolution.h"
@@ -23,7 +24,7 @@
 #include "DecayPileup.h"
 #include "DecayLinearization.h"
 
-class Decay {
+class Decay : public ConditionalUpdater{
 
 public:
 
@@ -32,10 +33,10 @@ public:
     //***********************************************//
 
     /*!
-     * Compute a mean lifetime by the moments of the decay and the instrument
+     * Compute a mean lifetime using the moments of the decay and the instrument
      * response function.
      *
-     * The computed lifetime is the first lifetime determined by the method of
+     * The lifetime is the first lifetime determined by the method of
      * moments (Irvin Isenberg, 1973, Biophysical journal).
      *
      * @param irf_histogram
@@ -47,17 +48,17 @@ public:
             std::vector<double> irf_histogram,
             std::vector<double> decay_histogram,
             double micro_time_resolution
-            ){
+    ) {
         double m0_irf = std::accumulate(
                 irf_histogram.begin(),
                 irf_histogram.end(),
                 0.0);
         double m1_irf = 0.0;
-        for(size_t i = 0; i<irf_histogram.size(); i++)
+        for (size_t i = 0; i < irf_histogram.size(); i++)
             m1_irf += i * irf_histogram[i];
-        double mu0 = std::accumulate(decay_histogram.begin(), decay_histogram.end(),0.0);
+        double mu0 = std::accumulate(decay_histogram.begin(), decay_histogram.end(), 0.0);
         double mu1 = 0.0;
-        for(size_t i = 0; i<decay_histogram.size(); i++)
+        for (size_t i = 0; i < decay_histogram.size(); i++)
             mu1 += i * decay_histogram[i];
         double g1 = mu0 / m0_irf;
         double g2 = (mu1 - g1 * m1_irf) / m0_irf;
@@ -67,33 +68,23 @@ public:
 
 private:
 
-    DecayScore* decayScore = nullptr;
-    DecayLifetimeSpectrum* decayLifetimeSpectrum = nullptr;
-    DecayConvolution* decayConvolution = nullptr;
-    DecayBackground* decayBackground = nullptr;
-    DecayPileup* decayPileup = nullptr;
-    DecayScale* decayScale = nullptr;
-    DecayLinearization* decayLinearization = nullptr;
-
+    std::shared_ptr<DecayScore> decayScore = nullptr;
+    std::shared_ptr<DecayLifetimeSpectrum> decayLifetimeSpectrum = nullptr;
+    std::shared_ptr<DecayConvolution> decayConvolution = nullptr;
+    std::shared_ptr<DecayBackground> decayBackground = nullptr;
+    std::shared_ptr<DecayPileup> decayPileup = nullptr;
+    std::shared_ptr<DecayScale> decayScale = nullptr;
+    std::shared_ptr<DecayLinearization> decayLinearization = nullptr;
 
     /// The experimental histogram
-    DecayCurve _data = DecayCurve();
+    std::shared_ptr<DecayCurve> _data = std::make_shared<DecayCurve>();
 
     /// model function
-    DecayCurve* _model = nullptr;
+    std::shared_ptr<DecayCurve> _model = std::make_shared<DecayCurve>();
 
     /// instrument response function
-    DecayCurve _irf = DecayCurve();
+    std::shared_ptr<DecayCurve> _irf = std::make_shared<DecayCurve>();
 
-    /// false if model function needs to be updated
-    bool _is_valid = false;
-
-    /// Used to set if the decay is 'valid'. A decay is invalid if the
-    /// computed model, wres, etc. does not correspond to the input parameters.
-    /// It should not be decided by outside if the decay is valid.
-    void set_is_valid(bool v){
-        _is_valid = v;
-    }
 
 public:
 
@@ -137,19 +128,7 @@ public:
             std::string score_type= "poisson"
     );
 
-    ~Decay(){
-        delete decayScore;
-        delete decayLifetimeSpectrum;
-        delete decayConvolution;
-        delete decayBackground;
-        delete decayPileup;
-        delete decayScale;
-        delete decayLinearization;
-    }
-
-    bool get_is_valid() const {
-        return _is_valid;
-    }
+    ~Decay() = default;
 
     //***********************************************//
     //*      CONVOLUTION                            *//
@@ -307,8 +286,8 @@ public:
      */
     double get_mean_lifetime(){
         return compute_mean_lifetime(
-            decayConvolution->corrected_irf.y,
-            _data.y,
+            decayConvolution->corrected_irf->y,
+            _data->y,
             micro_time_resolution()
         );
     }
@@ -359,6 +338,7 @@ public:
     }
 
     void set_pile_up_model(std::string v){
+        set_is_valid(false);
         decayPileup->set_pile_up_model(v);
     }
 
@@ -410,11 +390,11 @@ public:
 
     /// Computes the model function
     void update_model() {
-        _model = decayConvolution->get_decay();
-        decayPileup->add(_model);
-        decayLinearization->add(_model);
-        decayScale->add(_model);
-        decayBackground->add(_model);
+        decayConvolution->get_decay(*_model);
+        decayPileup->add(*_model);
+        decayLinearization->add(*_model);
+        decayScale->add(*_model);
+        decayBackground->add(*_model);
         set_is_valid(true);
     }
 
@@ -422,64 +402,64 @@ public:
     //*     CURVES: EXPERIMENTAL AND MODEL DATA     *//
     //***********************************************//
     double get_time_resolution(){
-        return _data.get_dx();
+        return _data->get_dx();
     }
 
     void set_acquisition_time(double v) {
-        _data.set_acquisition_time(v);
+        _data->set_acquisition_time(v);
     }
 
     double get_acquisition_time() const {
-        return _data.get_acquisition_time();
+        return _data->get_acquisition_time();
     }
 
     void set_data(double *input, int n_input) {
         set_is_valid(false);
         decayConvolution->set_is_valid(false);
         resize(n_input);
-        _data.set_y(input, n_input);
+        _data->set_y(input, n_input);
     }
 
     void get_data(double **output_view, int *n_output) {
-        *output_view = _data.y.data();
-        *n_output = _data.y.size();
+        *output_view = _data->y.data();
+        *n_output = _data->y.size();
     }
 
     void set_data_weights(double *input, int n_input) {
         set_is_valid(false);
         decayConvolution->set_is_valid(false);
         resize(n_input);
-        _data.set_w(input, n_input);
+        _data->set_w(input, n_input);
     }
 
     void get_data_weights(double **output_view, int *n_output) {
-        _data.get_w(output_view, n_output);
+        _data->get_w(output_view, n_output);
     }
 
     int size() const{
-        return _data.size();
+        return _data->size();
     }
 
     void resize(int size){
-        _data.resize(size);
-        _irf.resize(size);
+        _data->resize(size);
+        _irf->resize(size);
         _model->resize(size);
         decayLinearization->resize(size);
-        decayConvolution->corrected_irf.resize(size);
+        decayConvolution->corrected_irf->resize(size);
     }
 
     void set_time_axis(double *input, int n_input) {
         set_is_valid(false);
         decayConvolution->set_is_valid(false);
         resize(n_input);
-        _data.set_x(input, n_input);
-        _irf.set_x(input, n_input);
+        _data->set_x(input, n_input);
+        _irf->set_x(input, n_input);
         _model->set_x(input, n_input);
-        decayConvolution->corrected_irf.set_x(input, n_input);
+        decayConvolution->corrected_irf->set_x(input, n_input);
     }
 
     void get_time_axis(double **output_view, int *n_output) {
-        _data.get_x(output_view, n_output);
+        _data->get_x(output_view, n_output);
     }
 
     void get_model(double **output_view, int *n_output){
@@ -496,7 +476,7 @@ public:
         std::clog << "-- Setting DATA from TTTR..." << std::endl;
 #endif
         set_is_valid(false);
-        _data.set_tttr(tttr, tttr_micro_time_coarsening);
+        _data->set_tttr(tttr, tttr_micro_time_coarsening);
         set_excitation_period(
                 tttr->get_header()->
                 get_macro_time_resolution()
@@ -511,7 +491,7 @@ public:
         std::clog << "-- Setting IRF from TTTR..." << std::endl;
 #endif
         set_is_valid(false);
-        _irf.set_tttr(tttr, tttr_micro_time_coarsening);
+        _irf->set_tttr(tttr, tttr_micro_time_coarsening);
         set_excitation_period(
                 tttr->get_header()->
                         get_macro_time_resolution()
@@ -520,8 +500,8 @@ public:
 
     double micro_time_resolution(){
         double v = 1.0;
-        if(_data.size() > 2){
-            v = _data.x[1] - _data.x[0];
+        if(_data->size() > 2){
+            v = _data->x[1] - _data->x[0];
         }
         return v;
     }

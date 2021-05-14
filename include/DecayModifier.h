@@ -14,9 +14,9 @@ public:
 
     virtual void resize(size_t n) = 0;
 
-    virtual void add(DecayCurve* decay) = 0;
+    virtual void add(DecayCurve& decay) = 0;
 
-    ~DecayModifier() = default;
+    virtual ~DecayModifier() = default;
 
 };
 

@@ -3,6 +3,7 @@
 %}
 
 %include "../include/DecayPileup.h"
+%shared_ptr(DecayPileup);
 
 %attribute(DecayPileup, bool, use_pile_up_correction, get_use_pile_up_correction, set_use_pile_up_correction);
 %attribute(DecayPileup, double, instrument_dead_time, get_instrument_dead_time, set_instrument_dead_time);

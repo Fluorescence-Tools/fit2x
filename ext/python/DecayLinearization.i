@@ -7,5 +7,6 @@
     (double* linearization_table, int n_linearization_table)
 }
 %include "../include/DecayLinearization.h"
+%shared_ptr(DecayLinearization);
 
 %attribute(DecayLinearization, bool, use_linearization, get_use_linearization, set_use_linearization);

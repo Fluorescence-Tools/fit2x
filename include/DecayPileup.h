@@ -26,11 +26,11 @@ private:
 
     std::string pile_up_model = "coates";
 
-    DecayCurve* data;
+    std::shared_ptr<DecayCurve> data;
 
 public:
 
-    DecayCurve* get_data(){
+    std::shared_ptr<DecayCurve> get_data(){
 #ifdef VERBOSE_FIT2X
         std::clog << "DecayPileup::get_data" << std::endl;
 #endif
@@ -38,7 +38,7 @@ public:
         return data;
     }
 
-    void set_data(DecayCurve* d){
+    void set_data(std::shared_ptr<DecayCurve> d){
 #ifdef VERBOSE_FIT2X
         std::clog << "DecayPileup::set_data" << std::endl;
 #endif
@@ -102,7 +102,7 @@ public:
     }
 
     DecayPileup(
-            DecayCurve* data,
+            std::shared_ptr<DecayCurve> data,
             const char* pile_up_model = "coates",
             double repetition_rate = 100,
             double instrument_dead_time = 120,
@@ -128,14 +128,14 @@ public:
         // For potential future use
     }
 
-    void add(DecayCurve* model){
+    void add(DecayCurve& model){
 #ifdef VERBOSE_FIT2X
         std::clog << "DecayPileup::add" << std::endl;
 #endif
         if(use_pile_up_correction){
-            if(data->equal_size(*model)){
+            if(data->equal_size(model)){
                 add_pile_up_to_model(
-                        model->y.data(), model->y.size(),
+                        model.y.data(), model.y.size(),
                         data->y.data(), data->y.size(),
                         get_repetition_rate(),
                         get_instrument_dead_time(),

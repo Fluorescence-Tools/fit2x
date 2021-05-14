@@ -26,7 +26,7 @@ private:
     int _scale_stop = -1;
 
     /// Input data used for scaling
-    DecayCurve* data;
+    std::shared_ptr<DecayCurve> data;
 
 public:
 
@@ -134,7 +134,7 @@ public:
         return _scale_model_to_data;
     }
 
-    void set_data(DecayCurve* v){
+    void set_data(std::shared_ptr<DecayCurve> v){
 #ifdef VERBOSE_FIT2X
         std::clog << "DecayScale::set_data" << std::endl;
 #endif
@@ -156,7 +156,7 @@ public:
     }
 
     void set(
-            DecayCurve* data = nullptr,
+            std::shared_ptr<DecayCurve> data = nullptr,
             bool scale_model_to_data = false,
             double number_of_photons = -1,
             std::vector<int> scale_range = std::vector<int>({0, -1}),
@@ -174,7 +174,7 @@ public:
     }
 
     DecayScale(
-            DecayCurve* data = nullptr,
+            std::shared_ptr<DecayCurve> data = nullptr,
             bool scale_model_to_data = false,
             double number_of_photons = -1,
             std::vector<int> scale_range = std::vector<int>({0, -1}),
@@ -197,11 +197,12 @@ public:
     void resize(size_t n){
 #ifdef VERBOSE_FIT2X
         std::clog << "DecayScale::resize" << std::endl;
+        std::clog << "-- size_t n:" << n << std::endl;
 #endif
         // for potential future use
     }
 
-    void add(DecayCurve* decay){
+    void add(DecayCurve& decay){
 #ifdef VERBOSE_FIT2X
         std::clog << "DecayScale::add" << std::endl;
 #endif
@@ -211,7 +212,7 @@ public:
                 get_scale_start(),
                 get_scale_stop(),
                 get_constant_background(),
-                decay->y.data(),
+                decay.y.data(),
                 data->y.data(),
                 data->get_squared_weights().data()
         );

@@ -32,6 +32,13 @@ double statistics::chi2_counting(
         int x_max,
         const char* type
 ){
+#if VERBOSE_FIT2X
+  std::clog << "statistics::chi2_counting" << std::endl;
+  std::clog << "-- x_min:"  << x_min << std::endl;
+  std::clog << "-- x_max:"  << x_max << std::endl;
+  std::clog << "-- type:"  << type << std::endl;
+#endif
+
     double chi2 = 0.0;
     if(strcmp(type, "neyman") == 0){
         for(int i = x_min; i < x_max; i++){
@@ -47,7 +54,7 @@ double statistics::chi2_counting(
             double mu = model[i];
             double m = data[i];
             chi2 += 2 * std::abs(mu);
-            chi2 -= 2 * m * (1 + log(std::max(0.0, mu) / std::max(1.0, m)));
+            chi2 -= 2 * m * (1 + log(std::max(1.0, mu) / std::max(1.0, m)));
         }
     } else if(strcmp(type, "pearson") == 0){
         for(int i = x_min; i < x_max; i++){

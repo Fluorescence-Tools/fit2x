@@ -14,8 +14,8 @@ class DecayScore
 
 private:
 
-    DecayCurve* _model = nullptr;
-    DecayCurve* _data = nullptr;
+    std::shared_ptr<DecayCurve> _model = nullptr;
+    std::shared_ptr<DecayCurve> _data = nullptr;
 
     std::vector<double> _weighted_residuals;
 
@@ -38,16 +38,16 @@ private:
     std::string _score_type= "poisson";
 
     void update_weighted_residuals() {
-        int nm = _model->size();
-        int nd = _data->size();
-        int nw = std::min(nm, nd);
+        size_t nm = _model->size();
+        size_t nd = _data->size();
+        size_t nw = std::min(nm, nd);
         _weighted_residuals.resize(nw);
 #if VERBOSE_FIT2X
         std::clog << "Compute weighted residuals..." << std::endl;
         std::clog << "-- points in model function: " << nm << std::endl;
         std::clog << "-- points in data: " << nd << std::endl;
 #endif
-        for (int i = 0; i < nw; i++)
+        for (size_t i = 0; i < nw; i++)
             _weighted_residuals[i] = (_data->y[i] - _model->y[i]) / _data->ey[i];
     }
 
@@ -96,14 +96,14 @@ public:
         return std::vector<int>({_score_range_start, _score_range_stop});
     }
 
-    void set_model(DecayCurve* v){
+    void set_model(std::shared_ptr<DecayCurve> v){
 #ifdef VERBOSE_FIT2X
         std::clog << "DecayScore::set_model" << std::endl;
 #endif
         _model = v;
     }
 
-    void set_data(DecayCurve* v){
+    void set_data(std::shared_ptr<DecayCurve> v){
 #ifdef VERBOSE_FIT2X
         std::clog << "DecayScore::set_data" << std::endl;
 #endif
@@ -125,8 +125,8 @@ public:
     }
 
     void set(
-            DecayCurve* model,
-            DecayCurve* data,
+            std::shared_ptr<DecayCurve> model,
+            std::shared_ptr<DecayCurve> data,
             std::vector<int> score_range = std::vector<int>({0, -1}),
             std::string score_type = "poisson"
     ){
@@ -174,9 +174,9 @@ public:
             std::clog << "-- score_type: " << score_type << std::endl;
 #endif
             v = statistics::chi2_counting(
-                    _data->y,
-                    _model->y,
-                    _data->w,
+                    *_data->get_y(),
+                    *_model->get_y(),
+                    *_data->get_w(),
                     x_min, x_max,
                     score_type);
         }
@@ -195,8 +195,8 @@ public:
     }
 
     DecayScore(
-            DecayCurve* model,
-            DecayCurve* data,
+            std::shared_ptr<DecayCurve> model,
+            std::shared_ptr<DecayCurve> data,
             std::vector<int> score_range = std::vector<int>({0, -1}),
             std::string score_type= "poisson"
     ){

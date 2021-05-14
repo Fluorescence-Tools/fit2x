@@ -20,10 +20,15 @@
 %include "numpy.i"
 %include "documentation.i"
 
+#ifdef VERBOSE_FIT2X
 // Warning 509: Overloaded method ignored,
 // Warning 511: Ignore overloaded functions
 // Warning 401: Nothing known about base class
-#pragma SWIG nowarn=401,509,511
+// Warning 453: No typemaps are defined. (Some typemaps are defined and not used)
+// Warning 319: No access specifier given for base class (std::enable_shared_from_this)
+// Warning 362: operator= ignored
+#pragma SWIG nowarn=319,362,401,453,509,511
+#endif
 
 %init %{
 import_array();
@@ -37,12 +42,13 @@ import_array();
 %template(VectorInt32) std::vector<int>;
 
 // shared_prt
-%shared_ptr(TTTR) // to pass TTTR around
+%shared_ptr(TTTR);
 
 // Generic input arrays
 // floating numbers
 %apply(double* IN_ARRAY1, int DIM1) {(double *input, int n_input)}
 %apply(double* IN_ARRAY2, int DIM1, DIM2) {(double *input, int n_input1, int n_input2)}
+
 // integers
 %apply(char* IN_ARRAY1, int DIM1) {(char *input, int n_input)}
 %apply(short* IN_ARRAY1, int DIM1) {(short* input, int n_input)}

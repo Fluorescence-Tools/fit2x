@@ -74,11 +74,9 @@ void rescale_w_bg(double *fit, double *decay, double *w_sq, double bg, double *s
 
 // fast convolution
 void fconv(double *fit, double *x, double *lamp, int numexp, int start, int stop, double dt) {
-    start = std::max(1, start);
     std::vector<double> l2(stop);
     for (int i = 0; i < stop; i++) l2[i] = dt * 0.5 * lamp[i];
     /* convolution */
-    std::fill(fit, fit + stop, 0.0);
     for (int ne = 0; ne < numexp; ne++) {
         double expcurr = exp(-dt / x[2 * ne + 1]);
         double a = x[2 * ne];
@@ -96,11 +94,10 @@ void fconv(double *fit, double *x, double *lamp, int numexp, int start, int stop
 // fast convolution AVX
 void fconv_avx(double *fit, double *x, double *lamp, int numexp, int start, int stop, double dt) {
 
-    start = std::max(1, start);
     // make sure that there are always multiple of 4 in the lifetimes
-    const int chunk_size = 4; int pad = 0;
-    if (numexp % chunk_size) pad = chunk_size - (numexp % chunk_size);
-    int n_ele = numexp + pad;
+    const int chunk_size = 4; // the number of lifetimes per AVX register
+    int n_chunks = std::ceil((double) numexp / chunk_size);
+    int n_ele = n_chunks * chunk_size;
 
     // copy the interleaved lifetime spectrum to vectors
     auto *p = (double *) _mm_malloc(n_ele * sizeof(double), 32);
@@ -176,8 +173,6 @@ void fconv_per(double *fit, double *x, double *lamp, int numexp, int start, int 
     double fitcurr, expcurr, tail_a, deltathalf = dt*0.5;
 
     while (lamp[lamp_start++]==0);
-    for (i=0;i<stop;i++) fit[i]=0;
-
     stop1 = std::min(period_n+lamp_start, n_points);
 
     /* convolution */
@@ -210,12 +205,12 @@ void fconv_per_avx(double *fit, double *x, double *lamp, int numexp, int start, 
     std::clog << "-- period: " << period << std::endl;
     std::clog << "-- dt: " << dt << std::endl;
 #endif
+
     stop = (stop < 0) ? n_points: stop;
     // make sure that there are always multiple of the AVX register size
     const int chunk_size = 4; // the number of lifetimes per AVX register
-    int pad = 0;
-    if (numexp % chunk_size) pad = chunk_size - (numexp % chunk_size);
-    int n_ele = numexp + pad;
+    int n_chunks = std::ceil((double) numexp / chunk_size);
+    int n_ele = n_chunks * chunk_size;
 
     // Number of time channels in period
     int period_n = (int)ceil(period/dt-0.5);
@@ -534,14 +529,12 @@ void fconv_cs_time_axis(
         int convolution_stop
 ){
     int number_of_exponentials = n_lifetime_spectrum / 2;
-    convolution_start = std::max(0, convolution_start);
 #if VERBOSE_FIT2X
     std::clog << "convolve_lifetime_spectrum... " << std::endl;
     std::clog << "-- number_of_exponentials: " << number_of_exponentials << std::endl;
     std::clog << "-- convolution_start: " << convolution_start << std::endl;
     std::clog << "-- convolution_stop: " << convolution_stop << std::endl;
 #endif
-    std::fill(output, output+n_output, 0.0);
     for(int ne=0; ne<number_of_exponentials; ne++){
         double a = lifetime_spectrum[2 * ne];
         double current_lifetime = (lifetime_spectrum[2 * ne + 1]);

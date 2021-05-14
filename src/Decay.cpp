@@ -40,14 +40,15 @@ Decay::Decay(
         std::vector<int> score_range,
         std::string score_type
 ) {
-    decayScore = new DecayScore(_model, &_data, score_range, score_type);
-    decayLifetimeSpectrum = new DecayLifetimeSpectrum(
+    _irf = std::make_shared<DecayCurve>();
+    decayScore = std::make_shared<DecayScore>(_model, _data, score_range, score_type);
+    decayLifetimeSpectrum = std::make_shared<DecayLifetimeSpectrum>(
             lifetime_spectrum, n_lifetime_spectrum,
             use_amplitude_threshold,
             abs_lifetime_spectrum,
             amplitude_threshold);
-    decayConvolution = new DecayConvolution(
-            &_irf,
+    decayConvolution = std::make_shared<DecayConvolution>(
+            _irf,
             decayLifetimeSpectrum,
             convolution_range,
             use_corrected_irf_as_scatter,
@@ -56,24 +57,23 @@ Decay::Decay(
             excitation_period,
             irf_shift_channels,
             irf_background_counts);
-    _model = &decayConvolution->decay;
-    decayBackground = new DecayBackground(constant_offset);
+    decayBackground = std::make_shared<DecayBackground>(constant_offset);
     double repetition_rate = 1. / excitation_period *  1000.0;
-    decayPileup = new DecayPileup(&_data, pile_up_model,
+    decayPileup = std::make_shared<DecayPileup>(_data, pile_up_model,
                                   repetition_rate,
                                   instrument_dead_time,
                                   use_pile_up_correction);
-    decayScale = new DecayScale(&_data,
+    decayScale = std::make_shared<DecayScale>(_data,
                                 scale_model_to_data,
                                 number_of_photons,
                                 score_range,
                                 constant_offset
     );
-    decayLinearization = new DecayLinearization(linearization_table, n_linearization_table, use_linearization);
-    decayScore = new DecayScore(_model, &_data, score_range, score_type);
+    decayLinearization = std::make_shared<DecayLinearization>(linearization_table, n_linearization_table, use_linearization);
+    decayScore = std::make_shared<DecayScore>(_model, _data, score_range, score_type);
 
-    _data.set_tttr(tttr_data, tttr_micro_time_coarsening);
-    _irf.set_tttr(tttr_irf, tttr_micro_time_coarsening);
+    _data->set_tttr(tttr_data, tttr_micro_time_coarsening);
+    _irf->set_tttr(tttr_irf, tttr_micro_time_coarsening);
     if(!time_axis.empty())
         set_time_axis(time_axis.data(), time_axis.size());
     if(!irf_histogram.empty())

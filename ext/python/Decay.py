@@ -159,6 +159,7 @@
         for k in kwargs:
             if k in Decay._parameter_keys:
                 v = kwargs[k]
+                print(k, v)
                 if v is not None:
                     self.__setattr__(k, kwargs[k])
             else:

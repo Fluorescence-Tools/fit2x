@@ -7,9 +7,10 @@
     (double *lifetime_spectrum, int n_lifetime_spectrum),
     (double *lifetime_spectrum = nullptr, int n_lifetime_spectrum = -1)
 }
+%pythoncode "../ext/python/DecayClass.py"
 
 %include "../include/Decay.h"
-
+%shared_ptr(Decay);
 %attribute(Decay, bool, is_valid, get_is_valid);
 
 // Convolution

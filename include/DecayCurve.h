@@ -63,14 +63,14 @@ private:
         }
     }
 
-    std::vector<double> x;
-    std::vector<double> y;
+    std::vector<double> x = std::vector<double>();
+    std::vector<double> y = std::vector<double>();
     /// error in y
-    std::vector<double> ey;
+    std::vector<double> ey = std::vector<double>();
     /// weights, i.e., 1./ey
-    std::vector<double> w;
+    std::vector<double> w = std::vector<double>();
     /// Squared weights, i.e., (1./ey)**2.0
-    std::vector<double> w2;
+    std::vector<double> w2 = std::vector<double>();
 
 public:
 
@@ -90,7 +90,7 @@ public:
             double outside_value = 0.0
     );
 
-    bool restrict_to_positive_values = true;
+    bool restrict_to_positive_values = false;
 
     /*!
      * Computes the sum of two arrays considering their respective
@@ -132,17 +132,18 @@ public:
         return x.empty();
     }
 
-    void resize(int n);
+    void resize(size_t n);
 
     double get_dx();
 
-    std::vector<double> get_x(){
-        return x;
+    std::vector<double>* get_x(){
+        return &x;
     }
 
     void get_x(double **output_view, int *n_output){
-        *output_view = x.data();
-        *n_output = x.size();
+        auto v = get_x();
+        *output_view = v->data();
+        *n_output = v->size();
     }
 
     void set_x(std::vector<double> v){
@@ -155,22 +156,13 @@ public:
         set_x(vec);
     }
 
-    std::vector<double> get_ey(){
-        return ey;
+    std::vector<double>* get_ey(){
+        return &ey;
     }
 
     void set_ey(std::vector<double> v){
         ey = v;
         update_weights();
-    }
-
-    std::vector<double> get_y(){
-        if(restrict_to_positive_values){
-            for(auto &d: y){
-                d = std::max(0.0, d);
-            }
-        }
-        return y;
     }
 
     void set_w(std::vector<double> v){
@@ -183,8 +175,8 @@ public:
         set_w(vec);
     }
 
-    std::vector<double> get_w(){
-        return w;
+    std::vector<double>* get_w(){
+        return &w;
     }
 
     void get_w(double **output_view, int *n_output){
@@ -192,9 +184,20 @@ public:
         *n_output = w.size();
     }
 
+
+    std::vector<double>* get_y(){
+        if(restrict_to_positive_values){
+            for(auto &d: y){
+                d = std::max(0.0, d);
+            }
+        }
+        return &y;
+    }
+
     void get_y(double **output_view, int *n_output){
-        *output_view = y.data();
-        *n_output = y.size();
+        auto v = get_y();
+        *output_view = v->data();
+        *n_output = v->size();
     }
 
 
@@ -292,6 +295,7 @@ public:
     DecayCurve& operator+=(double v);
     DecayCurve operator*(double v) const;
     DecayCurve& operator*=(double v);
+    DecayCurve & operator = (const DecayCurve &D );
 
 };
 

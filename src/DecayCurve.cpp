@@ -78,20 +78,17 @@ void DecayCurve::compute_weights(const char* noise_model){
 }
 
 double DecayCurve::get_dx(){
-    double dt;
-    if(x.size() > 0){
+    double dt = 1.0;
+    if(!x.empty()){
         dt = x[0];
-    }
-    if(x.size() > 1) {
-        dt = x[1] - dt;
-    }
-    if(dt == 0.0){
-        dt = 1.0;
+        if(x.size() > 1) {
+            dt = x[1] - dt;
+        }
     }
     return dt;
 }
 
-void DecayCurve::resize(int n){
+void DecayCurve::resize(size_t n){
     int old_size = size();
 #if VERBOSE_FIT2X
     std::clog << "DecayCurve::resize" << std::endl;
@@ -162,7 +159,6 @@ DecayCurve DecayCurve::operator*(const double v) const
     return d;
 }
 
-
 DecayCurve& DecayCurve::operator*=(const double v)
 {
     for(int i=0; i<size(); i++){
@@ -170,4 +166,10 @@ DecayCurve& DecayCurve::operator*=(const double v)
         ey[i] *= v;
     }
     return *this;
+}
+
+DecayCurve& DecayCurve::operator=(const DecayCurve &D ){
+    x = D.x;
+    y = D.y; _y = D._y;
+    ey = D.ey; w = D.w; w2 = D.w2;
 }

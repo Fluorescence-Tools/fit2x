@@ -30,13 +30,13 @@ public:
         return constant_offset;
     }
 
-    void add(DecayCurve* decay) {
+    void add(DecayCurve& decay) {
         double offset = get_constant_offset();
 #ifdef VERBOSE_FIT2X
         std::clog << "DecayBackround::add" << std::endl;
         std::clog << "-- constant_offset:" << offset << std::endl;
 #endif
-        *decay += offset;
+        decay += offset;
     }
 
     void resize(size_t n){

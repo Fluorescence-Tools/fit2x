@@ -2,6 +2,7 @@
 #define FIT2X_DECAYLINEARIZATION_H
 
 #include <iostream> /* std::cerr */
+#include <algorithm> /* std::min */
 #include <vector>
 
 #include "DecayCurve.h"
@@ -88,16 +89,16 @@ public:
         //set_use_linearization(use_linearization);
     }
 
-    void add(DecayCurve* decay){
+    void add(DecayCurve& decay){
 #ifdef VERBOSE_FIT2X
         std::clog << "DecayLinearization::add" << std::endl;
         std::clog << "-- use_linearization: " << _use_linearization << std::endl;
 #endif
         if(get_use_linearization()){
-            if(!decay->equal_size(_linearization_table)){
+            if(!decay.equal_size(_linearization_table)){
                 std::cerr << "WARNING: Linearization size mismatch." << std::endl;
             }
-            int n_max = std::min(_linearization_table.size(), decay->size());
+            int n_max = std::min(_linearization_table.size(), decay.size());
 #ifdef VERBOSE_FIT2X
             std::clog << "-- linearization table: ";
 #endif
@@ -105,7 +106,7 @@ public:
 #ifdef VERBOSE_FIT2X
                 std::clog << _linearization_table[i] << " ";
 #endif
-                decay->y[i] *= _linearization_table[i];
+                decay.y[i] *= _linearization_table[i];
             }
 #ifdef VERBOSE_FIT2X
             std::clog << std::endl;

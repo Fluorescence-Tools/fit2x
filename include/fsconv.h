@@ -3,7 +3,7 @@
 #ifndef FIT2X_FSCONV_H
 #define FIT2X_FSCONV_H
 
-#include <cmath>
+#include <cmath>  /* std::ceil */
 #include <numeric> /* accumulate */
 #include <vector>
 #include "omp.h"

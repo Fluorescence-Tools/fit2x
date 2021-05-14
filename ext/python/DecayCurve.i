@@ -16,6 +16,8 @@
 }
 
 %include "../include/DecayCurve.h"
+%shared_ptr(DecayCurve);
+
 %attribute(
         DecayCurve,
         double, acquisition_time,

@@ -14,12 +14,11 @@ SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
 IF(BUILD_PYTHON_INTERFACE)
     FIND_PACKAGE(Python)
     MESSAGE("Building Python interface")
-    INCLUDE_DIRECTORIES(${Python_INCLUDE_DIR})
-    INCLUDE_DIRECTORIES(${Python_NumPy_PATH})
     SWIG_ADD_LIBRARY(
         ${MODULE_NAME}
         LANGUAGE python
-        SOURCES python/fit2x.i ${SRC_files}
+        SOURCES python/fit2x.i
+            ${SRC_files}
     )
 
     EXECUTE_PROCESS(COMMAND ${PYTHON_EXECUTABLE} -c "import sysconfig; print(sysconfig.get_config_var('LDSHARED'))"

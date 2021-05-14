@@ -29,19 +29,26 @@ class DecayConvolution{
 public:
 
     static void compute_corrected_irf(
-            DecayCurve* irf,
-            DecayCurve* corrected_irf,
+            std::shared_ptr<DecayCurve> irf,
+            std::shared_ptr<DecayCurve> corrected_irf,
             double irf_shift_channels,
             double irf_background_counts
     ){
 #if VERBOSE_FIT2X
-            std::clog << "DecayConvolution::compute_corrected_irf:" << std::endl;
-            std::clog << "-- irf_shift_channels:" << irf_shift_channels << std::endl;
-            std::clog << "-- irf_background_counts:" << irf_background_counts << std::endl;
+        std::clog << "DecayConvolution::compute_corrected_irf:" << std::endl;
+        std::clog << "-- irf_shift_channels:" << irf_shift_channels << std::endl;
+        std::clog << "-- irf_background_counts:" << irf_background_counts << std::endl;
+        std::clog << "-- irf_background_counts:" << irf_background_counts << std::endl;
+        std::clog << "-- irf->ptr():" << irf.get() << std::endl;
+        std::clog << "-- irf->size():" << irf->size() << std::endl;
+        std::cout << "A" << std::endl;
+        std::clog << "-- corrected_irf->ptr():" << corrected_irf.get() << std::endl;
+        std::clog << "-- corrected_irf->size():" << corrected_irf->size() << std::endl;
+        std::cout << "B" << std::endl;
 #endif
         corrected_irf->resize(irf->size());
         corrected_irf->set_shift(irf_shift_channels);
-        for (int i = 0; i < irf->size(); i++)
+        for (size_t i = 0; i < irf->size(); i++)
             corrected_irf->y[i] = std::max(irf->y[i] - irf_background_counts, 0.0);
     }
 
@@ -55,16 +62,16 @@ protected:
 
 private:
 
-    DecayLifetimeSpectrum* lifetime_spectrum;
-
-    /// Output Decay curve
-    DecayCurve decay;
-
     /// Input instrument response function
-    DecayCurve* irf;
+    std::shared_ptr<DecayCurve> irf;
+
+    std::shared_ptr<DecayLifetimeSpectrum> lifetime_spectrum;
 
     /// Background and shift corrected irf
-    DecayCurve corrected_irf;
+    std::shared_ptr<DecayCurve> corrected_irf = std::make_shared<DecayCurve>();
+
+    /// Output Decay curve
+    std::shared_ptr<DecayCurve> decay = std::make_shared<DecayCurve>();
 
     /// Tracks if the corrected irf is valid
     bool corrected_irf_valid = false;
@@ -96,7 +103,7 @@ private:
         std::clog << "DecayConvolution::update_corrected_irf" << std::endl;
 #endif
         compute_corrected_irf(
-                irf, &corrected_irf,
+                irf, corrected_irf,
                 get_irf_shift_channels(),
                 get_irf_background_counts());
         corrected_irf_valid = true;
@@ -112,8 +119,16 @@ public:
 #ifdef VERBOSE_FIT2X
         std::clog << "DecayConvolution::update_decay" << std::endl;
 #endif
-        convolve_lifetimes();
-        add_scatter();
+        if(!decay_valid) {
+            convolve_lifetimes();
+            add_scatter();
+        }
+    }
+
+    void get_decay(DecayCurve& out){
+        update_decay();
+        // Assignment copies over
+        out = *decay;
     }
 
     /// The method used for convolution
@@ -205,7 +220,8 @@ public:
         if(start < 0){
             start = nmax - start;
         }
-        return std::min(start, nmax);
+        // cannot start before idx 1 (some conv meth. use i - 1)
+        return std::max(1, std::min(start, nmax));
     }
 
     void set_convolution_stop(int v) {
@@ -246,16 +262,17 @@ public:
         return irf_background_counts;
     }
 
-    void set_irf(DecayCurve* v) {
+    void set_irf(std::shared_ptr<DecayCurve> v) {
 #ifdef VERBOSE_FIT2X
         std::clog << "DecayConvolution::set_irf" << std::endl;
+        std::clog << "-- irf.ptr()" << v.get() << std::endl;
 #endif
         irf = v;
-        decay.resize(v->size());
-        corrected_irf.resize(v->size());
-        decay.set_x(irf->x);
-        corrected_irf.set_x(irf->x);
-        corrected_irf.set_y(irf->y);
+        decay->resize(v->size());
+        corrected_irf->resize(v->size());
+        decay->set_x(irf->x);
+        corrected_irf->set_x(irf->x);
+        corrected_irf->set_y(irf->y);
         corrected_irf_valid = false;
         decay_valid = false;
     }
@@ -264,16 +281,17 @@ public:
 #ifdef VERBOSE_FIT2X
         std::clog << "DecayConvolution::set_irf" << std::endl;
 #endif
-        decay.resize(n_input);
+        decay->resize(n_input);
         irf->set_y(input, n_input);
-        decay.resize(n_input);
-        corrected_irf.resize(n_input);
-        corrected_irf.set_y(irf->y);
+        decay->resize(n_input);
+        corrected_irf->resize(n_input);
+        corrected_irf->set_y(irf->y);
         corrected_irf_valid = false;
         decay_valid = false;
+        set_is_valid(false);
     }
 
-    DecayCurve* get_irf(){
+    std::shared_ptr<DecayCurve> get_irf(){
 #ifdef VERBOSE_FIT2X
         std::clog << "DecayConvolution::get_irf" << std::endl;
 #endif
@@ -287,25 +305,25 @@ public:
         irf->get_y(output_view, n_output);
     }
 
-    DecayCurve* get_corrected_irf(){
+    std::shared_ptr<DecayCurve> get_corrected_irf(){
 #ifdef VERBOSE_FIT2X
         std::clog << "DecayConvolution::get_corrected_irf()" << std::endl;
 #endif
         if(!corrected_irf_valid){
             update_corrected_irf();
         }
-        return &corrected_irf;
+        return corrected_irf;
     }
 
     void get_corrected_irf(double **output_view, int *n_output){
 #ifdef VERBOSE_FIT2X
         std::clog << "DecayConvolution::get_corrected_irf(double**, int*)" << std::endl;
 #endif
-        DecayCurve* irf_c = get_corrected_irf();
+        auto irf_c = get_corrected_irf();
         irf_c->get_y(output_view, n_output);
     }
 
-    void set_lifetime_spectrum(DecayLifetimeSpectrum* v){
+    void set_lifetime_spectrum(std::shared_ptr<DecayLifetimeSpectrum> v){
 #ifdef VERBOSE_FIT2X
         std::clog << "DecayConvolution::set_lifetime_spectrum" << std::endl;
 #endif
@@ -313,7 +331,7 @@ public:
         decay_valid = false;
     }
 
-    DecayLifetimeSpectrum* get_lifetime_spectrum(){
+    std::shared_ptr<DecayLifetimeSpectrum> get_lifetime_spectrum(){
 #ifdef VERBOSE_FIT2X
         std::clog << "DecayConvolution::get_lifetime_spectrum" << std::endl;
 #endif
@@ -335,19 +353,9 @@ public:
         return use_corrected_irf_as_scatter;
     }
 
-    DecayCurve* get_decay(){
-#ifdef VERBOSE_FIT2X
-        std::clog << "DecayConvolution::get_decay" << std::endl;
-#endif
-        if(!decay_valid){
-            update_decay();
-        }
-        return &decay;
-    }
-
     void set(
-            DecayCurve* instrument_response_function,
-            DecayLifetimeSpectrum* lifetime_spectrum,
+            std::shared_ptr<DecayCurve> instrument_response_function,
+            std::shared_ptr<DecayLifetimeSpectrum> lifetime_spectrum,
             std::vector<int> convolution_range = std::vector<int>({0, -1}),
             bool use_corrected_irf_as_scatter = true,
             double scatter_fraction = 0.0,
@@ -372,8 +380,8 @@ public:
     }
 
     DecayConvolution(
-            DecayCurve* instrument_response_function,
-            DecayLifetimeSpectrum* lifetime_spectrum,
+            std::shared_ptr<DecayCurve> instrument_response_function,
+            std::shared_ptr<DecayLifetimeSpectrum> lifetime_spectrum,
             std::vector<int> convolution_range = std::vector<int>({0, -1}),
             bool use_corrected_irf_as_scatter = true,
             double scatter_fraction = 0.0,
@@ -397,6 +405,7 @@ public:
                 irf_background_counts
         );
     }
+
 
 };
 
