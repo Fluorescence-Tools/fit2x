@@ -13,84 +13,38 @@
 #include "tttrlib/TTTR.h"
 
 
-class DecayCurve: std::enable_shared_from_this<DecayCurve>{
+class DecayCurve {
 
     friend class DecayConvolution;
     friend class DecayPileup;
     friend class DecayLinearization;
     friend class DecayScale;
     friend class DecayScore;
-    friend class DecayBackground;
-    friend class Decay;
+    friend class DecayPattern;
 
 private:
 
-    void compute_weights(const char* noise_model = "poisson");
-    int max_validated_size(const DecayCurve& other) const;
+    void compute_noise(const char* noise_model = "poisson");
     std::vector<double> _y; // original y values
     std::string noise_model = "NA";
-    double shift = 0.0;
-    bool shift_set_outside = true;
-    double shift_outside_value = 0.0;
-    /// Acquisition time of the experiment in seconds
-    double acquisition_time = 1e9; // to give some room to the top
+    double current_shift = 0.0;
+    double acquisition_time = 1e9;
+    double avg_dx = 1.0;
 
-    void update_weights(){
-        w.resize(ey.size());
-        w2.resize(ey.size());
-        for(int i = 0; i<ey.size();i++){
-            if(ey[i] > 0.0){
-                w[i] = 1. / (ey[i]);
-                w2[i] = 1. / (ey[i] * ey[i]);
-            } else{
-                w[i] = 0.0;
-                w2[i] = 0.0;
-            }
-        }
-    }
-
-    void update_ey(){
-        ey.resize(w.size());
-        w2.resize(w.size());
-        for(int i = 0; i<w.size();i++){
-            if(w[i] > 0.0){
-                ey[i] = 1. / (w[i]);
-                w2[i] = w[i] * w[i];
-            } else{
-                w2[i] = 0.0;
-                ey[i] = std::numeric_limits<double>::infinity();
-            }
-        }
-    }
 
     std::vector<double> x = std::vector<double>();
     std::vector<double> y = std::vector<double>();
-    /// error in y
     std::vector<double> ey = std::vector<double>();
-    /// weights, i.e., 1./ey
-    std::vector<double> w = std::vector<double>();
-    /// Squared weights, i.e., (1./ey)**2.0
-    std::vector<double> w2 = std::vector<double>();
+
 
 public:
 
-    /*!
-     * Shift an input array by a floating number.
-     *
-     * @param input[in] the input array
-     * @param n_input[in] length of the input array
-     * @param output output array
-     * @param n_output length of the output array
-     * @param shift[in] the shift of the output
-     */
     static std::vector<double> shift_array(
             double *input, int n_input,
             double shift,
             bool set_outside = true,
             double outside_value = 0.0
     );
-
-    bool restrict_to_positive_values = false;
 
     /*!
      * Computes the sum of two arrays considering their respective
@@ -132,23 +86,49 @@ public:
         return x.empty();
     }
 
-    void resize(size_t n);
+    std::vector<double> get_dx(){
+        std::vector<double> dx(size(), 0.0);
+        if(!empty()){
+            for(size_t i = 1; i < x.size(); i++){
+                dx[i] = x[i] - x[i - 1];
+            }
+        }
+        return dx;
+    }
 
-    double get_dx();
+    void resize(size_t n, double v=0.0, double dx=1.0){
+        size_t old_size = size();
+        // get last dx to extend the axis linearly
+        auto dx_vec = get_dx();
+        if(!dx_vec.empty()) dx = dx_vec[dx_vec.size() - 1];
 
+        x.resize(n);
+        y.resize(n, v); _y.resize(n, v);
+        ey.resize(n, std::numeric_limits<double>::max());
+
+        for(size_t i = old_size; i < n; i++){
+            if(i > 0) x[i] = x[i - 1] + dx;
+        }
+    }
+
+
+    double get_average_dx(){
+        return avg_dx;
+    }
+
+    /*-------*/
+    /* x     */
+    /*-------*/
     std::vector<double>* get_x(){
         return &x;
     }
 
-    void get_x(double **output_view, int *n_output){
-        auto v = get_x();
-        *output_view = v->data();
-        *n_output = v->size();
-    }
-
-    void set_x(std::vector<double> v){
+    void set_x(std::vector<double>& v){
         resize(v.size());
         x = v;
+        // compute average dx
+        auto dx = get_dx();
+        avg_dx = std::accumulate(dx.begin(), dx.end(), 0.0) / (double) dx.size();
     }
 
     void set_x(double *input, int n_input){
@@ -156,66 +136,44 @@ public:
         set_x(vec);
     }
 
+    /*-------*/
+    /* y     */
+    /*-------*/
+    std::vector<double>* get_y(){
+        return &y;
+    }
+
+    void set_y(std::vector<double>& v){
+        resize(v.size());
+        y = v; _y = v;
+        compute_noise(noise_model.c_str());
+    }
+
+    void set_y(double *input, int n_input){
+        auto vec = std::vector<double>(input, input+n_input);
+        set_y(vec);
+    }
+
+    /*-------*/
+    /* ey    */
+    /*-------*/
     std::vector<double>* get_ey(){
         return &ey;
     }
 
-    void set_ey(std::vector<double> v){
-        ey = v;
-        update_weights();
-    }
-
-    void set_w(std::vector<double> v){
-        w = v;
-        update_ey();
-    }
-
-    void set_w(double* input, int n_input){
-        auto vec = std::vector<double>(input, input + n_input);
-        set_w(vec);
-    }
-
-    std::vector<double>* get_w(){
-        return &w;
-    }
-
-    void get_w(double **output_view, int *n_output){
-        *output_view = w.data();
-        *n_output = w.size();
-    }
-
-
-    std::vector<double>* get_y(){
-        if(restrict_to_positive_values){
-            for(auto &d: y){
-                d = std::max(0.0, d);
-            }
-        }
-        return &y;
-    }
-
-    void get_y(double **output_view, int *n_output){
-        auto v = get_y();
-        *output_view = v->data();
-        *n_output = v->size();
-    }
-
-
-    void set_y(std::vector<double> v){
+    void set_ey(std::vector<double>& v){
         resize(v.size());
-        y = v; _y = v;
-        compute_weights(noise_model.c_str());
+        ey = v;
     }
 
-    void set_y(double* input, int n_input){
-        auto vec = std::vector<double>(input, input + n_input);
-        set_y(vec);
+    void set_ey(double *input, int n_input){
+        auto vec = std::vector<double>(input, input+n_input);
+        set_ey(vec);
     }
 
-    std::vector<double> get_squared_weights(){
-        return w2;
-    }
-
+    /*--------------------*/
+    /* aquisition time    */
+    /*--------------------*/
     void set_acquisition_time(double v) {
         if(acquisition_time < 0)
             acquisition_time = std::numeric_limits<double>::max();
@@ -226,29 +184,26 @@ public:
         return acquisition_time;
     }
 
-    void set_shift(double v){
-        shift = v;
-        y = shift_array(_y.data(), _y.size(),
-                        shift,
-                        shift_set_outside,
-                        shift_outside_value);
+    /*--------------------*/
+    /* time shift         */
+    /*--------------------*/
+    void set_shift(double v, double outside=0.0, bool shift_set_outside=true){
+        current_shift = v;
+        double* d = _y.data(); int n = _y.size();
+        y = shift_array(d, n, current_shift, shift_set_outside, outside);
     }
 
-    bool equal_size(DecayCurve& other){
-        return size() == other.size();
+    double get_shift(){
+        return current_shift;
     }
 
-    bool equal_size(std::vector<double> other){
-        return size() == other.size();
-    }
-
+    /*--------------------*/
+    /* TTTR data          */
+    /*--------------------*/
     void set_tttr(
             std::shared_ptr<TTTR> tttr_data,
             int tttr_micro_time_coarsening=1
     ){
-#if VERBOSE_FIT2X
-        std::clog << "DecayCurve::set_tttr" << std::endl;
-#endif
         if(tttr_data != nullptr){
             double *hist; int n_hist;
             double *time; int n_time;
@@ -264,38 +219,33 @@ public:
             auto header = tttr_data->get_header();
             double micro_time_resolution =
                     header->get_micro_time_resolution() / tttr_micro_time_coarsening;
-            for(size_t i = 0; i < x.size(); i++) x[i] *= micro_time_resolution;
+            for(size_t i = 0; i < x.size(); i++) x[i] = i * micro_time_resolution;
         }
-#if VERBOSE_FIT2X
-        else{
-            std::clog << "-- no tttr provided" << std::endl;
-        }
-#endif
     }
 
     DecayCurve(
-            std::vector<double> time_axis,
-            std::vector<double> counts,
+            std::vector<double> x = std::vector<double>(),
+            std::vector<double> y  = std::vector<double>(),
+            std::vector<double> ey  = std::vector<double>(),
             double acquisition_time = -1,
-            const char* noise_model = "poisson"
+            const char* noise_model = "poisson",
+            int size = -1
             ){
         this->acquisition_time = acquisition_time;
         this->noise_model = noise_model;
-        set_x(time_axis);
-        set_y(counts);
+        set_ey(ey);
+        set_y(y);
+        set_x(x);
+        if(size > 0) resize(size);
     }
 
-    DecayCurve(int size = 0, const char* noise_model = "poisson"){
-        this->noise_model = noise_model;
-        resize(size);
-    }
-
-    DecayCurve operator+(const DecayCurve& other) const;
-    DecayCurve operator+(double v) const;
+    DecayCurve& operator+(const DecayCurve& other) const;
+    DecayCurve& operator*(const DecayCurve& other) const;
+    DecayCurve& operator+(double v) const;
+    DecayCurve& operator*(double v) const;
     DecayCurve& operator+=(double v);
-    DecayCurve operator*(double v) const;
     DecayCurve& operator*=(double v);
-    DecayCurve & operator = (const DecayCurve &D );
+    DecayCurve& operator=(const DecayCurve& other);
 
 };
 
