@@ -35,53 +35,40 @@ void rescale_w(double *fit, double *decay, double *w_sq, double *scale, int star
 }
 
 /* rescaling -- new version + background. scale = sum(fit*decay/w^2)/sum(fit^2/w^2) */
-void rescale_w_bg(double *fit, double *decay, double *w_sq, double bg, double *scale, int start, int stop) {
-#if VERBOSE_FIT2X
-    std::clog << "RESCALE_W_BG" << std::endl;
-    std::clog << "-- initial scale: " << *scale << std::endl;
-    std::clog << "w_sq [start:stop]: ";
-    for(int i=start; i<stop; i++) std::clog << w_sq[i] << " ";
-    std::clog << std::endl;
-    std::clog << "decay [start:stop]: ";
-    for(int i=start; i<stop; i++) std::clog << decay[i] << " ";
-    std::clog << std::endl;
-    std::clog << "fit [start:stop]: ";
-    for(int i=start; i<stop; i++) std::clog << fit[i] << " ";
-    std::clog << std::endl;
-#endif
-    /* scaling */
-    if (*scale <= 0.) {
-        double sumnom = 0., sumdenom = 0.;
-        for (int i = start; i < stop; i++) {
-            if (w_sq[i] > 0.) {
-                sumnom += fit[i] * (decay[i] - bg) / w_sq[i];
-                sumdenom += fit[i] * fit[i] / w_sq[i];
-            }
+void rescale_w_bg(double *fit, double *decay, double *e_sq, double bg, double *scale, int start, int stop) {
+    double sumnom = 0., sumdenom = 0.;
+    for (int i = start; i < stop; i++) {
+        if(decay[i] > 0){
+            double iwsq = (e_sq[i]*e_sq[i]+1e-12);
+            sumnom += fit[i] * (decay[i] - bg) * iwsq;
+            sumdenom += fit[i] * fit[i] * iwsq;
         }
-#if VERBOSE_FIT2X
-        std::clog << "-- sumnom: " << sumnom << std::endl;
-        std::clog << "-- sumdenom: " << sumdenom << std::endl;
-#endif
-        if (sumdenom != 0.) *scale = sumnom / sumdenom;
     }
-#if VERBOSE_FIT2X
-    std::clog << "-- final scale: " << *scale << std::endl;
-#endif
+    if (sumdenom != 0.) *scale = sumnom / sumdenom;
     for (int i = start; i < stop; i++)
         fit[i] *= *scale;
+#if VERBOSE_FIT2X
+    std::clog << "RESCALE_W_BG" << std::endl;
+    std::clog << "w_sq [start:stop]: "; for(int i=start; i<stop; i++) std::clog << e_sq[i] << " "; std::clog << std::endl;
+    std::clog << "decay [start:stop]: "; for(int i=start; i<stop; i++) std::clog << decay[i] << " "; std::clog << std::endl;
+    std::clog << "fit [start:stop]: "; for(int i=start; i<stop; i++) std::clog << fit[i] << " "; std::clog << std::endl;
+    std::clog << "-- sumnom: " << sumnom << std::endl;
+    std::clog << "-- sumdenom: " << sumdenom << std::endl;
+    std::clog << "-- final scale: " << *scale << std::endl;
+#endif
 }
 
 
-// fast convolution
+// fast convolution - OK
 void fconv(double *fit, double *x, double *lamp, int numexp, int start, int stop, double dt) {
     std::vector<double> l2(stop);
+    start = std::max(1, start);
     for (int i = 0; i < stop; i++) l2[i] = dt * 0.5 * lamp[i];
     /* convolution */
     for (int ne = 0; ne < numexp; ne++) {
         double expcurr = exp(-dt / x[2 * ne + 1]);
         double a = x[2 * ne];
         double fitcurr = 0.0;
-
         fit[0] += l2[0] * a;
         for (int i = start; i < stop; i++) {
             fitcurr = (fitcurr + l2[i - 1]) * expcurr + l2[i];
@@ -93,6 +80,7 @@ void fconv(double *fit, double *x, double *lamp, int numexp, int start, int stop
 
 // fast convolution AVX
 void fconv_avx(double *fit, double *x, double *lamp, int numexp, int start, int stop, double dt) {
+    int start1 = std::max(1, start);
 
     // make sure that there are always multiple of 4 in the lifetimes
     const int chunk_size = 4; // the number of lifetimes per AVX register
@@ -122,18 +110,18 @@ void fconv_avx(double *fit, double *x, double *lamp, int numexp, int start, int 
         // take care of first channel
         // fit[0] += l2[0] * a;
         l2c = _mm256_set1_pd(l2[0]);
-        fitcurr = _mm256_mul_pd(a, l2c);
-        tmp = _mm256_mul_pd(fitcurr, a);
+        tmp = _mm256_mul_pd(l2c, a);
 #ifdef _WIN32
-        fit[0] = double(tmp.m256d_f64[0]);
+        fit[0] += double(tmp.m256d_f64[0]);
         fit[0] += double(tmp.m256d_f64[1]);
         fit[0] += double(tmp.m256d_f64[2]);
         fit[0] += double(tmp.m256d_f64[3]);
 #else
-        fit[0] = tmp[0] + tmp[1] + tmp[2] + tmp[3];
+        fit[0] += tmp[0] + tmp[1] + tmp[2] + tmp[3];
 #endif
+        fitcurr = _mm256_set1_pd(0.0);
         // convolution
-        for (int i = start; i < stop; i++) {
+        for (int i = start1; i < stop; i++) {
             l2p = _mm256_set1_pd(l2[i - 1]);
             l2c = _mm256_set1_pd(l2[i]);
             //fitcurr = (fitcurr + l2[i - 1]) * expcurr + l2[i];
@@ -165,7 +153,7 @@ void fconv_avx(double *fit, double *x, double *lamp, int numexp, int start, int 
 void fconv_per(double *fit, double *x, double *lamp, int numexp, int start, int stop,
                int n_points, double period, double dt)
 {
-#ifdef VERBOSE_FIT2X
+#if VERBOSE_FIT2X
     std::clog << "fconv_per" << std::endl;
 #endif
     int ne, i, lamp_start = 0,
@@ -174,14 +162,16 @@ void fconv_per(double *fit, double *x, double *lamp, int numexp, int start, int 
 
     while (lamp[lamp_start++]==0);
     stop1 = std::min(period_n+lamp_start, n_points);
+    int start1 = std::max(1, start);
 
     /* convolution */
     for (ne=0; ne<numexp; ne++) {
         expcurr = exp(-dt/x[2*ne+1]);
         tail_a = 1./(1.-exp(-period/x[2*ne+1]));
         fitcurr = 0;
-        for (i=1; i<stop1; i++){
-            fitcurr=(fitcurr + deltathalf*lamp[i-1])*expcurr + deltathalf*lamp[i];
+        fit[0] += (fitcurr + deltathalf * lamp[0]);
+        for (i=start1; i<stop1; i++){
+            fitcurr=(fitcurr + deltathalf*lamp[i - 1])*expcurr + deltathalf*lamp[i];
             fit[i] += fitcurr*x[2*ne];
         }
         fitcurr *= exp(-(period_n - stop1 + start)*dt/x[2*ne+1]);
@@ -196,7 +186,7 @@ void fconv_per(double *fit, double *x, double *lamp, int numexp, int start, int 
 // fast convolution, high repetition rate, AVX
 void fconv_per_avx(double *fit, double *x, double *lamp, int numexp, int start, int stop,
                    int n_points, double period, double dt) {
-#ifdef VERBOSE_FIT2X
+#if VERBOSE_FIT2X
     std::clog << "fconv_per_avx" << std::endl;
     std::clog << "-- numexp: " << numexp << std::endl;
     std::clog << "-- start: " << start << std::endl;
@@ -205,7 +195,7 @@ void fconv_per_avx(double *fit, double *x, double *lamp, int numexp, int start, 
     std::clog << "-- period: " << period << std::endl;
     std::clog << "-- dt: " << dt << std::endl;
 #endif
-
+    int start1 = std::max(1, start);
     stop = (stop < 0) ? n_points: stop;
     // make sure that there are always multiple of the AVX register size
     const int chunk_size = 4; // the number of lifetimes per AVX register
@@ -261,19 +251,21 @@ void fconv_per_avx(double *fit, double *x, double *lamp, int numexp, int start, 
         // take care of first channel
         // fit[0] += l2[0] * a;
         l2c = _mm256_set1_pd(l2[0]);
-        fitcurr = _mm256_mul_pd(a, l2c);
-        tmp = _mm256_mul_pd(fitcurr, a);
+        tmp = _mm256_mul_pd(l2c, a);
 #ifdef _WIN32
-        fit[0] = double(tmp.m256d_f64[0]);
+        fit[0] += double(tmp.m256d_f64[0]);
         fit[0] += double(tmp.m256d_f64[1]);
         fit[0] += double(tmp.m256d_f64[2]);
         fit[0] += double(tmp.m256d_f64[3]);
 #else
-        fit[0] = tmp[0] + tmp[1] + tmp[2] + tmp[3];
+        fit[0] += tmp[0] + tmp[1] + tmp[2] + tmp[3];
 #endif
-        for (int i = 1; i < stop1; i++) {
+        fitcurr = _mm256_set1_pd(0.0);
+        for (int i = start1; i < stop1; i++) {
             //fitcurr = (fitcurr + l2[i - 1]) * expcurr + l2[i];
-            l2p = _mm256_set1_pd(l2[i - 1]);
+            int pre = std::max(0, i - 1);
+
+            l2p = _mm256_set1_pd(l2[pre]);
             l2c = _mm256_set1_pd(l2[i]);
             fitcurr = _mm256_add_pd(fitcurr, l2p);
 #ifdef __FMA__
@@ -406,8 +398,12 @@ void add_pile_up_to_model(
         double repetition_rate,
         double instrument_dead_time,
         double measurement_time,
-        const char* pile_up_model
+        const char* pile_up_model,
+        int start,
+        int stop
 ){
+    stop = stop < 0 ? n_data : std::min(n_data, stop);
+    start = start < 0 ? 0 : std::min(n_data, start);
 #if VERBOSE_FIT2X
     std::clog << "ADD PILE-UP" << std::endl;
     std::clog << "-- Repetition_rate [MHz]: " << repetition_rate << std::endl;
@@ -415,6 +411,8 @@ void add_pile_up_to_model(
     std::clog << "-- Measurement_time [s]: " << measurement_time << std::endl;
     std::clog << "-- n_data: " << n_data << std::endl;
     std::clog << "-- n_model: " << n_model << std::endl;
+    std::clog << "-- start: " << start << std::endl;
+    std::clog << "-- stop: " << stop << std::endl;
 #endif
     if(strcmp(pile_up_model, "coates") == 0){
 #if VERBOSE_FIT2X
@@ -437,23 +435,16 @@ void add_pile_up_to_model(
         // Coates, 1968, eq. 2 & 4
         std::vector<double> rescaled_data(n_data);
 
-        #ifndef _WIN32
-        #pragma omp simd
-        #endif
-        for(int i=0;i<n_data;i++)
+        for(int i = start; i < stop; i++)
             rescaled_data[i] = -std::log(1.0 - data[i] / (n_excitation_pulses - cum_sum[i]));
-
-        #ifndef _WIN32
-        #pragma omp simd
-        #endif
-        for(int i=0;i<n_data;i++)
+        for(int i = start; i < stop; i++)
             rescaled_data[i] = (rescaled_data[i] == 0) ? 1.0 : rescaled_data[i];
         // rescale model function to preserve data counting statistics
         std::vector<double> sf(n_data);
-        for(int i=0;i<n_data;i++)
+        for(int i = start; i < stop; i++)
             sf[i] = data[i] / rescaled_data[i];
         double s = std::accumulate(sf.begin(),sf.end(),0.0);
-        for(int i=0;i<n_data;i++)
+        for(int i = start; i < stop; i++)
             model[i] = model[i] * (sf[i] / s * n_data);
     }
 }
@@ -513,14 +504,45 @@ void fconv_per_cs_time_axis(
 #endif
 #ifndef __AVX2__
     fconv_per(
-            model, lifetime_spectrum, instrument_response_function, (int) n_lifetime_spectrum / 2,
+            model, lifetime_handler, instrument_response_function, (int) n_lifetime_spectrum / 2,
             convolution_start, convolution_stop, n_model, period, dt
     );
 #endif
 }
 
 
+/* fast convolution, high repetition rate, with time axis */
 void fconv_cs_time_axis(
+        double* output, int n_output,
+        double* time_axis, int n_time_axis,
+        double *instrument_response_function, int n_instrument_response_function,
+        double* lifetime_spectrum, int n_lifetime_spectrum,
+        int convolution_start,
+        int convolution_stop
+){
+    double dt = time_axis[1] - time_axis[0];
+#ifdef __AVX2__
+    fconv_avx(
+            output,
+            lifetime_spectrum,
+            instrument_response_function,
+            (int) n_lifetime_spectrum / 2,
+            convolution_start, convolution_stop, dt
+    );
+#endif
+#ifndef __AVX2__
+    fconv(
+            output,
+            lifetime_spectrum,
+            instrument_response_function,
+            (int) n_lifetime_spectrum / 2,
+            convolution_start, convolution_stop, dt
+    );
+#endif
+}
+
+
+void fconv_cs_time_axis_old(
         double* output, int n_output,
         double* time_axis, int n_time_axis,
         double *instrument_response_function, int n_instrument_response_function,
@@ -540,8 +562,9 @@ void fconv_cs_time_axis(
         double current_lifetime = (lifetime_spectrum[2 * ne + 1]);
         if((a == 0.0) || (current_lifetime == 0.0)) continue;
         double current_model_value = 0.0;
-        for(int i=convolution_start; i<convolution_stop; i++){
+        for(int i = convolution_start; i < convolution_stop; i++){
             double dt;
+            int pre = std::max(0, i - 1);
             if(i < convolution_stop - 1){
                 dt = (time_axis[i + 1] - time_axis[i]);
             } else{
@@ -549,7 +572,7 @@ void fconv_cs_time_axis(
             }
             double dt_2 = dt / 2.0;
             double current_exponential = std::exp(-dt / current_lifetime);
-            current_model_value = (current_model_value + dt_2 * instrument_response_function[i - 1]) *
+            current_model_value = (current_model_value + dt_2 * instrument_response_function[pre]) *
                                   current_exponential + dt_2 * instrument_response_function[i];
             output[i] += current_model_value * a;
         }

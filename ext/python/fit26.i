@@ -1,5 +1,5 @@
 %{
-#include "../include/fit26.h"
+#include "fit26.h"
 %}
 
 %rename (targetf26) my_targetf26;

@@ -15,19 +15,6 @@ private:
     /// A constant that is subtracted from the data
     double _constant_background = 0.0;
 
-    /// Number of photons in output / modified decay.
-    double _number_of_photons = -1;
-
-    /// If set to true the model/output is scale to the input data
-    bool _scale_model_to_data;
-
-    /// Scaling range (Photons in the decay range (_start, _stop) are used for scaling
-    int _scale_start = 0;
-    int _scale_stop = -1;
-
-    /// Input data used for scaling
-    std::shared_ptr<DecayCurve> data;
-
 public:
 
     /*!
@@ -48,174 +35,67 @@ public:
      * @param squared_data_weights[in] squared weights of the data
      */
     static void scale_model(
-            bool scale_model_to_data,
-            double number_of_photons,
-            int start, int stop,
+            size_t start, size_t stop,
             double constant_background,
             double* model,
             double* data,
             double* squared_data_weights
-    );
-
-    int get_scale_start(){
-#ifdef VERBOSE_FIT2X
-        std::clog << "DecayScale::get_scale_start" << std::endl;
+    ){
+#if VERBOSE_FIT2X
+        std::clog << "DecayScale::scale_model" << std::endl;
 #endif
-        int start = _scale_start;
-        int nmax = data->size();
-        if(start < 0){
-            start = nmax - start;
-        }
-        return start;
-    }
-
-    void set_scale_start(int v){
-#ifdef VERBOSE_FIT2X
-        std::clog << "DecayScale::set_scale_start" << std::endl;
-#endif
-        _scale_start = v;
-    }
-
-    int get_scale_stop(){
-#ifdef VERBOSE_FIT2X
-        std::clog << "DecayScale::get_scale_stop" << std::endl;
-#endif
-        int stop = _scale_stop;
-        int nmax = data->size();
-        if(stop < 0){
-            stop = std::min(nmax, std::max(0, nmax + stop));
-        } else if (stop == 0){
-            stop = nmax;
-        }
-        stop = std::min(stop, nmax);
-        return stop;
-    }
-
-    void set_scale_stop(int v){
-#ifdef VERBOSE_FIT2X
-        std::clog << "DecayScale::set_scale_stop" << std::endl;
-#endif
-        _scale_stop = v;
+        double scale = 0.0;
+        rescale_w_bg(model, data, squared_data_weights, constant_background, &scale, start, stop);
     }
 
     /// Number of photons in data between start and stop (if model is scaled to data). Otherwise
     /// user-specified number of photons
     double get_number_of_photons(){
-#ifdef VERBOSE_FIT2X
-        std::clog << "DecayScale::get_number_of_photons" << std::endl;
-#endif
-        if(_scale_model_to_data){
-            double re = 0.0;
-            for(int i=get_scale_start(); i<get_scale_stop(); i++)
-                re += data->y[i];
-            return re;
-        }
-        return _number_of_photons;
+        double re = 0.0;
+        DecayCurve* d = get_data();
+        for(size_t i = get_start(d); i < get_stop(d); i++)
+            re += d->y[i];
+        return re;
     }
 
-    void set_number_of_photons(double v){
-#ifdef VERBOSE_FIT2X
-        std::clog << "DecayScale::set_number_of_photons" << std::endl;
-#endif
-        _number_of_photons = v;
-    }
-
-    void set_scale_model_to_data(bool v){
-#ifdef VERBOSE_FIT2X
-        std::clog << "DecayScale::set_scale_model_to_data" << std::endl;
-#endif
-        _scale_model_to_data = v;
-    }
-
-    bool get_scale_model_to_data(){
-#ifdef VERBOSE_FIT2X
-        std::clog << "DecayScale::get_scale_model_to_data" << std::endl;
-#endif
-        return _scale_model_to_data;
-    }
-
-    void set_data(std::shared_ptr<DecayCurve> v){
-#ifdef VERBOSE_FIT2X
-        std::clog << "DecayScale::set_data" << std::endl;
-#endif
-        data = v;
-    }
-
-    double get_constant_background(){
-#ifdef VERBOSE_FIT2X
-        std::clog << "DecayScale::get_constant_background" << std::endl;
-#endif
+    double get_constant_background() const {
         return _constant_background;
     }
 
     void set_constant_background(double v){
-#ifdef VERBOSE_FIT2X
-        std::clog << "DecayScale::set_constant_background" << std::endl;
-#endif
         _constant_background = v;
     }
 
     void set(
-            std::shared_ptr<DecayCurve> data = nullptr,
-            bool scale_model_to_data = false,
-            double number_of_photons = -1,
-            std::vector<int> scale_range = std::vector<int>({0, -1}),
-            double constant_background = 0.0
+            DecayCurve* data = nullptr,
+            double constant_background = 0.0,
+            int start = 0, int stop = -1, bool active = true
     ){
-#ifdef VERBOSE_FIT2X
-        std::clog << "DecayScale::set" << std::endl;
-#endif
-        set_scale_model_to_data(scale_model_to_data);
         set_data(data);
-        set_number_of_photons(number_of_photons);
-        set_scale_start(scale_range[0]);
-        set_scale_stop(scale_range[1]);
         set_constant_background(constant_background);
+        set_start(start);
+        set_stop(stop);
+        set_active(active);
     }
 
     DecayScale(
-            std::shared_ptr<DecayCurve> data = nullptr,
-            bool scale_model_to_data = false,
-            double number_of_photons = -1,
-            std::vector<int> scale_range = std::vector<int>({0, -1}),
-            double constant_background = 0.0
-            ){
-#ifdef VERBOSE_FIT2X
-        std::clog << "DecayScale::DecayScale" << std::endl;
-#endif
-
-        set(
-                data,
-                scale_model_to_data,
-                number_of_photons,
-                scale_range,
-                constant_background);
+            DecayCurve* data = nullptr,
+            double constant_background = 0.0,
+            int start=0, int stop=-1, bool active=true
+    ) : DecayModifier(data, start, stop, active){
+        set_constant_background(constant_background);
     }
 
-    ~DecayScale() = default;
-
-    void resize(size_t n){
-#ifdef VERBOSE_FIT2X
-        std::clog << "DecayScale::resize" << std::endl;
-        std::clog << "-- size_t n:" << n << std::endl;
-#endif
-        // for potential future use
-    }
-
-    void add(DecayCurve& decay){
-#ifdef VERBOSE_FIT2X
-        std::clog << "DecayScale::add" << std::endl;
-#endif
-        scale_model(
-                get_scale_model_to_data(),
-                get_number_of_photons(),
-                get_scale_start(),
-                get_scale_stop(),
+    void add(DecayCurve* decay){
+        if(is_active()){
+            auto d = get_data();
+            scale_model(
+                get_start(decay),get_stop(decay),
                 get_constant_background(),
-                decay.y.data(),
-                data->y.data(),
-                data->get_squared_weights().data()
-        );
+                decay->y.data(),
+                d->y.data(), d->ey.data()
+            );
+        }
     }
 
 };

@@ -1,5 +1,5 @@
 %{
-#include "../include/fit25.h"
+#include "fit25.h"
 %}
 
 

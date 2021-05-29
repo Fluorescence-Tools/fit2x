@@ -3,7 +3,7 @@ SET(PROJECT_NAME fit2x)
 PROJECT(${PROJECT_NAME})
 ENABLE_LANGUAGE(CXX)
 SET(CMAKE_CXX_STANDARD 11)
-add_definitions(-D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES)
+ADD_DEFINITIONS(-D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES)
 
 ################################################################################
 ###### CMAKE
@@ -25,7 +25,6 @@ OPTION(INSTALL "Install the library and the include files" ON)
 OPTION(BUILD_PYTHON_INTERFACE "Build Python interface" ON)
 OPTION(BUILD_DOC "Build documentation" OFF)
 OPTION(BUILD_R_INTERFACE "Build R interface" OFF)
-
 
 ################################################################################
 ###### Compiler flags
@@ -87,7 +86,7 @@ IF (CMAKE_BUILD_TYPE STREQUAL "Release")
     ENDIF()
 ELSE (CMAKE_BUILD_TYPE STREQUAL "Debug")
     MESSAGE("Debug build")
-    ADD_DEFINITIONS("-DVERBOSE_FIT2X=1")
+    ADD_DEFINITIONS("-DVERBOSE_FIT2X=0")
     ## Enable Compiler warnings
     #############################
     IF(MSVC)
@@ -198,5 +197,21 @@ INSTALL(TARGETS ${PROJECT_NAME}Static
         ARCHIVE DESTINATION lib
         PUBLIC_HEADER DESTINATION include/${PROJECT_NAME}
         )
+
+
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    get_property(dirs DIRECTORY . PROPERTY INCLUDE_DIRECTORIES)
+    foreach(dir ${dirs})
+        message(STATUS "INCLUDE_DIRECTORY='${dir}'")
+    endforeach()
+    get_property(dirs DIRECTORY . PROPERTY LINK_LIBRARIES)
+    foreach(dir ${dirs})
+        message(STATUS "LINK_LIBRARIES='${dir}'")
+    endforeach()
+    get_property(dirs DIRECTORY . PROPERTY LINK_DIRECTORIES)
+    foreach(dir ${dirs})
+        message(STATUS "LINK_DIRECTORIES='${dir}'")
+    endforeach()
+ENDIF (CMAKE_BUILD_TYPE STREQUAL "Debug")
 
 

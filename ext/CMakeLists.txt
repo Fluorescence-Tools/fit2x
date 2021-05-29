@@ -17,8 +17,7 @@ IF(BUILD_PYTHON_INTERFACE)
     SWIG_ADD_LIBRARY(
         ${MODULE_NAME}
         LANGUAGE python
-        SOURCES python/fit2x.i
-            ${SRC_files}
+        SOURCES python/fit2x.i ${SRC_files}
     )
 
     EXECUTE_PROCESS(COMMAND ${PYTHON_EXECUTABLE} -c "import sysconfig; print(sysconfig.get_config_var('LDSHARED'))"
@@ -42,20 +41,4 @@ IF(BUILD_PYTHON_INTERFACE)
         ENDIF()
     ENDIF()
 ENDIF()
-
-
-get_property(dirs DIRECTORY . PROPERTY INCLUDE_DIRECTORIES)
-foreach(dir ${dirs})
-    message(STATUS "INCLUDE_DIRECTORY='${dir}'")
-endforeach()
-
-get_property(dirs DIRECTORY . PROPERTY LINK_LIBRARIES)
-foreach(dir ${dirs})
-    message(STATUS "LINK_LIBRARIES='${dir}'")
-endforeach()
-
-get_property(dirs DIRECTORY . PROPERTY LINK_DIRECTORIES)
-foreach(dir ${dirs})
-    message(STATUS "LINK_DIRECTORIES='${dir}'")
-endforeach()
 

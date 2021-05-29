@@ -1,6 +1,6 @@
 @property
 def x(self):
-    return self.get_x()
+    return np.array(self.get_x())
 
 @x.setter
 def x(self, v):
@@ -8,7 +8,7 @@ def x(self, v):
 
 @property
 def y(self):
-    return self.get_y()
+    return np.array(self.get_y())
 
 @y.setter
 def y(self, v):
@@ -16,10 +16,5 @@ def y(self, v):
 
 @property
 def ey(self):
-    return self.get_ey()
-
-@property
-def squared_weights(self):
-    return self.get_squared_weights()
-
+    return np.array(self.get_ey())
 

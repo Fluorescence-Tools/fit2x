@@ -88,7 +88,7 @@ void rescale_w(double *fit, double *decay, double *w_sq, double *scale, int star
  * @param start[in] The start micro time channel
  * @param stop[in] The stop micro time channel
  */
-void rescale_w_bg(double *fit, double *decay, double *w_sq, double bg, double *scale, int start, int stop);
+void rescale_w_bg(double *fit, double *decay, double *e_sq, double bg, double *scale, int start, int stop);
 
 
 /*!
@@ -275,6 +275,8 @@ void shift_lamp(double *lampsh, double *lamp, double ts, int n_points, double ou
  * @param instrument_dead_time[in] The overall dead-time of the detection system in nanoseconds
  * @param measurement_time[in] The measurement time in seconds
  * @param pile_up_model[in] The model used to compute the pile up distortion.
+ * @param start Start index for pile up
+ * @param stop Stop index for pile up
  * (default "coates")
  */
 void add_pile_up_to_model(
@@ -283,7 +285,9 @@ void add_pile_up_to_model(
         double repetition_rate,
         double instrument_dead_time,
         double measurement_time,
-        const char* pile_up_model = "coates"
+        const char* pile_up_model = "coates",
+        int start = 0,
+        int stop = -1
 );
 
 
@@ -309,7 +313,7 @@ void discriminate_small_amplitudes(
 *
 * Fills the pre-allocated output array `output_decay` with a fluorescence
 * intensity decay defined by a set of fluorescence lifetimes defined by the
-* parameter `lifetime_spectrum`. The fluorescence decay will be convolved
+* parameter `lifetime_handler`. The fluorescence decay will be convolved
 * (non-periodically) with an instrumental response function that is defined
 * by `instrument_response_function`.
 *
@@ -353,7 +357,7 @@ void fconv_per_cs_time_axis(
 *
 * Fills the pre-allocated output array `output_decay` with a fluorescence
 * intensity decay defined by a set of fluorescence lifetimes defined by the
-* parameter `lifetime_spectrum`. The fluorescence decay will be convolved
+* parameter `lifetime_handler`. The fluorescence decay will be convolved
 * (non-periodically) with an instrumental response function that is defined
 * by `instrument_response_function`.
 *

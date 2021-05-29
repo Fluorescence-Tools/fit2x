@@ -27,69 +27,32 @@ double twoIstar_1ch(int* C, double* M, int Ndata)
 double statistics::chi2_counting(
         std::vector<double> &data,
         std::vector<double> &model,
-        std::vector<double> &weights,
+        std::vector<double> &data_noise,
         int x_min,
         int x_max,
         const char* type
 ){
 #if VERBOSE_FIT2X
-  std::clog << "statistics::chi2_counting" << std::endl;
-  std::clog << "-- x_min:"  << x_min << std::endl;
-  std::clog << "-- x_max:"  << x_max << std::endl;
-  std::clog << "-- type:"  << type << std::endl;
-#endif
-
-    double chi2 = 0.0;
-    if(strcmp(type, "neyman") == 0){
-        for(int i = x_min; i < x_max; i++){
-            double mu = model[i];
-            double m = std::max(1., data[i]);
-            chi2 += (mu - m) * (mu - m) / m;
-        }
-    } else if(strcmp(type, "poisson") == 0){
-        #ifndef _WIN32
-        #pragma omp simd
-        #endif
-        for(int i = x_min; i < x_max; i++){
-            double mu = model[i];
-            double m = data[i];
-            chi2 += 2 * std::abs(mu);
-            chi2 -= 2 * m * (1 + log(std::max(1.0, mu) / std::max(1.0, m)));
-        }
-    } else if(strcmp(type, "pearson") == 0){
-        for(int i = x_min; i < x_max; i++){
-            double m = model[i];
-            double d = data[i];
-            if (m > 0) {
-                chi2 += (m-d) / m;
-            }
-        }
-    } else if(strcmp(type, "gauss") == 0){
-        for(int i = x_min; i < x_max; i++){
-            double mu = model[i];
-            double m = data[i];
-            double mu_p = std::sqrt(.25 + m * m) - 0.5;
-            if(mu_p <= 1.e-12) continue;
-            chi2 += (mu - m) * (mu - m) / mu + std::log(mu/mu_p) - (mu_p - m) * (mu_p - m) / mu_p;
-        }
-    } else if(strcmp(type, "cnp") == 0){
-        for(int i = x_min; i < x_max; i++){
-            double m = data[i];
-            if(m <= 1e-12) continue;
-            double mu = model[i];
-            chi2 += (mu - m) * (mu - m) / (3. / (1./m + 2./mu));
-        }
-    } else{
-        for(int i=x_min;i<x_max;i++){
-            double d = (data[i] - model[i]) / weights[i];
-            chi2 += d * d;
-        }
-    }
-#if VERBOSE_FIT2X
     std::cout << "CHI2_COUNTING" << std::endl;
     std::cout << "-- type: " << type << std::endl;
     std::cout << "-- x_min: " << x_min << std::endl;
     std::cout << "-- x_max: " << x_max << std::endl;
+#endif
+    double chi2;
+    if(strcmp(type, "neyman") == 0){
+        chi2 = neyman(data.data(), model.data(), x_min, x_max);
+    } else if(strcmp(type, "poisson") == 0){
+        chi2 = poisson(data.data(), model.data(), x_min, x_max);
+    } else if(strcmp(type, "pearson") == 0){
+        chi2 = pearson(data.data(), model.data(), x_min, x_max);
+    } else if(strcmp(type, "gauss") == 0){
+        chi2 = gauss(data.data(), model.data(), x_min, x_max);
+    } else if(strcmp(type, "cnp") == 0){
+        chi2 = cnp(data.data(), model.data(), x_min, x_max);
+    } else{
+        chi2 = sswr(data.data(), model.data(), data_noise.data(), x_min, x_max);
+    }
+#if VERBOSE_FIT2X
     std::cout << "-- chi2: " << chi2 << std::endl;
 #endif
     return chi2;

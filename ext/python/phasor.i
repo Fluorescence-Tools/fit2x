@@ -1,5 +1,5 @@
 %{
-#include "../include/phasor.h"
+#include "phasor.h"
 %}
 
-%include "../include/phasor.h"
+%include "phasor.h"
