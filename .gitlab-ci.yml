@@ -43,8 +43,8 @@ deploy:conda:
     - linux
   dependencies:
     - build:linux
-    - build:windows
-    - build:osx
+#    - build:windows
+#    - build:osx
   before_script:
     - git submodule update --init --recursive --remote
   script:
