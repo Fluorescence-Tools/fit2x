@@ -93,7 +93,7 @@ void fconv_avx(double *fit, double *x, double *lamp, int numexp, int start, int 
     for (int i = 0; i < numexp; i++) p[i] = x[2 * i + 0];
 
     auto *ex = (double *) _mm_malloc(n_ele * sizeof(double), 32);
-    std::fill(ex + numexp, ex + n_ele, 0.0);
+    std::fill(ex, ex + n_ele, 0.0);
     for (int i = 0; i < numexp; i++) ex[i] = exp(-dt / x[2 * i + 1]);
 
     // precompute have lamp steps in units of dt

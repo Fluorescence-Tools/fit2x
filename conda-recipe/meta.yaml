@@ -24,13 +24,11 @@ requirements:
     - numpy
     - cmake
     - swig
-    - imp {{ imp }} # for correct linking for IMP
   host:
     - python {{ python }}
     - numpy
     - setuptools
     - tttrlib
-    - imp {{ imp }} # for correct linking for IMP
   run:
     - python {{ python }}
     - {{ pin_compatible('numpy') }}
