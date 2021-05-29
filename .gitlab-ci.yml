@@ -30,6 +30,8 @@ test:linux:
   script:
     - source activate base
     - conda config --add channels "file://`pwd`/bld-dir"
+    # for tttrlib
+    - conda config --add channels tpeulen
     - mamba install python tttrlib nose scipy
     - git clone https://gitlab.peulen.xyz/tpeulen/tttr-data --depth 1
     - |
