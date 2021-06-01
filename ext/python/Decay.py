@@ -84,7 +84,6 @@ class Decay(ParameterDirector):
         'tttr_data',
         'tttr_irf',
         'linearization_table',
-        'constant_offset',
         'corrected_irf',
         'x',
         'y',
@@ -95,7 +94,8 @@ class Decay(ParameterDirector):
     _attributes = {
         #VERSION
         #####################
-        'version': ("", "get_version"),
+        # TODO
+        # 'version': ("", "get_version"),
         # Data
         ############################
         'data': ("_data", "y"),
@@ -289,5 +289,3 @@ class Decay(ParameterDirector):
             dm.set_range(start_stop)
         self.decay_score.set_range(start_stop)
 
-    def get_version(self):
-        return fit2x.__version__
