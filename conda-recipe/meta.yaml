@@ -19,8 +19,8 @@ requirements:
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
     - cmake >=3.13
-    - python
-    - tttrlib
+    - python {{ python }}
+    - tttrlib >=0.0.20
     - numpy
     - cmake
     - swig
@@ -28,7 +28,7 @@ requirements:
     - python {{ python }}
     - numpy
     - setuptools
-    - tttrlib
+    - tttrlib >=0.0.20
   run:
     - python {{ python }}
     - {{ pin_compatible('numpy') }}
