@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <algorithm>
-#include <bits/stdc++.h>
 
 # include "DecayModifier.h"
 

@@ -504,7 +504,7 @@ void fconv_per_cs_time_axis(
 #endif
 #ifndef __AVX2__
     fconv_per(
-            model, lifetime_handler, instrument_response_function, (int) n_lifetime_spectrum / 2,
+            model, lifetime_spectrum, instrument_response_function, (int) n_lifetime_spectrum / 2,
             convolution_start, convolution_stop, n_model, period, dt
     );
 #endif
