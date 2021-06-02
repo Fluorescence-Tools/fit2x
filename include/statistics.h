@@ -111,7 +111,74 @@ double twoIstar(int* C, double* M, int Nchannels);
  */
 double Wcm(int* C, double* M, int Nchannels);
 
+
 namespace statistics{
+
+    inline double neyman(double* data, double *model, int start, int stop){
+        double chi2 = 0.0;
+        for(int i = start; i < stop; i++){
+            double mu = model[i];
+            double m = std::max(1., data[i]);
+            chi2 += (mu - m) * (mu - m) / m;
+        }
+        return chi2;
+    }
+
+    inline double poisson(double* data, double *model, int start, int stop){
+        double chi2 = 0.0;
+        for(int i = start; i < stop; i++){
+            double mu = model[i];
+            double m = data[i];
+            chi2 += 2 * std::abs(mu);
+            chi2 -= 2 * m * (1 + log(std::max(1.0, mu) / std::max(1.0, m)));
+        }
+        return chi2;
+    }
+
+    inline double pearson(double* data, double *model, int start, int stop){
+        double chi2 = 0.0;
+        for(int i = start; i < stop; i++){
+            double m = model[i];
+            double d = data[i];
+            if (m > 0) {
+                chi2 += (m-d) / m;
+            }
+        }
+        return chi2;
+    }
+
+    inline double gauss(double* data, double *model, int start, int stop){
+        double chi2 = 0.0;
+        for(int i = start; i < stop; i++){
+            double mu = model[i];
+            double m = data[i];
+            double mu_p = std::sqrt(.25 + m * m) - 0.5;
+            if(mu_p <= 1.e-12) continue;
+            chi2 += (mu - m) * (mu - m) / mu + std::log(mu/mu_p) - (mu_p - m) * (mu_p - m) / mu_p;
+        }
+        return chi2;
+    }
+
+    inline double cnp(double* data, double *model, int start, int stop){
+        double chi2 = 0.0;
+        for(int i = start; i < stop; i++){
+            double m = data[i];
+            double mu = model[i];
+            if(m <= 1e-12) continue;
+            chi2 += (mu - m) * (mu - m) / (3. / (1./m + 2./mu));
+        }
+        return chi2;
+    }
+
+    /// Sum of squared weighted residuals
+    inline double sswr(double* data, double *model, double *data_noise, int start, int stop){
+        double chi2 = 0.0;
+        for(int i=start;i<stop;i++){
+            double d = (data[i] - model[i]) / data_noise[i];
+            chi2 += d * d;
+        }
+        return chi2;
+    }
 
     /*!
      * Different chi2 measures for counting data:

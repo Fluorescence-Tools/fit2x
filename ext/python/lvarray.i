@@ -2,7 +2,7 @@
 static int LVI32ArrayErr = 0;    // flag to save LVI32Array struct error state
 static int LVDoubleArrayErr = 0; // flag to save LVDoubleArrayErr struct error state
 %}
-%include "../include/lvarrays.h"
+%include "lvarrays.h"
 
 %apply (int DIM1, double* INPLACE_ARRAY1) {(int len5, double* mfunction)}
 %apply (int DIM1, double* IN_ARRAY1)

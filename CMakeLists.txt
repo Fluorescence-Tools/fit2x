@@ -1,15 +1,15 @@
 cmake_minimum_required(VERSION 3.13.0 FATAL_ERROR)
-
 SET(PROJECT_NAME fit2x)
 PROJECT(${PROJECT_NAME})
 ENABLE_LANGUAGE(CXX)
 SET(CMAKE_CXX_STANDARD 11)
-add_definitions(-D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES)
+ADD_DEFINITIONS(-D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES)
 
 ################################################################################
 ###### CMAKE
 ################################################################################
 SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
+MESSAGE(STATUS "CMAKE_MODULE_PATH='${CMAKE_MODULE_PATH}'")
 
 ################################################################################
 ###### DEFINITIONS
@@ -27,54 +27,18 @@ OPTION(BUILD_DOC "Build documentation" OFF)
 OPTION(BUILD_R_INTERFACE "Build R interface" OFF)
 
 ################################################################################
-###### CONDA
-################################################################################
-
-## Check for Conda
-###########################
-IF(DEFINED ENV{CONDA_PREFIX})
-    MESSAGE(STATUS "CONDA env seen: --[$ENV{CONDA_PREFIX}]--")
-    SET(ENV{PATH} "$ENV{CONDA_PREFIX}/bin;$ENV{PATH}")
-    # Define python_command that is used to call python and locate the python libraries
-    if (MSVC)
-        INCLUDE_DIRECTORIES($ENV{CONDA_PREFIX}/Library/include)
-        LINK_DIRECTORIES($ENV{CONDA_PREFIX}/Library/lib)
-        SET(python_command $ENV{CONDA_PREFIX}/python.exe)
-    ELSE()
-        INCLUDE_DIRECTORIES($ENV{CONDA_PREFIX}/include)
-        LINK_DIRECTORIES($ENV{CONDA_PREFIX}/lib)
-        SET(python_command $ENV{CONDA_PREFIX}/bin/python)
-    ENDIF()
-ELSE()
-    MESSAGE(STATUS "No conda environment defined")
-ENDIF()
-
-# Conda - INCLUDE and LIB DIR
-#############################################
-if(UNIX)
-    if(DEFINED ENV{CONDA_PREFIX})
-        LINK_DIRECTORIES("$ENV{CONDA_PREFIX}/lib")
-        INCLUDE_DIRECTORIES("$ENV{CONDA_PREFIX}/include")
-    else()
-        LINK_DIRECTORIES(/usr/local/lib)
-        INCLUDE_DIRECTORIES(/usr/local/include)
-    endif()
-endif()
-
-
-################################################################################
 ###### Compiler flags
 ################################################################################
 
 ## Compiler warnings
 ########################
-#IF (CMAKE_BUILD_TYPE STREQUAL "Debug")
-#    if(MSVC)
-#        ADD_COMPILE_OPTIONS(/Wall)
-#    else()
-#        ADD_COMPILE_OPTIONS(-Wall -Wextra -pedantic)
-#    endif()
-#ENDIF (CMAKE_BUILD_TYPE STREQUAL "Debug")
+IF (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    if(MSVC)
+        ADD_COMPILE_OPTIONS(/Wall)
+    else()
+        ADD_COMPILE_OPTIONS(-Wall -Wextra -pedantic)
+    endif()
+ENDIF (CMAKE_BUILD_TYPE STREQUAL "Debug")
 
 if(LINUX)
     STRING(APPEND CMAKE_CXX_FLAGS " -march=native -Ofast -mavx -ffast-math -funroll-loops")
@@ -122,7 +86,7 @@ IF (CMAKE_BUILD_TYPE STREQUAL "Release")
     ENDIF()
 ELSE (CMAKE_BUILD_TYPE STREQUAL "Debug")
     MESSAGE("Debug build")
-    ADD_DEFINITIONS("-DVERBOSE_FIT2X=1")
+    ADD_DEFINITIONS("-DVERBOSE_FIT2X=0")
     ## Enable Compiler warnings
     #############################
     IF(MSVC)
@@ -137,34 +101,20 @@ ENDIF (CMAKE_BUILD_TYPE STREQUAL "Release")
 ###### INCLUDES AND LIBRARIES
 ################################################################################
 
+## CONDA
+###########################
+FIND_PACKAGE(Conda)
+
 ## TTTRLIB
+###########################
 LINK_LIBRARIES(tttrlib)
 
 ## Boost
 ###########################
-IF(DEFINED ENV{CONDA_PREFIX})
-    MESSAGE("Using Conda Boost")
-    SET(BOOST_ROOT $ENV{CONDA_PREFIX})
-    SET(Boost_NO_SYSTEM_PATHS ON)
-    SET(Boost_NO_BOOST_CMAKE ON)
-    IF (CMAKE_BUILD_TYPE STREQUAL "Debug")
-        SET(Boost_DEBUG ON)
-        SET(Boost_DETAILED_FAILURE_MESSAGE ON)
-    ENDIF (CMAKE_BUILD_TYPE STREQUAL "Debug")
-    IF (WIN32)
-        # Win Boost Conda uses static linking
-        SET(Boost_USE_STATIC_LIBS ON)
-        SET(Boost_USE_STATIC ON)
-    ELSE()
-        SET(Boost_USE_STATIC_LIBS OFF)
-        SET(Boost_USE_STATIC OFF)
-        SET(Boost_USE_MULTITHREAD)
-    endif (WIN32)
-ENDIF()
-FIND_PACKAGE(Boost 1.36 REQUIRED COMPONENTS date_time filesystem iostreams)
+FIND_PACKAGE(CondaBoost)
+FIND_PACKAGE(Boost 1.36 REQUIRED COMPONENTS filesystem iostreams locale)
 INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
-LINK_LIBRARIES(${Boost_LIBRARIES})
-MESSAGE(${Boost_INCLUDE_DIRS})
+LINK_LIBRARIES(Boost::filesystem Boost::iostreams Boost::locale)
 
 ## HDF5
 # Implicit dependency tttrlib -> HDF5
@@ -175,21 +125,11 @@ LINK_LIBRARIES(${HDF5_LIBRARIES})
 # needed for build on Windows
 ADD_DEFINITIONS(-DH5_BUILT_AS_DYNAMIC_LIB)
 
-### Intel MKL
-###############
-#find_package(MKL REQUIRED)
-#if (MKL_FOUND)
-#    INCLUDE_DIRECTORIES(${MKL_INCLUDE_DIRS})
-#    LINK_LIBRARIES(${MKL_CORE_LIBRARY})
-#else ()
-#    message(WARNING "MKL libs not found")
-#endif ()
-
 ## OpenMP
 ###########################
 if (APPLE)
     # When using conda use CONDA_PREFIX
-    if(DEFINED ENV{CONDA_PREFIX})
+    if(DEFINED ENV{COND_PREFIX})
         SET(OMP_INCLUDE_DIR "$ENV{CONDA_PREFIX}/include")
         SET(OMP_LIB_DIR "$ENV{CONDA_PREFIX}/lib")
     else()
@@ -220,7 +160,6 @@ INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include)
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR})
 FILE(GLOB SRC_files "${CMAKE_SOURCE_DIR}/src/*.cpp")
 ADD_SUBDIRECTORY(ext)
-
 
 ################################################################################
 ###### Targets
@@ -258,5 +197,21 @@ INSTALL(TARGETS ${PROJECT_NAME}Static
         ARCHIVE DESTINATION lib
         PUBLIC_HEADER DESTINATION include/${PROJECT_NAME}
         )
+
+
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    get_property(dirs DIRECTORY . PROPERTY INCLUDE_DIRECTORIES)
+    foreach(dir ${dirs})
+        message(STATUS "INCLUDE_DIRECTORY='${dir}'")
+    endforeach()
+    get_property(dirs DIRECTORY . PROPERTY LINK_LIBRARIES)
+    foreach(dir ${dirs})
+        message(STATUS "LINK_LIBRARIES='${dir}'")
+    endforeach()
+    get_property(dirs DIRECTORY . PROPERTY LINK_DIRECTORIES)
+    foreach(dir ${dirs})
+        message(STATUS "LINK_DIRECTORIES='${dir}'")
+    endforeach()
+ENDIF (CMAKE_BUILD_TYPE STREQUAL "Debug")
 
 

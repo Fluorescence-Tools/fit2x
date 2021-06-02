@@ -1,5 +1,5 @@
 %{
-#include "../include/fit23.h"
+#include "fit23.h"
 %}
 
 %rename (modelf23) my_modelf23;

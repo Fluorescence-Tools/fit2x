@@ -4,68 +4,77 @@ stages:
 - deploy
 - Trigger-cross-projects
 
-# Change pip's cache directory to be inside the project directory since we can
-# only cache local items.
-variables:
-  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
-
 build:linux:
   stage: build
   tags:
     - linux
-  image: continuumio/miniconda3:latest
+  image: condaforge/mambaforge:latest
   before_script:
-    - apt update -yq && apt -yq install build-essential doxygen
+    - apt update -yq && apt -yq install build-essential
+    - git submodule update --init --recursive --remote
   script:
-    - source activate base
-    - cp .condarc ~/.condarc
-    - conda install mamba=$MAMBA_VERSION boa conda-verify
-    - conda mambabuild conda-recipe --output-folder bld-dir
+    - ./tools/build.sh
   artifacts:
-    expire_in: 7 days
+    paths:
+      - bld-dir/
+
+build:windows:
+  stage: build
+  tags:
+    - win
+  before_script:
+    - git submodule update --init --recursive --remote
+  script:
+    - .\tools\build.bat
+  artifacts:
+    paths:
+      - bld-dir/
+
+build:osx:
+  stage: build
+  tags:
+    - osx
+  before_script:
+    - git submodule update --init --recursive --remote
+  script:
+    - ./tools/build.sh
+  artifacts:
     paths:
       - bld-dir/
 
 test:linux:
-  variables:
-    MINICONDA_OS: "Linux"
   stage: test
   tags:
     - linux
-  image: ubuntu:latest
+  image: condaforge/mambaforge:latest
   before_script:
     - apt update -yq
     - apt install -yq procps wget git git-lfs
-    # Download and install miniconda
-    - wget https://repo.continuum.io/miniconda/Miniconda3-$MINICONDA_VERSION-$MINICONDA_OS-x86_64.sh -O miniconda.sh
-    - bash miniconda.sh -b -p $HOME/miniconda
-    - export PATH="$HOME/miniconda/bin:$PATH"
-    # setup conda to always accept commands
-    - conda config --set always_yes yes --set changeps1 no
+    - git submodule update --init --recursive --remote
   script:
     - source activate base
-    - cp .condarc ~/.condarc
-    - conda install mamba
     - conda config --add channels "file://`pwd`/bld-dir"
-    - mamba create -n test python fit2x nose scipy
-    - conda activate test
+    # for tttrlib
+    - conda config --add channels tpeulen
+    - mamba install python tttrlib nose scipy
+    - git clone https://gitlab.peulen.xyz/tpeulen/tttr-data --depth 1
     - |
       cd test
       nosetests
 
-deploy:
+deploy:conda:
   stage: deploy
-  image: continuumio/miniconda3:latest
+  image: condaforge/mambaforge:latest
   tags:
     - linux
   dependencies:
     - build:linux
+    - build:windows
+    - build:osx
+  before_script:
+    - git submodule update --init --recursive --remote
   script:
-    - source activate
-    - conda install anaconda-client
-    - if [[ "$CI_COMMIT_REF_NAME" == "master" ]]; then DEPLOY_LABEL=main; else DEPLOY_LABEL=nightly; fi
-    - anaconda -t ${ANACONDA_API_TOKEN} upload -l ${DEPLOY_LABEL} -u ${CONDA_USER} --force bld-dir/linux-64/*.tar.bz2
-
+    - ./tools/deploy.sh
 
 # Downstream projects
 scikit-fluorescence:

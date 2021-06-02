@@ -1,5 +1,5 @@
 %{
-#include "../include/fsconv.h"
+#include "fsconv.h"
 %}
 
 // manually added instead of including header file as all other functions

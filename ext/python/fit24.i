@@ -1,5 +1,5 @@
 %{
-#include "../include/fit24.h"
+#include "fit24.h"
 %}
 
 %exception my_modelf24{$action if (PyErr_Occurred()) SWIG_fail;}

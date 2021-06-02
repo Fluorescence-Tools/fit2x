@@ -1,3 +1,5 @@
+tools/
+cmake/
 build/
 bld-dir/
 dist/
@@ -16,3 +18,4 @@ docs/auto_examples/
 docs/modules/
 .history/
 .vscode/
+.history/

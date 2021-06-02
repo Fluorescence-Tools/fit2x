@@ -2,13 +2,14 @@
 import os
 import platform
 import subprocess
+import multiprocessing
 
 from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext
 
 
 def read_version(
-        header_file='./include/fits2x.h'
+        header_file='./include/info.h'
 ):
     version = "0.0.0"
     with open(header_file, "r") as fp:
@@ -57,20 +58,10 @@ class CMakeBuild(build_ext):
                 '-GVisual Studio 14 2015 Win64'
             ]
         else:
-            build_args += ['--', '-j8']
-            # When using conda try to convince cmake to use
-            # the conda boost
-            CONDA_PREFIX = os.getenv('CONDA_PREFIX')
-            if CONDA_PREFIX is not None:
-                print("Conda prefix is: ", CONDA_PREFIX)
-                print("Convincing cmake to use the conda boost")
-                cmake_args += [
-                    '-DCMAKE_PREFIX_PATH=' + CONDA_PREFIX,
-                    '-DBOOST_ROOT=' + CONDA_PREFIX,
-                    '-DBoost_NO_SYSTEM_PATHS=ON',
-                    '-DBoost_DEBUG=ON',
-                    '-DBoost_DETAILED_FAILURE_MESSAGE=ON'
-                ]
+            build_args += [
+                '--',
+                '-j%s' % int(multiprocessing.cpu_count() * 1.5)
+            ]
 
         env = os.environ.copy()
         if not os.path.exists(self.build_temp):

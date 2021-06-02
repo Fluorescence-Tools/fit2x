@@ -19,18 +19,16 @@ requirements:
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
     - cmake >=3.13
-    - python
-    - tttrlib
+    - python {{ python }}
+    - tttrlib >=0.0.20
     - numpy
     - cmake
     - swig
-    - imp {{ imp }} # for correct linking for IMP
   host:
     - python {{ python }}
     - numpy
     - setuptools
-    - tttrlib
-    - imp {{ imp }} # for correct linking for IMP
+    - tttrlib >=0.0.20
   run:
     - python {{ python }}
     - {{ pin_compatible('numpy') }}
