@@ -20,12 +20,14 @@ requirements:
     - {{ compiler('cxx') }}
     - cmake >=3.13
     - python {{ python }}
+    - boost {{ boost }}
     - tttrlib >=0.0.20
     - numpy
     - cmake
     - swig
   host:
     - python {{ python }}
+    - boost {{ boost }}
     - numpy
     - setuptools
     - tttrlib >=0.0.20
