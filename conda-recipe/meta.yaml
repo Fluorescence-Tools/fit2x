@@ -18,14 +18,9 @@ requirements:
   build:
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
-    - cmake >=3.13
-    - python {{ python }}
-    - boost {{ boost }}
-    - tttrlib >=0.0.20
-    - numpy
-    - cmake
-    - swig
   host:
+    - swig
+    - cmake
     - python {{ python }}
     - boost {{ boost }}
     - numpy
