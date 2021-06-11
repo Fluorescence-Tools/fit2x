@@ -27,10 +27,10 @@ requirements:
     - setuptools
     - tttrlib >=0.0.20
   run:
-    - python {{ python }}
-    - {{ pin_compatible('numpy') }}
+    - python
+    - numpy
+    - boost
     - {{ pin_compatible('tttrlib', max_pin='x.x.x') }}
-    - {{ pin_compatible('boost', max_pin='x.x.x') }}
     - llvm-openmp # [osx]
 
 about:
