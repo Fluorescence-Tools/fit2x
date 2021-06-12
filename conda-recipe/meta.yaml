@@ -7,7 +7,6 @@ package:
   version: {{ data.get('version')|lower }}
 
 source:
-  #  path: ..
   git_url: ..
 
 build:
@@ -18,14 +17,15 @@ requirements:
   build:
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
-    - swig
+    - doxygen
     - cmake
+    - swig
   host:
+    - python {{ python }}
+    - setuptools
+    - numpy
     - boost {{ boost }}
     - tttrlib >=0.0.20
-    - python {{ python }}
-    - numpy
-    - setuptools
   run:
     - python
     - numpy

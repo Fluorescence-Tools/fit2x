@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 rm -r -f build
+git submodule update --recursive --init --remote
 $PYTHON setup.py install --single-version-externally-managed --record=record.txt
 
 cd build

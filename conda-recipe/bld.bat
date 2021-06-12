@@ -1,5 +1,5 @@
-git submodule update --recursive --init --remote
 rmdir build /s /q
+git submodule update --recursive --init --remote
 %PYTHON% setup.py install --single-version-externally-managed --record=record.txt
 cd build
 cmake .. -G "NMake Makefiles" ^
