@@ -25,7 +25,7 @@ requirements:
     - setuptools
     - numpy
     - boost {{ boost }}
-    - tttrlib >=0.0.20
+    - tttrlib >=0.0.21
   run:
     - python
     - numpy
