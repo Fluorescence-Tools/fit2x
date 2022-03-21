@@ -1,1 +1,1 @@
-#define FIT2X_VERSION                "0.0.7"
+#define FIT2X_VERSION                "0.0.8"
