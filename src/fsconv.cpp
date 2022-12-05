@@ -77,7 +77,7 @@ void fconv(double *fit, double *x, double *lamp, int numexp, int start, int stop
     }
 }
 
-
+#ifdef __AVX2__
 // fast convolution AVX
 void fconv_avx(double *fit, double *x, double *lamp, int numexp, int start, int stop, double dt) {
     int start1 = std::max(1, start);
@@ -146,6 +146,7 @@ void fconv_avx(double *fit, double *x, double *lamp, int numexp, int start, int 
     }
     _mm_free(ex); _mm_free(p);
 }
+#endif
 
 
 
@@ -183,6 +184,7 @@ void fconv_per(double *fit, double *x, double *lamp, int numexp, int start, int 
 }
 
 
+#ifdef __AVX2__
 // fast convolution, high repetition rate, AVX
 void fconv_per_avx(double *fit, double *x, double *lamp, int numexp, int start, int stop,
                    int n_points, double period, double dt) {
@@ -306,7 +308,7 @@ void fconv_per_avx(double *fit, double *x, double *lamp, int numexp, int start, 
     }
     free(l2); _mm_free(p); _mm_free(ex); _mm_free(scale); _mm_free(tails);
 }
-
+#endif
 
 /* fast convolution, high repetition rate, with convolution stop for Paris */
 /* fast convolution, high repetition rate, with convolution stop for Paris */
