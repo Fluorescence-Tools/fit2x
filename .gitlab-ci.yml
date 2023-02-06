@@ -8,7 +8,9 @@ build:linux:
   stage: build
   tags:
     - linux
-  image: condaforge/mambaforge:latest
+  image:
+    name: condaforge/linux-anvil-cos7-x86_64
+    entrypoint: [ "/bin/bash", "-i", "-c" ]
   before_script:
     - apt update -yq && apt -yq install build-essential
   script:
@@ -21,7 +23,11 @@ build:windows:
   stage: build
   tags:
     - win
+  image: mambaforge:vs16
   script:
+    - cmd.exe
+    - conda activate base
+    - cd tools && git pull --force && cd..
     - .\tools\build.bat
   artifacts:
     paths:
