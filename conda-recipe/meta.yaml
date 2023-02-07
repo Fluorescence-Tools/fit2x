@@ -21,11 +21,11 @@ requirements:
     - cmake
     - swig
   host:
-    - python {{ python }}
+    - python
     - setuptools
     - numpy
     - boost {{ boost }}
-    - tttrlib >=0.0.21
+    - tttrlib
   run:
     - python
     - numpy
