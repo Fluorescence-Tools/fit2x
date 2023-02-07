@@ -9,9 +9,10 @@ build:linux:
   tags:
     - linux
   image:
-    name: condaforge/linux-anvil-cos7-x86_64
+    name: condaforge/mambaforge
     entrypoint: [ "/bin/bash", "-i", "-c" ]
   script:
+    - cd tools && git pull --force && cd..
     - ./tools/build.sh
   artifacts:
     paths:
