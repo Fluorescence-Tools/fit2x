@@ -10,8 +10,8 @@ build:linux:
     - linux
   image:
     name: condaforge/mambaforge
-    entrypoint: [ "/bin/bash", "-i", "-c" ]
   script:
+    - mamba install git
     - cd tools && git pull --force && cd..
     - ./tools/build.sh
   artifacts:
