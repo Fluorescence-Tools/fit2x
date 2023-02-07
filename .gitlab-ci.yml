@@ -12,7 +12,7 @@ build:linux:
     name: condaforge/mambaforge
   script:
     - mamba install git
-    - cd tools && git pull origin master --force && cd..
+    - cd tools && git pull origin master --force && cd ..
     - ./tools/build.sh
   artifacts:
     paths:
