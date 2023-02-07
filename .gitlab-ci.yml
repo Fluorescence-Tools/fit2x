@@ -11,8 +11,6 @@ build:linux:
   image:
     name: condaforge/linux-anvil-cos7-x86_64
     entrypoint: [ "/bin/bash", "-i", "-c" ]
-  before_script:
-    - apt update -yq && apt -yq install build-essential
   script:
     - ./tools/build.sh
   artifacts:
