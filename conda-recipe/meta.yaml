@@ -1,5 +1,3 @@
-{% set PY_VER_MAJOR = PY_VER[0] %}
-{% set PY_VER_MINOR = PY_VER[2] %}
 {% set data = load_setup_py_data(setup_file='../setup.py', from_recipe_dir=True) %}
 
 package:
@@ -10,27 +8,35 @@ source:
   git_url: ..
 
 build:
-    number: 0
-    string: py{{ PY_VER_MAJOR }}{{ PY_VER_MINOR }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}
+  number: 0
+  detect_binary_files_with_prefix: True  # [not win]
 
 requirements:
   build:
+    - python
+    - numpy
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
-    - doxygen
-    - cmake
+    - llvm-openmp  # [osx]
+    - libgomp      # [linux]
+    - pkg-config   # [not win]
     - swig
+    - ninja
+    - cmake
+    - make         # [linux]
+    - doxygen
   host:
     - python
     - setuptools
     - numpy
-    - boost {{ boost }}
+    - boost-cpp
     - tttrlib
   run:
     - python
-    - numpy
-    - boost
-    - {{ pin_compatible('tttrlib', max_pin='x.x.x') }}
+    - typing # [py27]
+    - {{ pin_compatible('numpy') }}
+    - boost-cpp
+    - tttrlib
     - llvm-openmp # [osx]
 
 about:

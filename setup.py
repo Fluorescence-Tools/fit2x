@@ -49,7 +49,7 @@ class CMakeBuild(build_ext):
             '-DCMAKE_SWIG_OUTDIR=' + extdir
         ]
         cfg = 'Debug' if self.debug else 'Release'
-        build_args = ['--config', cfg, '-j 16']
+        build_args = ['--config', cfg]
         cmake_args += ['-DCMAKE_BUILD_TYPE=' + cfg]
         if platform.system() == "Windows":
             cmake_args += [
@@ -66,7 +66,7 @@ class CMakeBuild(build_ext):
         env = os.environ.copy()
         if not os.path.exists(self.build_temp):
             os.makedirs(self.build_temp)
-        print("cmake building: " + " ".join(cmake_args))
+        print("BUILDING::CMAKE: " + " ".join(cmake_args))
         subprocess.check_call(
             ['cmake', ext.sourcedir] + cmake_args,
             cwd=self.build_temp,
