@@ -39,6 +39,10 @@ requirements:
     - tttrlib
     - llvm-openmp # [osx]
 
+test:
+  imports:
+    - fit2x
+
 about:
   home: https://github.com/fluorescence-tools/fit2x
   license: {{ data.get('license') }}
