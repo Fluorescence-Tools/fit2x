@@ -26,7 +26,7 @@ build:windows:
   script:
     - cmd.exe
     - conda activate base
-    - cd tools && git pull --force && cd..
+    - cd tools && git pull --force && cd ..
     - .\tools\build.bat
   artifacts:
     paths:
@@ -37,6 +37,7 @@ build:osx:
   tags:
     - osx
   script:
+    - cd tools && git pull --force && cd ..
     - ./tools/build.sh
   artifacts:
     paths:
