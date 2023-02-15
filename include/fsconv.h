@@ -130,7 +130,6 @@ void fconv(double *fit, double *x, double *lamp, int numexp, int start, int stop
  */
 void fconv_avx(double *fit, double *x, double *lamp, int numexp, int start, int stop, double dt=0.05);
 
-
 /*!
  * @brief Convolve lifetime spectrum with instrument response (fast convolution,
  * high repetition rate)
@@ -155,6 +154,7 @@ void fconv_per(
         double *fit, double *x, double *lamp, int numexp, int start, int stop,
         int n_points, double period, double dt=0.05
 );
+
 /*!
  * @brief Convolve lifetime spectrum with instrument response (fast convolution,
  * high repetition rate), AVX optimized version
