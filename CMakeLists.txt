@@ -51,6 +51,9 @@ if(APPLE)
     ADD_DEFINITIONS(-stdlib=libc++)
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
     SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pthread")
+    # Requires AVX and FMA
+    STRING(APPEND CMAKE_CXX_FLAGS " -Ofast -ffast-math -funroll-loops")
+    STRING(APPEND CMAKE_C_FLAGS " -Ofast -ffast-math -funroll-loops")
 endif()
 if (MSVC)
     ADD_DEFINITIONS(-DMS_WIN64)
@@ -197,5 +200,4 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
         message(STATUS "LINK_DIRECTORIES='${dir}'")
     endforeach()
 ENDIF (CMAKE_BUILD_TYPE STREQUAL "Debug")
-
 
