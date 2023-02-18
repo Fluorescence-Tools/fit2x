@@ -14,7 +14,7 @@ build:
 
 requirements:
   build:
-    - python {{ python }}
+    - python
     - numpy
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
@@ -27,13 +27,13 @@ requirements:
     - make         # [linux]
     - doxygen
   host:
-    - python {{ python }}
+    - python
     - setuptools
     - numpy
     - boost-cpp
     - tttrlib
   run:
-    - python {{ python }}
+    - python
     - boost-cpp
     - {{ pin_compatible('numpy') }}
     - {{ pin_compatible('tttrlib') }}
