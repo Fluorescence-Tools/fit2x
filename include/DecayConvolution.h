@@ -159,11 +159,14 @@ private:
                 fconv_per(my, lt, iy, ln / 2, start, stop, nm, ex_per, dt);
             } else if (cm == ConvFast) {
                 fconv(my, lt, iy, ln / 2, start, stop, dt);
-            } else if (cm == ConvFastAVX) {
+            }
+#ifdef __AVX2__
+            else if (cm == ConvFastAVX) {
                 fconv_avx(my, lt, iy, ln / 2, start, stop, dt);
             } else if (cm == ConvFastPerAVX) {
                 fconv_per_avx(my, lt, iy, ln / 2, start, stop, nm, ex_per, dt);
             }
+#endif
         }
 #if VERBOSE_FIT2X
         std::clog << "DecayConvolution::convolve_lifetimes" << std::endl;
