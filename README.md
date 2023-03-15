@@ -6,7 +6,7 @@
 fit2x is currently in early development.
 
 ## General description
-fits2x is a collection of models that use maximum likelihood
+fit2x is a collection of models that use maximum likelihood
 estimators for polarization and time-resolved fluorescence decays.
 
 fit2x implement burst integrated fluorescence lifetime fits (BIFL)
@@ -18,6 +18,11 @@ Interface Generator) for common scripting languages as Python as main
 target language. 
 
 ![fit2x smfit23][1]
+
+
+## Design goals
+*   Low memory footprint (keep objective large datasets, e.g.  FLIM in memory).
+*   Platform independent C/C++ library with interfaces for scripting libraries
 
 ## Capabilities
 *   Polarization and time-resolved analysis 
@@ -103,12 +108,9 @@ be installed by the following command:
 conda install -c tpeulen fit2x
 ```
 
-For most users the later approach is recommended. Currently, pre-compiled 
-packages for the anaconda distribution system are available for:
-
-*   Windows: Python 3.7 (x64)
-*   Linux: Python 3.7 (x64)
-*   MacOs: Python 3.7 (x64)
+For most users the latter approach is recommended. Currently, pre-compiled 
+packages for the anaconda distribution system are available for 64bit Windows, macOS,
+and Linux.
 
 Legacy 32-bit platforms and versions of programming languages, e.g, Python 2.7 
 are not supported.
