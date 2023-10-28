@@ -79,7 +79,7 @@ void fconv(double *fit, double *x, double *lamp, int numexp, int start, int stop
 
 // fast convolution AVX
 void fconv_avx(double *fit, double *x, double *lamp, int numexp, int start, int stop, double dt) {
-#ifdef __AVX2__
+#ifdef WITH_AVX
     int start1 = std::max(1, start);
 
     // make sure that there are always multiple of 4 in the lifetimes
@@ -187,7 +187,7 @@ void fconv_per(double *fit, double *x, double *lamp, int numexp, int start, int 
 // fast convolution, high repetition rate, AVX
 void fconv_per_avx(double *fit, double *x, double *lamp, int numexp, int start, int stop,
                    int n_points, double period, double dt) {
-#ifdef __AVX2__
+#ifdef WITH_AVX
 #if VERBOSE_FIT2X
     std::clog << "fconv_per_avx" << std::endl;
     std::clog << "-- numexp: " << numexp << std::endl;
@@ -493,7 +493,7 @@ void fconv_per_cs_time_axis(
         double period
 ){
     double dt = time_axis[1] - time_axis[0];
-#ifdef __AVX2__
+#ifdef WITH_AVX
     fconv_per_avx(
             model,
             lifetime_spectrum,
@@ -504,7 +504,7 @@ void fconv_per_cs_time_axis(
             period, dt
     );
 #endif
-#ifndef __AVX2__
+#ifndef WITH_AVX
     fconv_per(
             model, lifetime_spectrum, instrument_response_function, (int) n_lifetime_spectrum / 2,
             convolution_start, convolution_stop, n_model, period, dt
@@ -523,7 +523,7 @@ void fconv_cs_time_axis(
         int convolution_stop
 ){
     double dt = time_axis[1] - time_axis[0];
-#ifdef __AVX2__
+#ifdef WITH_AVX
     fconv_avx(
             output,
             lifetime_spectrum,
@@ -532,7 +532,7 @@ void fconv_cs_time_axis(
             convolution_start, convolution_stop, dt
     );
 #endif
-#ifndef __AVX2__
+#ifndef WITH_AVX
     fconv(
             output,
             lifetime_spectrum,
