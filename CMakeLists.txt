@@ -101,12 +101,7 @@ ENDIF (CMAKE_BUILD_TYPE STREQUAL "Release")
 ###### INCLUDES AND LIBRARIES
 ################################################################################
 
-## CONDA
-###########################
 FIND_PACKAGE(Conda)
-
-## TTTRLIB
-###########################
 LINK_LIBRARIES(tttrlib)
 
 ## Boost
