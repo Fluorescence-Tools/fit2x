@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.13.0 FATAL_ERROR)
 SET(PROJECT_NAME fit2x)
 PROJECT(${PROJECT_NAME})
 ENABLE_LANGUAGE(CXX)
-SET(CMAKE_CXX_STANDARD 11)
+SET(CMAKE_CXX_STANDARD 17)
 ADD_DEFINITIONS(-D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES)
 
 ################################################################################
@@ -105,6 +105,11 @@ ENDIF (CMAKE_BUILD_TYPE STREQUAL "Release")
 ################################################################################
 ###### INCLUDES AND LIBRARIES
 ################################################################################
+
+# third party includes/code
+FILE(GLOB_RECURSE SRC_files_thirdparty "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/*.cpp")
+LIST(APPEND SRC_files ${SRC_files_thirdparty})
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/thirdparty)
 
 ## CONDA
 ###########################
