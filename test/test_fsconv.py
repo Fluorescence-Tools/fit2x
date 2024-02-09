@@ -131,7 +131,6 @@ class Tests(unittest.TestCase):
             np.allclose(model_ref, model_fconv), True
         )
 
-        # AVX wont be supported on Apple -> M1
         if platform != "darwin":
             model_fconv_avx = np.zeros_like(irf)
             fit2x.fconv_avx(
@@ -140,9 +139,7 @@ class Tests(unittest.TestCase):
                 x=lifetime_spectrum,
                 dt=dt
             )
-            self.assertEqual(
-                np.allclose(model_fconv_avx, model_fconv), True
-            )
+            np.testing.assert_allclose(model_fconv_avx, model_fconv)
 
     def test_fconv_per(self):
         period = 13.0
@@ -190,7 +187,7 @@ class Tests(unittest.TestCase):
             np.allclose(model_fconv_per, ref), True
         )
 
-        # AVX wont be supported on Apple -> M1
+        # AVX won't be supported on Apple -> M1
         if platform != "darwin":
             model_fconv_avx = np.zeros_like(irf)
             fit2x.fconv_per_avx(
@@ -248,9 +245,7 @@ class Tests(unittest.TestCase):
         # plt.semilogy(irf)
         # plt.show()
 
-        self.assertEqual(
-            np.allclose(ref, model_fconv_per_cs), True
-        )
+        np.testing.assert_allclose(ref, model_fconv_per_cs)
 
     # def test_sconv(self):
     #     period = 12.0

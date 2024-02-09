@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.13.0 FATAL_ERROR)
 SET(PROJECT_NAME fit2x)
 PROJECT(${PROJECT_NAME})
 ENABLE_LANGUAGE(CXX)
-SET(CMAKE_CXX_STANDARD 11)
+SET(CMAKE_CXX_STANDARD 17)
 ADD_DEFINITIONS(-D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES)
 
 ################################################################################
@@ -40,32 +40,37 @@ IF (CMAKE_BUILD_TYPE STREQUAL "Debug")
     endif()
 ENDIF (CMAKE_BUILD_TYPE STREQUAL "Debug")
 
-if(LINUX)
-    STRING(APPEND CMAKE_CXX_FLAGS " -Ofast -ffast-math -funroll-loops")
-    STRING(APPEND CMAKE_C_FLAGS " -Ofast -ffast-math -funroll-loops")
-endif()
-if(APPLE)
+# SIMD
+###########################
+IF(NOT APPLE)
+    IF(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "x86_64")
+        SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/dependency)
+        INCLUDE(simd)
+        IF(${AVX_FOUND})
+            MESSAGE("BUILD WITH SIMD")
+            add_compile_definitions(WITH_AVX)
+            IF (MSVC)
+                # https://devblogs.microsoft.com/cppblog/simd-extension-to-c-openmp-in-visual-studio/
+                # /Oi is for intrinsics
+                SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX -openmp:experimental /Oi")
+            ELSE(MSVC)
+                STRING(APPEND CMAKE_CXX_FLAGS " -Ofast -mavx -mfma -ffast-math -funroll-loops")
+            ENDIF (MSVC)
+        ELSE(${AVX_FOUND})
+            UNSET(WITH_AVX)
+        ENDIF(${AVX_FOUND})
+    ENDIF()
+ENDIF()
+
+# MACOSX
+##############
+if (APPLE)
     FIND_PACKAGE(Threads)
     # explicit link to libc++ for recent osx versions
     MESSAGE(STATUS "Explicitly link to libc++ on modern osx versions")
     ADD_DEFINITIONS(-stdlib=libc++)
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
     SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pthread")
-    # Requires AVX and FMA
-    STRING(APPEND CMAKE_CXX_FLAGS " -Ofast -ffast-math -funroll-loops")
-    STRING(APPEND CMAKE_C_FLAGS " -Ofast -ffast-math -funroll-loops")
-endif()
-if (MSVC)
-    ADD_DEFINITIONS(-DMS_WIN64)
-    ADD_DEFINITIONS(-D_USE_MATH_DEFINES)
-    # https://devblogs.microsoft.com/cppblog/simd-extension-to-c-openmp-in-visual-studio/
-    # /Oi is for intrinsics
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX -openmp:experimental /Oi /O2")
-endif (MSVC)
-
-# MACOSX
-##############
-if (APPLE)
     # Don't set MACOSX_RPATH by default
     # https://github.com/conda/conda/issues/3624
     if(DEFINED ENV{CONDA_PREFIX})
@@ -101,6 +106,13 @@ ENDIF (CMAKE_BUILD_TYPE STREQUAL "Release")
 ###### INCLUDES AND LIBRARIES
 ################################################################################
 
+# third party includes/code
+FILE(GLOB_RECURSE SRC_files_thirdparty "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/*.cpp")
+LIST(APPEND SRC_files ${SRC_files_thirdparty})
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/thirdparty)
+
+## CONDA
+###########################
 FIND_PACKAGE(Conda)
 LINK_LIBRARIES(tttrlib)
 
