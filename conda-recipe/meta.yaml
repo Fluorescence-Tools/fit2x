@@ -36,7 +36,7 @@ requirements:
     - python
     - boost-cpp
     - {{ pin_compatible('numpy') }}
-    - {{ pin_compatible('tttrlib') }}
+    - {{ pin_compatible('tttrlib', max_pin='x.x.x') }}
     - llvm-openmp # [osx]
 
 test:
