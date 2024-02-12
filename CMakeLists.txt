@@ -114,9 +114,6 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/thirdparty)
 ## CONDA
 ###########################
 FIND_PACKAGE(Conda)
-
-## TTTRLIB
-###########################
 LINK_LIBRARIES(tttrlib)
 
 ## Boost

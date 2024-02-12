@@ -131,7 +131,6 @@ class Tests(unittest.TestCase):
             np.allclose(model_ref, model_fconv), True
         )
 
-        # AVX won't be supported on Apple -> M1
         if platform != "darwin":
             model_fconv_avx = np.zeros_like(irf)
             fit2x.fconv_avx(
@@ -200,7 +199,9 @@ class Tests(unittest.TestCase):
                 stop=-1,
                 dt=dt
             )
-            np.testing.assert_allclose(model_fconv_avx, model_fconv_per)
+            self.assertEqual(
+                np.allclose(model_fconv_avx, model_fconv_per), True
+            )
 
     def test_fconv_per_cs(self):
         period = 13.0

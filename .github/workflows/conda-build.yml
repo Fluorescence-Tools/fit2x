@@ -1,6 +1,7 @@
 name: Conda Build
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - development
@@ -39,6 +40,7 @@ jobs:
       - name: Build Conda Package
         shell: bash -el {0}
         run: |
+          conda config --add channels tpeulen
           mamba install conda-build boa
           cd conda-recipe
           curl -sLO  https://raw.githubusercontent.com/conda-forge/conda-forge-pinning-feedstock/084b098a28a7a66e9a0967d156bc55b9ebfc6726/recipe/conda_build_config.yaml

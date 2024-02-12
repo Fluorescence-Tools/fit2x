@@ -79,7 +79,7 @@ void fconv(double *fit, double *x, double *lamp, int numexp, int start, int stop
 
 // fast convolution AVX
 void fconv_avx(double *fit, double *x, double *lamp, int numexp, int start, int stop, double dt) {
-#ifdef WITH_AVX
+#ifdef __AVX2__
     int start1 = std::max(1, start);
 
     // make sure that there are always multiple of 4 in the lifetimes
@@ -187,7 +187,8 @@ void fconv_per(double *fit, double *x, double *lamp, int numexp, int start, int 
 // fast convolution, high repetition rate, AVX
 void fconv_per_avx(double *fit, double *x, double *lamp, int numexp, int start, int stop,
                    int n_points, double period, double dt) {
-#ifdef WITH_AVX
+
+#ifdef __AVX2__
 #if VERBOSE_FIT2X
     std::clog << "fconv_per_avx" << std::endl;
     std::clog << "-- numexp: " << numexp << std::endl;
